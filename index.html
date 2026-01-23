@@ -12,15 +12,16 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/7111/7111466.png">
 
-<script>
-  // Registrar el Service Worker
-  if ('serviceWorker' in navigator) {
+    <script>
+    // Registrar el Service Worker
+    if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('./sw.js')
         .then(reg => console.log('PWA Lista!', reg))
         .catch(err => console.log('Fallo PWA', err));
     });
-  }
+    }
+
 </script>
     <style>
         :root {
@@ -141,8 +142,18 @@
         <p class="text-center mt-8 mono text-[9px] text-slate-600 uppercase tracking-widest">
             Source: <span class="text-slate-400">API personal v1.0</span>
         </p>
+
+                                         <!--Boton de intalacion para Android-->
+        <div id="install-container" class="hidden mb-6">
+            <button id="btnInstall" class="w-full bg-emerald-600/20 border border-emerald-500/50 text-emerald-400 py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-emerald-600/30 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                    <span class="mono text-xs font-bold uppercase tracking-widest">Instalar en Pantalla de Inicio</span>
+            </button>
+        </div>
+
+                                                <!--Aviso legal-->
         <footer class="mt-10 pt-6 border-t border-white/5 space-y-4">
-            
+
             <div class="bg-red-500/5 border border-red-500/20 rounded-lg p-3">
                 <p class="warning-blink mono text-[10px] leading-relaxed text-center font-bold">
                     ⚠️ ATENCIÓN: Esta es una API a manera de proyecto personal. 
@@ -160,9 +171,7 @@
                 </p>
             </div>
         </footer>
-        
-
-    </div>
+        </div>
 
     <script>
         // RECUERDA: Cambia esta URL por la tuya de Railway
@@ -194,9 +203,38 @@
                 loader.classList.add('hidden');
             }
         }
-
         // Carga inicial
         window.onload = fetchTasa;
+
+        let deferredPrompt;
+const installContainer = document.getElementById('install-container');
+const btnInstall = document.getElementById('btnInstall');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Evita que Chrome muestre el aviso automático
+    e.preventDefault();
+    // Guarda el evento para activarlo luego
+    deferredPrompt = e;
+    // Muestra nuestro botón personalizado
+    installContainer.classList.remove('hidden');
+});
+
+btnInstall.addEventListener('click', async () => {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            console.log('Usuario aceptó la instalación');
+        }
+        deferredPrompt = null;
+        installContainer.classList.add('hidden');
+    }
+});
+
+window.addEventListener('appinstalled', () => {
+    installContainer.classList.add('hidden');
+    console.log('PWA instalada con éxito');
+});
     </script>
 </body>
 </html>
