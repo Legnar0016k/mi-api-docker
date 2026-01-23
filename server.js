@@ -1,3 +1,24 @@
+const express = require('express');
+const cors = require('cors');
+const axios = require('axios');
+const cheerio = require('cheerio');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Habilitar CORS para que tu monitor.html y SISOV puedan consultar la API
+app.use(cors());
+
+// Ruta principal de bienvenida
+app.get('/', (req, res) => {
+    res.json({
+        mensaje: "API de Tasa Cambiaria Activa",
+        autor: "Raul",
+        endpoint: "/tasa-bcv"
+    });
+});
+
+// Ruta de Scraping
 app.get('/tasa-bcv', async (req, res) => {
     try {
         const { data } = await axios.get('https://www.monitordedivisavenezuela.com/', {
@@ -8,47 +29,49 @@ app.get('/tasa-bcv', async (req, res) => {
         });
 
         const $ = cheerio.load(data);
-
-        // En esta página, buscamos el valor que está asociado al BCV
-        // Usualmente está en un div o párrafo que contiene el texto "BCV"
         let tasaTexto = '';
-        
-        $('p, div, span').each((i, el) => {
-            const texto = $(el).text();
-            if (texto.includes('BCV') && texto.includes('Bs')) {
-                // Buscamos el número dentro de ese texto
+
+        // Buscamos de forma inteligente el valor del BCV en la página
+        $('p, div, span, h5').each((i, el) => {
+            const texto = $(el).text().toUpperCase();
+            if (texto.includes('BCV') && texto.includes('BS')) {
+                // Extrae el número (ejemplo: 54,50)
                 const match = texto.match(/\d+,\d+/);
                 if (match) {
                     tasaTexto = match[0];
-                    return false; // Rompe el ciclo
+                    return false; // Detiene el ciclo al encontrarlo
                 }
             }
         });
 
+        // Si la búsqueda inteligente falla, intentamos por selector de clase común
         if (!tasaTexto) {
-            // Plan B: Buscar por una clase común en esa web si el texto falla
             tasaTexto = $('.precio').first().text().trim();
         }
 
-        // Limpieza de formato: de "36,50" a 36.50
-        const tasaNumerica = parseFloat(tasaTexto.replace('.', '').replace(',', '.'));
+        if (!tasaTexto) throw new Error("No se encontró el formato de tasa esperado");
 
-        if (isNaN(tasaNumerica)) throw new Error("No se pudo parsear la tasa");
+        // Convertimos "54,50" -> "54.50" -> 54.5 (Número)
+        const tasaNumerica = parseFloat(tasaTexto.replace('.', '').replace(',', '.'));
 
         res.json({
             success: true,
             moneda: "USD",
             tasa: tasaNumerica,
             fecha_consulta: new Date().toLocaleString('es-VE', { timeZone: 'America/Caracas' }),
-            fuente: "Monitor de Divisa Venezuela (Dato BCV)"
+            fuente: "Monitor de Divisa (Datos BCV)"
         });
 
     } catch (error) {
-        console.error("Error Scraping:", error.message);
+        console.error("Error en el servidor:", error.message);
         res.status(500).json({
             success: false,
-            error: "Error al obtener datos de la nueva fuente",
+            error: "No se pudo obtener la tasa",
             detalle: error.message
         });
     }
+});
+
+app.listen(PORT, () => {
+    console.log(`🚀 Servidor corriendo en el puerto ${PORT}`);
 });
