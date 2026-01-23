@@ -1,58 +1,54 @@
+const express = require('express');
+const cors = require('cors');
+const axios = require('axios');
+const cheerio = require('cheerio');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Configuración de CORS manual y automática
+app.use(cors());
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
+app.get('/', (req, res) => res.send('API Operativa 🚀'));
+
 app.get('/tasa-bcv', async (req, res) => {
     try {
         const { data } = await axios.get('https://www.monitordedivisavenezuela.com/', {
             timeout: 10000,
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-            }
+            headers: { 'User-Agent': 'Mozilla/5.0' }
         });
 
         const $ = cheerio.load(data);
         let tasaFinal = null;
 
-        // BUSQUEDA SELECTIVA:
-        // Buscamos en todos los divs que tengan la clase de fuente grande
+        // Buscamos el div que contiene el texto de la tasa
         $('div.text-3xl.font-bold').each((i, el) => {
-            const texto = $(el).text().trim(); // Ejemplo: "352.71 Bs/USD"
-            
+            const texto = $(el).text().trim();
             if (texto.includes('Bs/USD')) {
-                // Extraemos solo el número (ejemplo: 352.71)
-                const match = texto.match(/[\d.]+/); 
+                const match = texto.match(/[\d.]+/);
                 if (match) {
                     tasaFinal = parseFloat(match[0]);
-                    return false; // Detener búsqueda
+                    return false;
                 }
             }
         });
 
-        // Si por alguna razón el diseño cambia un poco, buscamos por texto "Tasa BCV"
-        if (!tasaFinal) {
-            $('*').each((i, el) => {
-                const textoPadre = $(el).text().toUpperCase();
-                if (textoPadre.includes('TASA BCV')) {
-                    const precioSiguiente = $(el).find('.text-3xl').text().trim();
-                    const match = precioSiguiente.match(/[\d.]+/);
-                    if (match) tasaFinal = parseFloat(match[0]);
-                }
-            });
-        }
-
-        if (!tasaFinal || isNaN(tasaFinal)) throw new Error("No se encontró el precio en el formato Bs/USD");
+        if (!tasaFinal) throw new Error("No se encontró el dato");
 
         res.json({
             success: true,
-            moneda: "USD",
             tasa: tasaFinal,
-            fecha_consulta: new Date().toLocaleString('es-VE', { timeZone: 'America/Caracas' }),
-            fuente: "Monitor de Divisa (Captura Directa)"
+            fecha_consulta: new Date().toLocaleString('es-VE')
         });
 
     } catch (error) {
-        console.error("Error:", error.message);
-        res.status(500).json({
-            success: false,
-            error: "Error al extraer el dato exacto",
-            detalle: error.message
-        });
+        res.status(500).json({ success: false, error: error.message });
     }
 });
+
+app.listen(PORT, '0.0.0.0', () => console.log(`Puerto: ${PORT}`));

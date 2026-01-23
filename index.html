@@ -128,7 +128,7 @@
             result.classList.add('hidden');
 
             try {
-                const response = await fetch(API_URL);
+                const response = await fetch(`${API_URL}?t=${new Date().getTime()}`, { mode: 'cors' });
                 const data = await response.json();
 
                 if (data.success) {
