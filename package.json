@@ -1,0 +1,12 @@
+{
+
+    "name": "mi-primera-api-docker",
+    "version": "1.0.0",
+    "description": "API api de prueba para Railway",
+    "main": "server.js",
+    "scrips" : {
+        "start": "node server.js"
+    },
+    
+        "dependencies": {"express": "^4.18.2" }
+}
