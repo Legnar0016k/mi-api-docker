@@ -53,3 +53,72 @@ Si tienes Docker instalado:
 1. Clona el repositorio:
    ```bash
    git clone [https://github.com/TU_USUARIO/TU_REPOSO.git](https://github.com/TU_USUARIO/TU_REPOSO.git)
+
+
+🏦 **Monitor de Tasa BCV - Sistema de Alta Disponibilidad**
+
+Este proyecto ha evolucionado de una API Dockerizada a un ecosistema Fullstack robusto. Diseñado para consultar, procesar y visualizar la tasa oficial del BCV, cuenta con un sistema de triple capa para garantizar que los datos mostrados sean siempre coherentes y verídicos, incluso si la fuente original falla.
+
+🛠️ **Arquitectura Modular (Triple Capa)**
+Para evitar errores de "datos locos" o caídas del servidor, el frontend ahora se divide en módulos independientes:
+
+**Capa de Supervisión (supervisor.js):** El cerebro que orquestador. Decide qué fuente de datos usar (Railway o Respaldo) basándose en la salud del sistema.
+
+**Capa de Validación (validador.js):** El perito matemático. Compara el dato de Railway contra una API de referencia (dolarapi.com) y rechaza desviaciones mayores al 10%.
+
+**Capa de Renderizado (ui-render.js):** El motor visual. Maneja los estados de sincronización (OK, SWAP, FAIL) sin interferir con la lógica de datos.
+
+**🚀 Características Técnicas**
+Backend: Node.js v20 + Express.
+
+Scraping: Axios + Cheerio (Extracción inteligente de datos financieros).
+
+PWA (Progressive Web App): Instalable en Android, iOS y PC con soporte Offline mediante Service Workers.
+
+Contenedorización: Dockerizado (Dockerfile optimizado) para despliegue inmediato.
+
+Despliegue: Cloud hosting en Railway con CI/CD automatizado desde GitHub.
+
+Diseño: Dashboard Cyberpunk / Glassmorphism con Tailwind CSS e indicadores de estado dinámicos.
+
+**📌 Gestión de Estados de Sincronización**
+La app comunica su estado de salud en tiempo real:
+
+🟢 SINCRO OK: Datos obtenidos de la API principal y validados exitosamente.
+
+🟠 SINCRO SWAP: Error detectado en la fuente principal; el sistema activó el respaldo de emergencia.
+
+🔴 SINCRO FAIL: Ambas fuentes de datos están fuera de línea.
+
+**📦 Estructura de Archivos**
+Bash
+├── server.js          # API REST y Motor de Scraping (Backend)
+├── index.html         # Dashboard Principal (PWA)
+├── supervisor.js      # Orquestador de lógica y Failover
+├── validador.js       # Validación dinámica de coherencia (10% umbral)
+├── ui-render.js       # Controlador de interfaz y estados visuales
+├── sw.js              # Service Worker para soporte Offline
+├── manifest.json      # Configuración de PWA e iconos
+└── Dockerfile         # Definición del contenedor de producción
+⚙️ Instalación y Ejecución Local
+Con Docker (Recomendado)
+Si tienes Docker instalado, puedes levantar el backend en segundos:
+
+**Clonar:** git clone https://github.com/Legnar0016k/mi-api-docker.git
+
+Construir imagen: docker build -t bcv-monitor .
+
+Ejecutar: docker run -p 3000:3000 bcv-monitor
+
+Sin Docker
+Instala dependencias: npm install
+
+Inicia el servidor: node server.js
+
+Abre index.html en tu navegador.
+
+**📝 Bitácora de Cambios**
+El historial detallado de actualizaciones, incluyendo el fix para evitar "picos" de precio y la migración a arquitectura modular, se encuentra en el archivo CHANGELOG.md.
+
+**proximos cambios**
+configurar un "Web Hook" para que te llegue un aviso al celular si el supervisor detecta un fallo y tiene que hacer SWAP...
