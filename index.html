@@ -3,57 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitor de Tasa BCV | Mi API</title>
+    <title>Terminal BCV | Live Feed</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Inter', sans-serif;
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-green: #00ff8c;
         }
-        .glass {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
+        body {
+            background-color: #020617;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(30, 58, 138, 0.15) 0%, transparent 80%),
+                linear-gradient(rgba(15, 23, 42, 0.8) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(15, 23, 42, 0.8) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+        }
+        .cyber-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 242, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        .cyber-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
+        }
+        .glow-text {
+            text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+        }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 10px var(--neon-green);
+            animation: pulse-slow 2s infinite;
         }
     </style>
 </head>
-<body>
+<body class="flex items-center justify-center p-6">
 
-    <div class="glass p-8 w-full max-w-md shadow-2xl mx-4">
-        <div class="text-center">
-            <h1 class="text-blue-400 text-sm font-bold uppercase tracking-widest mb-2">Monitor Oficial</h1>
-            <h2 class="text-white text-3xl font-extrabold mb-6">Tasa BCV</h2>
-            
-            <div id="loader" class="py-10">
-                <div class="animate-spin inline-block w-8 h-8 border-4 border-current border-t-transparent text-blue-500 rounded-full" role="status"></div>
-                <p class="text-slate-400 mt-4 text-sm">Consultando mi API en Railway...</p>
+    <div class="cyber-card w-full max-w-md rounded-3xl p-8 transition-all hover:border-cyan-400/40">
+        <div class="flex justify-between items-start mb-10">
+            <div>
+                <p class="mono text-[10px] uppercase tracking-[0.3em] text-cyan-500/70 mb-1">Terminal // Alpha-Build</p>
+                <h1 class="text-white text-2xl font-extrabold tracking-tight">DATA STREAM <span class="text-cyan-400">BCV</span></h1>
             </div>
-
-            <div id="result" class="hidden">
-                <div class="bg-blue-500/10 rounded-2xl p-6 mb-6 border border-blue-500/20">
-                    <span class="text-slate-400 text-xs block mb-1">Precio del Dólar (USD)</span>
-                    <span id="price" class="text-white text-5xl font-black tracking-tighter"></span>
-                    <span class="text-blue-400 text-lg font-bold ml-1">Bs.</span>
-                </div>
-                
-                <div class="flex justify-between items-center text-xs text-slate-500 px-2">
-                    <span id="date"></span>
-                    <span class="bg-green-500/20 text-green-400 px-2 py-1 rounded-md uppercase font-bold">Oficial</span>
-                </div>
+            <div class="bg-slate-800/50 rounded-lg px-3 py-1 border border-slate-700">
+                <span class="live-dot mr-2"></span>
+                <span class="mono text-[10px] text-emerald-400 font-bold">LIVE</span>
             </div>
-
-            <button onclick="fetchTasa()" class="mt-8 w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-all active:scale-95 shadow-lg shadow-blue-600/20">
-                Actualizar Tasa
-            </button>
         </div>
+
+        <div id="loader" class="py-12 flex flex-col items-center">
+            <div class="relative w-16 h-16">
+                <div class="absolute inset-0 border-4 border-cyan-500/20 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-t-cyan-400 rounded-full animate-spin"></div>
+            </div>
+            <p class="mono text-xs text-slate-400 mt-6 tracking-widest animate-pulse">CONNECTING TO API...</p>
+        </div>
+
+        <div id="result" class="hidden space-y-6">
+            <div class="relative group">
+                <div class="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+                <div class="relative bg-black/40 border border-white/5 rounded-2xl p-6 text-center">
+                    <span class="text-slate-500 text-[10px] uppercase tracking-[0.2em] font-bold">Tasa de Cambio Oficial</span>
+                    <div class="flex items-center justify-center mt-2">
+                        <span id="price" class="text-white text-6xl font-black tracking-tighter glow-text">--.--</span>
+                        <span class="text-cyan-500 text-xl font-bold ml-3 mono">VES</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-slate-900/40 rounded-xl p-3 border border-white/5">
+                    <span class="block text-slate-500 text-[9px] uppercase font-bold tracking-wider mb-1">Última Act.</span>
+                    <span id="date" class="text-slate-300 text-[11px] mono">--:--:--</span>
+                </div>
+                <div class="bg-slate-900/40 rounded-xl p-3 border border-white/5">
+                    <span class="block text-slate-500 text-[9px] uppercase font-bold tracking-wider mb-1">Estado</span>
+                    <span class="text-emerald-400 text-[11px] mono font-bold">SINCRO OK</span>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="fetchTasa()" class="group relative mt-10 w-full overflow-hidden rounded-xl bg-cyan-600 p-[1px] transition-all hover:scale-[1.02] active:scale-95">
+            <div class="relative flex items-center justify-center gap-2 bg-slate-950 py-4 transition-all group-hover:bg-transparent">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-cyan-400 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span class="mono text-xs font-bold tracking-[0.2em] text-cyan-400 group-hover:text-white uppercase">Refresh Datastream</span>
+            </div>
+        </button>
+
+        <p class="text-center mt-8 mono text-[9px] text-slate-600 uppercase tracking-widest">
+            Source: <span class="text-slate-400">API personal v1.0</span>
+        </p>
     </div>
 
     <script>
+        // RECUERDA: Cambia esta URL por la tuya de Railway
         const API_URL = 'https://mi-api-docker-production.up.railway.app/tasa-bcv';
 
         async function fetchTasa() {
@@ -69,19 +133,22 @@
 
                 if (data.success) {
                     document.getElementById('price').innerText = data.tasa.toFixed(2);
-                    document.getElementById('date').innerText = data.fecha_consulta;
+                    // Formatear fecha corta
+                    const hora = data.fecha_consulta.split(' ')[1] || data.fecha_consulta;
+                    document.getElementById('date').innerText = hora;
                     
                     loader.classList.add('hidden');
                     result.classList.remove('hidden');
                 }
             } catch (error) {
-                console.error("Error al consultar la API:", error);
-                alert("No se pudo conectar con tu API en Railway. Revisa que esté activa.");
+                console.error("Error:", error);
+                alert("CONEXIÓN FALLIDA: Verifica el servidor.");
+                loader.classList.add('hidden');
             }
         }
 
-        // Cargar al iniciar
-        fetchTasa();
+        // Carga inicial
+        window.onload = fetchTasa;
     </script>
 </body>
 </html>
