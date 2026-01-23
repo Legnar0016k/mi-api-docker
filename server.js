@@ -1,9 +1,11 @@
 const express = require('express');
+const cors = require('cors'); // <--- 1. Importar cors
 const axios = require('axios');
 const cheerio = require('cheerio');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(cors()); // <--- 2. Permitir que cualquier app consulte tu API
 app.get('/tasa-bcv', async (req, res) => {
     try {
         // 1. Descargamos el HTML de la página del BCV
