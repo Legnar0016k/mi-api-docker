@@ -172,15 +172,18 @@
             </div>
         </footer>
         </div>
-
+        
+        <!--Se anañade un supervisor para proteger la tasa del dolar-->
+        <script src="./supervisor.js"></script>
     <script>
-        // RECUERDA: Cambia esta URL por la tuya de Railway
-        const API_URL = 'https://mi-api-docker-production.up.railway.app/tasa-bcv';
 
+        /** RECUERDA: Cambia esta URL por la tuya de Railway
+        const API_URL = 'https://mi-api-docker-production.up.railway.app/tasa-bcv';
+       
         async function fetchTasa() {
             const loader = document.getElementById('loader');
             const result = document.getElementById('result');
-            
+                     
             loader.classList.remove('hidden');
             result.classList.add('hidden');
 
@@ -203,12 +206,14 @@
                 loader.classList.add('hidden');
             }
         }
+            **/
+
         // Carga inicial
         window.onload = fetchTasa;
 
         let deferredPrompt;
-const installContainer = document.getElementById('install-container');
-const btnInstall = document.getElementById('btnInstall');
+            const installContainer = document.getElementById('install-container');
+            const btnInstall = document.getElementById('btnInstall');
 
 window.addEventListener('beforeinstallprompt', (e) => {
     // Evita que Chrome muestre el aviso automático
