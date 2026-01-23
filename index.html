@@ -6,6 +6,22 @@
     <title>Terminal BCV | Live Feed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;800&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#020617">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/7111/7111466.png">
+
+<script>
+  // Registrar el Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('PWA Lista!', reg))
+        .catch(err => console.log('Fallo PWA', err));
+    });
+  }
+</script>
     <style>
         :root {
             --neon-blue: #00f2ff;
@@ -55,6 +71,17 @@
             animation: pulse-slow 2s infinite;
         }
     </style>
+    <style>
+        /* Animación de parpadeo para el aviso legal */
+        @keyframes warning-fade {
+            0%, 100% { color: #ef4444; opacity: 1; } /* Rojo intenso */
+            50% { color: #7f1d1d; opacity: 0.6; }   /* Rojo oscuro */
+        }
+        .warning-blink {
+            animation: warning-fade 1.5s infinite;
+        }
+    </style>
+    
 </head>
 <body class="flex items-center justify-center p-6">
 
@@ -114,6 +141,27 @@
         <p class="text-center mt-8 mono text-[9px] text-slate-600 uppercase tracking-widest">
             Source: <span class="text-slate-400">API personal v1.0</span>
         </p>
+        <footer class="mt-10 pt-6 border-t border-white/5 space-y-4">
+            
+            <div class="bg-red-500/5 border border-red-500/20 rounded-lg p-3">
+                <p class="warning-blink mono text-[10px] leading-relaxed text-center font-bold">
+                    ⚠️ ATENCIÓN: Esta es una API a manera de proyecto personal. 
+                    Para fines comerciales y legales, consulte SIEMPRE la tasa en la página oficial: 
+                    <a href="https://www.bcv.org.ve/" target="_blank" class="underline hover:text-white">bcv.org.ve</a>
+                </p>
+            </div>
+
+            <div class="flex flex-col items-center gap-2">
+                <p class="mono text-[9px] text-slate-500 uppercase tracking-[0.2em]">
+                    &copy; 2026 Raúl | <span class="text-cyan-500/70">MIT License</span>
+                </p>
+                <p class="mono text-[8px] text-slate-700 uppercase">
+                    Data Source: Monitor de Divisa Venezuela
+                </p>
+            </div>
+        </footer>
+        
+
     </div>
 
     <script>
