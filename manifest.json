@@ -1,0 +1,16 @@
+{
+  "short_name": "TasaBCV",
+  "name": "Monitor de Tasa Oficial BCV",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/7111/7111466.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#020617",
+  "background_color": "#020617"
+}
