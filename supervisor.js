@@ -19,6 +19,36 @@ async function supervisorFetch() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 4000); // 4 segundos max
 
+
+    try {
+        console.log("Supervisor: Iniciando chequeo...");
+        const response = await fetch(`${CONFIG.API_PRIMARY}?t=${new Date().getTime()}`);
+        const data = await response.json();
+
+        if (data.success) {
+            // SOLICITUD AL VALIDADOR DINÁMICO
+            const esValidaDinamicamente = await ValidadorTecnico.esTasaValida(data.tasa);
+
+            if (esValidaDinamicamente === true) {
+                actualizarUI(data.tasa, data.fecha_consulta);
+            } 
+            else if (esValidaDinamicamente === false) {
+                console.warn("Dato rechazado por el Validador Dinámico.");
+                await llamarRespaldo();
+            }
+            else {
+                // Si el validador falla (ej. DolarApi caído), usa tus límites manuales actuales
+                if (data.tasa > CONFIG.LIMITS.MIN && data.tasa < CONFIG.LIMITS.MAX) {
+                    actualizarUI(data.tasa, data.fecha_consulta);
+                } else {
+                    await llamarRespaldo();
+                }
+            }
+        }
+    } catch (err) {
+        await llamarRespaldo();
+    }
+
     // Crear un controlador para abortar si tarda mucho
 try {
         console.log("Supervisor: Iniciando chequeo...");
