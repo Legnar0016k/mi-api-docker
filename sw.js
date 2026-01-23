@@ -1,5 +1,5 @@
-const CACHE_NAME = 'bcv-monitor-v1';
-const assets = ['./index.html', './manifest.json'];
+const CACHE_NAME = 'bcv-monitor-v2';
+const assets = ['./','./index.html', './manifest.json','./icon-512.png'];
 
 // Instalación
 self.addEventListener('install', event => {
