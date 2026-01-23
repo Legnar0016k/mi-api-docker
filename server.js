@@ -12,6 +12,14 @@ app.get('/', (req, res) => {
 
 });
 
+app.get('/tasa', (req, res) => {
+    res.json({
+        moneda: "VES",
+        tasa: 54.50, // Un ejemplo
+        fuente: "Mi propia API"
+    });
+});
+
 app.listen(PORT, () => {
     console.log(`Servidor activo en puerto ${PORT}`);
 });
