@@ -21,6 +21,7 @@
   - `SINCRO SWAP` (Naranja): Fallback activo usando API de respaldo.
   - `SINCRO FAIL` (Rojo): Fallo total de conexión en ambas fuentes.
 
+
   ## [v1.2.2] - 2026-01-23
 ### Añadido
 - **Módulo UI Renderer (`ui-render.js`)**: Separación total de la lógica visual. Ahora el diseño es independiente de la obtención de datos.
@@ -28,3 +29,11 @@
 
 ### Cambios
 - **Refactorización Modular**: El proyecto ahora sigue el patrón de responsabilidad única (UI, Validación, Supervisión).
+
+
+## [v1.3.0] - 2026-01-24
+### Añadido
+- **Modularización Completa**: Separación de lógica en `ui-render.js`, `validador.js` y `supervisor.js` para evitar corrupción de código fuente.
+- **Validación Dinámica**: Implementación de comparación porcentual (10%) contra DolarApi para descartar datos erróneos del scraping.
+- **Documentación Pro**: Actualización total del README.md con arquitectura de triple capa.
+
