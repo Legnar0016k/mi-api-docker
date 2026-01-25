@@ -70,3 +70,22 @@
 - **PWA Meta Tags**: Actualización de etiquetas meta según estándares modernos de Chrome.
 - **Estabilidad de red**: Resuelto error de conversión de respuesta en el Service Worker.
 
+## [v1.7.3] - 2026-01-24
+### Corregido
+- **Middleware Order**: Reorganización de `server.js` para asegurar que CORS afecte a todos los endpoints (Fix 404/CORS).
+- **Service Worker Logic**: Se excluyeron las peticiones de API del interceptor del SW para evitar errores de tipo 'Response'.
+- **Redundancia**: Eliminación de múltiples declaraciones de CORS en el backend.
+
+## [v1.7.4] - 2026-01-24
+### Corregido
+- **Seguridad Frontend**: Eliminación de scripts de backend en el cliente para evitar errores de referencia.
+- **Optimización de Server**: Limpieza de redundancias en la configuración de CORS y orden de Middlewares.
+- **Despliegue**: Verificación de rutas relativas para el módulo de scraping del Euro.
+
+## [v1.7.5] - 2026-01-24
+### Corregido
+- **Middleware Sync**: Reordenamiento de CORS en `server.js` para validar correctamente los endpoints `/api/euro` y `/tasa-bcv`.
+- **Arquitectura**: Eliminada la carga de `scraper-bcv.js` en el cliente (solo backend) para evitar errores de referencia en el navegador.
+- **Service Worker**: Implementada exclusión de URLs de API para prevenir el error 'Failed to convert value to Response'.
+- **PWA**: Actualización de etiquetas meta obsoletas para mejor compatibilidad en Chrome.
+

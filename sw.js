@@ -19,7 +19,14 @@ self.addEventListener('activate', event => {
 
 // Estrategia: Red primero, si falla, usar cache
 self.addEventListener('fetch', event => {
+    // No cachear peticiones a la API para evitar conflictos de CORS en el SW
+    if (event.request.url.includes('railway.app') || event.request.url.includes('dolarapi.com')) {
+        return; 
+    }
+
     event.respondWith(
-        fetch(event.request).catch(() => caches.match(event.request))
+        fetch(event.request).catch(() => {
+            return caches.match(event.request) || new Response("Offline", { status: 503 });
+        })
     );
 });

@@ -8,6 +8,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 
+app.use(cors());
+
+// Configuración de CORS manual y automática // elimminado
+
 
 //Monitor del Euro
 app.get('/api/euro', async (req, res) => {
@@ -17,15 +21,6 @@ app.get('/api/euro', async (req, res) => {
     } else {
         res.status(500).json({ success: false, message: 'Error al conectar con BCV' });
     }
-});
-
-
-// Configuración de CORS manual y automática
-app.use(cors());
-app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
 });
 
 app.get('/', (req, res) => res.send('API Operativa 🚀'));
@@ -67,5 +62,3 @@ app.get('/tasa-bcv', async (req, res) => {
 
 app.listen(PORT, '0.0.0.0', () => console.log(`Puerto: ${PORT}`));
 
-const cors = require('cors');
-app.use(cors()); // Esto abre la puerta a las peticiones del frontend
