@@ -122,3 +122,69 @@ El historial detallado de actualizaciones, incluyendo el fix para evitar "picos"
 
 **proximos cambios**
 configurar un "Web Hook" para que te llegue un aviso al celular si el supervisor detecta un fallo y tiene que hacer SWAP...
+
+**📦 Estructura de Archivos actual version v1.9.0**
+PROYECTO: TERMINAL BCV
+├── 🌐 Backend (Railway/Node.js)
+│   ├── server.js           # Orquestador de la API
+│   └── scraper-bcv.js      # Minería de datos (BCV/Monitor)
+│
+├── 💻 Frontend (Cliente PWA)
+│   ├── index.html          # Estructura y carga de scripts
+│   ├── manifest.json       # Configuración PWA
+│   ├── sw.js               # Service Worker (Cache & Offline)
+│   │
+│   ├── ⚙️ CORE LOGIC
+│   │   ├── supervisor.js   # Toma de decisiones (Fetch A o B)
+│   │   └── validador.js    # Inteligencia de comparación (Umbral 10%)
+│   │
+│   ├── 🎨 UI & RENDER
+│   │   ├── ui-render.js    # El "Pintor" (Semáforo y Precios)
+│   │   ├── ui-features.js  # Modales y Euro
+│   │   └── calc-logic.js   # Calculadora y botones rápidos
+│   │
+│   └── 🛡️ RESILIENCIA & TEST (Nuevos)
+│       ├── recovery-logic.js       # Reintento tras fallo (Centinela)
+│       ├── fault-test.js           # Inyector de errores manual
+│       └── chaos-and-recovery-test.js # Test de sabotaje automático
+│
+└── 📖 DOCUMENTACIÓN
+    └── CHANGELOG.md        # Historial técnico de cambios
+    └── README.md
+
+
+**🚨 Protocolo de Emergencia y Pruebas de Resiliencia (v1.9.0)**
+
+Este manual describe cómo operar las herramientas de sabotaje y recuperación añadidas en la última actualización.
+
+1. Simulación de Fallo de Servidor (fault-test.js)
+Objetivo: Forzar al sistema a abandonar la API de Railway y activar el respaldo (SWAP).
+
+Cómo activarlo: Descomenta la carga del script en el index.html.
+
+Resultado esperado:
+
+La consola mostrará: ⚠️ MODO DE PRUEBA: Forzando error en API Principal...
+
+El indicador de estado en la UI cambiará de SINCRO OK a SINCRO SWAP (Naranja).
+
+La tasa se obtendrá de ve.dolarapi.com.
+
+2. Test de Caos Dinámico (chaos-and-recovery-test.js)
+Objetivo: Validar que el sistema sobrevive a una caída total de internet y se recupera solo.
+
+Funcionamiento: 1. Secuestra el comando fetch y lo bloquea durante 15 segundos. 2. El sistema entrará en SINCRO FAIL (Rojo). 3. A los 15 segundos, libera el bloqueo. 4. El recovery-logic.js (Centinela) detectará el fallo y reintentará la conexión hasta volver a SINCRO OK.
+
+3. El Centinela de Recuperación (recovery-logic.js)
+Estado: Siempre activo en segundo plano.
+
+Lógica de Reintento: Utiliza un Backoff Algorítmico. Empieza reintentando cada 5 segundos y va aumentando el tiempo hasta un máximo de 30 segundos para no saturar el dispositivo del usuario.
+
+🛠️ Instrucciones para el Desarrollador (Mantenimiento)
+[!WARNING] IMPORTANTE PARA PRODUCCIÓN: Antes de hacer un git push definitivo, asegúrate de que el bloque de "DEBUG" en el index.html esté comentado. De lo contrario, los usuarios finales experimentarán "caos" programado.
+
+HTML
+<script src="validador.js"></script>
+<script src="ui-render.js"></script>
+<script src="supervisor.js"></script>
+<script src="recovery-logic.js"></script>
