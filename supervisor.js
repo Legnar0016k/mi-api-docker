@@ -96,7 +96,7 @@ try {
         await llamarRespaldo();
     }
 }
-
+//============================================================================
 async function llamarRespaldo() {
     try {
         const response = await fetch(CONFIG.API_FALLBACK);
@@ -105,10 +105,13 @@ async function llamarRespaldo() {
         // DolarApi usa 'promedio' o 'compra'
         const tasaSegura = data.promedio || data.compra || data.venta;
 
-        if (tasaSegura) {
-            console.log("Supervisor: Respaldo DolarApi activado exitosamente 🛡️");
-            actualizarUI(tasaSegura, "Respaldo (DolarApi)");
-        } else {
+      if (tasaSegura) {
+        console.log("Supervisor: Respaldo DolarApi activado exitosamente 🛡️");
+        // CAMBIA LA LÍNEA DE ABAJO:
+        UIRenderer.actualizar(tasaSegura, "SWAP", true); // Enviamos el flag de respaldo
+        }
+        
+        else {
             throw new Error("DolarApi no devolvió valores");
         }
     } catch (error) {
@@ -116,7 +119,7 @@ async function llamarRespaldo() {
         document.querySelector('#loader p').innerText = "ERROR TOTAL DE SEÑAL";
     }
 }
-
+//=============================================================================
 function actualizarUI(tasa, fecha) {
     const loader = document.getElementById('loader');
     const result = document.getElementById('result');

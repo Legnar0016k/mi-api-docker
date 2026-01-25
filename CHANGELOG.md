@@ -89,3 +89,28 @@
 - **Service Worker**: Implementada exclusión de URLs de API para prevenir el error 'Failed to convert value to Response'.
 - **PWA**: Actualización de etiquetas meta obsoletas para mejor compatibilidad en Chrome.
 
+## [v1.8.0] - 2026-01-25
+### Corregido
+- **UI Consistency**: Eliminada función duplicada en `supervisor.js` que causaba solapamiento de textos en "Última Act.".
+- **Semáforo de Estado**: Implementado `SINCRO SWAP` (Naranja) y `SINCRO FAIL` (Rojo) mediante `UIRenderer`.
+- **Naming**: Cambiadas las referencias de "DolarApi" a "SWAP" en logs y etiquetas de interfaz.
+### Añadido
+- **Quick Amounts**: Activación de lógica para botones de múltiplos de 5 en la calculadora.
+
+## [v1.8.1] - 2026-01-25
+### Corregido
+- **UI Logic**: Sincronizado `supervisor.js` con `UIRenderer.js` para evitar duplicidad de escritura en el DOM.
+- **Visual Status**: El estado de respaldo ahora se muestra correctamente como "SINCRO SWAP" en color naranja.
+### Añadido
+- **Testing Tool**: Creado `fault-test.js` para simular caídas de servidor y validar el sistema de contingencia.
+
+## [v1.9.0] - 2026-01-25
+### Añadido
+- **Módulo de Resiliencia**: Creado `recovery-logic.js` para intentos de reconexión automática mediante backoff algorítmico tras un `SINCRO FAIL`.
+- **Suite de Pruebas de Estrés**: Implementados `fault-test.js` y `chaos-and-recovery-test.js` para simular catástrofes de red y validar la recuperación del sistema.
+- **Modo Caos**: Capacidad de interceptar el `fetch` global para forzar estados de error controlados.
+
+### Corregido
+- **Estabilidad de UI**: El semáforo de sincronización ahora responde correctamente a los cambios de estado inducidos por fallos de red manuales.
+- **Persistencia**: Se asegura que el sistema retorne a `SINCRO OK` automáticamente una vez que la red se restablece en las pruebas de caos.
+
