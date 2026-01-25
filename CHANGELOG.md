@@ -114,3 +114,10 @@
 - **Estabilidad de UI**: El semáforo de sincronización ahora responde correctamente a los cambios de estado inducidos por fallos de red manuales.
 - **Persistencia**: Se asegura que el sistema retorne a `SINCRO OK` automáticamente una vez que la red se restablece en las pruebas de caos.
 
+## [v2.0.0] - 2026-01-25
+### Añadido
+- **Cerebro Central**: Implementación de `app-loader.js` para gestión modular.
+### Eliminado
+- **Código Muerto**: Se eliminaron más de 40 líneas de scripts manuales y funciones comentadas del `index.html`.
+- **Scripts redundantes**: Limpieza de etiquetas `<script>` individuales en favor del inyector dinámico.
+

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal BCV v1.9.0 | Live Feed</title>
+    <title>Terminal BCV v2.0 | Live Feed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
@@ -148,7 +148,7 @@
         </button>
 
         <p class="text-center mt-8 mono text-[9px] text-slate-600 uppercase tracking-widest">
-            Source: <span class="text-slate-400">API personal v1.9.0</span>
+            Source: <span class="text-slate-400">API personal v2.0</span>
         </p>
 
                                          <!--Boton de intalacion para Android-->
@@ -222,26 +222,52 @@
 </div>
         
 
-        <!--calculador automatico para respaldo del supervisor-->
-        <script src="./validador.js"></script>
-        <!--Semaforo de conexion-->
-        <script src="./ui-render.js"></script>
-        <!--Se anañade un supervisor para proteger la tasa del dolar-->
-        <script src="./supervisor.js"></script>
+        <!--todos los script fueron eliminados por un JS central  src="./app-loader.js"...-->
 
-        <!--sistema de fallos controlado(borrar al terminar)-->
-        <!-- <script src="./sitema de fallos controlado/fault-test.js"></script> -->
-         <!--sistema de recuperacion automatica-->
-        <!-- <script src="./sitema de fallos controlado/chaos-and-recovery-test.js"></script> -->
-        <!--Recuperacion secuencial-->
-        <!-- <script src="./sitema de fallos controlado/recovery-logic.js"></script> -->
-        
-        <!--Monitor de la Tasa del Dolar-->
-        <script src="./ui-features.js"></script>
-        <!--Logica de la calculadora-->
-        <script src="./calc-logic.js"></script>
-        
+
+        <script src="./app-loader.js"></script>
+
     <script>
+        // LÓGICA DE INSTALACIÓN PWA (Se queda en el index)
+        let deferredPrompt;
+        const installContainer = document.getElementById('install-container');
+        const btnInstall = document.getElementById('btnInstall');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installContainer.classList.remove('hidden');
+        });
+
+        btnInstall.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                installContainer.classList.add('hidden');
+            }
+        });
+
+        window.addEventListener('appinstalled', () => {
+            installContainer.classList.add('hidden');
+            console.log('PWA instalada con éxito');
+        });
+
+        // CARGA INICIAL: Llamamos al supervisor una vez que el cerebro inyecte todo
+        window.onload = () => {
+            setTimeout(() => {
+                if (typeof supervisorFetch === 'function') {
+                    supervisorFetch();
+                } else {
+                    console.error("Error: supervisorFetch no cargó a tiempo.");
+                }
+            }, 200); // Pequeño delay para asegurar inyección
+        };
+    </script>
+
+    <script>
+
+        //todos los script fueron deshabilitados...
 
         /** RECUERDA: Cambia esta URL por la tuya de Railway
         const API_URL = 'https://mi-api-docker-production.up.railway.app/tasa-bcv';
@@ -275,37 +301,40 @@
             **/
 
         // Carga inicial
-        window.onload = fetchTasa;
 
-        let deferredPrompt;
-            const installContainer = document.getElementById('install-container');
-            const btnInstall = document.getElementById('btnInstall');
+        
+//         window.onload = fetchTasa;
 
-window.addEventListener('beforeinstallprompt', (e) => {
-    // Evita que Chrome muestre el aviso automático
-    e.preventDefault();
-    // Guarda el evento para activarlo luego
-    deferredPrompt = e;
-    // Muestra nuestro botón personalizado
-    installContainer.classList.remove('hidden');
-});
+//         let deferredPrompt;
+//             const installContainer = document.getElementById('install-container');
+//             const btnInstall = document.getElementById('btnInstall');
 
-btnInstall.addEventListener('click', async () => {
-    if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-            console.log('Usuario aceptó la instalación');
-        }
-        deferredPrompt = null;
-        installContainer.classList.add('hidden');
-    }
-});
+// window.addEventListener('beforeinstallprompt', (e) => {
+//     // Evita que Chrome muestre el aviso automático
+//     e.preventDefault();
+//     // Guarda el evento para activarlo luego
+//     deferredPrompt = e;
+//     // Muestra nuestro botón personalizado
+//     installContainer.classList.remove('hidden');
+// });
 
-window.addEventListener('appinstalled', () => {
-    installContainer.classList.add('hidden');
-    console.log('PWA instalada con éxito');
-});
-    </script>
+// btnInstall.addEventListener('click', async () => {
+//     if (deferredPrompt) {
+//         deferredPrompt.prompt();
+//         const { outcome } = await deferredPrompt.userChoice;
+//         if (outcome === 'accepted') {
+//             console.log('Usuario aceptó la instalación');
+//         }
+//         deferredPrompt = null;
+//         installContainer.classList.add('hidden');
+//     }
+// });
+
+// window.addEventListener('appinstalled', () => {
+//     installContainer.classList.add('hidden');
+//     console.log('PWA instalada con éxito');
+// });
+//     </script>
+    
 </body>
 </html>
