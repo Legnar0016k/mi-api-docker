@@ -59,6 +59,7 @@ function setQuickAmount(amount) {
     }
 }
 
-// Al final de calc-logic.js añade esto:
+// Exponer al scope global para que los onclick/oninput del HTML funcionen
 window.calcular = calcular;
 window.setCurrency = setCurrency;
+window.setQuickAmount = setQuickAmount;
