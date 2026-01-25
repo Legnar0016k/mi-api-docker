@@ -1,10 +1,24 @@
+//servidor principal de la aplicacion
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const cheerio = require('cheerio');
-
+const bcvScraper = require('./scraper-bcv.js');
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+
+
+//Monitor del Euro
+app.get('/api/euro', async (req, res) => {
+    const tasa = await bcvScraper.getEuroBCV();
+    if (tasa) {
+        res.json({ success: true, tasa: tasa, moneda: 'EUR' });
+    } else {
+        res.status(500).json({ success: false, message: 'Error al conectar con BCV' });
+    }
+});
+
 
 // Configuración de CORS manual y automática
 app.use(cors());

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal BCV v1.3.0 | Live Feed</title>
+    <title>Terminal BCV v1.7.0 | Live Feed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
@@ -105,7 +105,7 @@
             </div>
             <p class="mono text-xs text-slate-400 mt-6 tracking-widest animate-pulse">CONNECTING TO API...</p>
         </div>
-
+        <!--Visualizador-->
         <div id="result" class="hidden space-y-6">
             <div class="relative group">
                 <div class="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
@@ -117,17 +117,25 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="grid grid-cols-2 gap-4">
-                <div class="bg-slate-900/40 rounded-xl p-3 border border-white/5">
-                    <span class="block text-slate-500 text-[9px] uppercase font-bold tracking-wider mb-1">Última Act.</span>
-                    <span id="date" class="text-slate-300 text-[11px] mono">--:--:--</span>
-                </div>
-               <div class="bg-slate-900/40 rounded-xl p-3 border border-white/5">
-                    <span class="block text-slate-500 text-[9px] uppercase font-bold tracking-wider mb-1">Estado</span>
-                    <span id="sync-status" class="text-emerald-400 text-[11px] mono font-bold">SINCRO OK</span>
-                </div>
-            </div>
+            <!--Arreglar-->
+           <div class="grid grid-cols-3 gap-2">
+    <div class="bg-slate-900/40 rounded-xl p-3 border border-white/5">
+        <span class="block text-slate-500 text-[9px] uppercase font-bold tracking-wider mb-1">Última Act.</span>
+        <span id="date" class="text-slate-300 text-[11px] mono">--:--:--</span>
+    </div>
+    <div class="bg-slate-900/40 rounded-xl p-3 border border-cyan-500/20">
+        <span class="block text-cyan-500 text-[9px] uppercase font-bold tracking-wider mb-1">Euro BCV</span>
+        <span id="euro-price" class="text-slate-300 text-[11px] mono">--.--</span>
+    </div>
+    <div class="bg-slate-900/40 rounded-xl p-3 border border-white/5">
+        <span class="block text-slate-500 text-[9px] uppercase font-bold tracking-wider mb-1">Estado</span>
+        <span id="sync-status" class="text-emerald-400 text-[11px] mono font-bold text-[10px]">SINCRO OK</span>
+    </div>
+</div>
+
+    <button onclick="AbrirCalculadora()" class="mt-4 w-full border border-cyan-500/30 rounded-xl py-3 flex items-center justify-center gap-2 hover:bg-cyan-500/10 transition-all group">
+    <span class="mono text-[10px] font-bold text-cyan-400 tracking-widest uppercase">Abrir Calculadora Modular</span>
+</button>
         </div>
 
         <button onclick="fetchTasa()" class="group relative mt-10 w-full overflow-hidden rounded-xl bg-cyan-600 p-[1px] transition-all hover:scale-[1.02] active:scale-95">
@@ -140,7 +148,7 @@
         </button>
 
         <p class="text-center mt-8 mono text-[9px] text-slate-600 uppercase tracking-widest">
-            Source: <span class="text-slate-400">API personal v1.3.0</span>
+            Source: <span class="text-slate-400">API personal v1.7.0</span>
         </p>
 
                                          <!--Boton de intalacion para Android-->
@@ -172,6 +180,46 @@
             </div>
         </footer>
         </div>
+         <!--Modal de Calculadora-->
+ <div id="modal-calc" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    
+    <div class="cyber-card w-full max-w-sm rounded-3xl p-6 border-cyan-400">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-white mono text-sm font-extrabold tracking-tighter uppercase">Calculadora de Cambio</h2>
+            <button onclick="CerrarCalculadora()" class="text-slate-500 hover:text-white transition-colors">✕</button>
+        </div>
+        
+        <div id="calc-content" class="space-y-4">
+            <div class="bg-black/60 border border-cyan-500/30 rounded-2xl p-4 text-right">
+                <span class="block text-[9px] uppercase text-cyan-500/50 mb-1 tracking-tighter">Total Estimado (VES)</span>
+                <div id="calc-result" class="text-3xl font-black text-white glow-text">0.00</div>
+            </div>
+
+            <div class="space-y-3">
+                <span class="block text-[9px] uppercase text-slate-500 ml-2 tracking-widest font-bold">Accesos Rápidos (Divisa)</span>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="setQuickAmount(5)" class="py-2 bg-slate-800/50 border border-white/5 rounded-lg text-cyan-400 font-mono text-[11px] hover:bg-cyan-500/20 transition-all font-bold">5</button>
+                    <button onclick="setQuickAmount(10)" class="py-2 bg-slate-800/50 border border-white/5 rounded-lg text-cyan-400 font-mono text-[11px] hover:bg-cyan-500/20 transition-all font-bold">10</button>
+                    <button onclick="setQuickAmount(15)" class="py-2 bg-slate-800/50 border border-white/5 rounded-lg text-cyan-400 font-mono text-[11px] hover:bg-cyan-500/20 transition-all font-bold">15</button>
+                    <button onclick="setQuickAmount(20)" class="py-2 bg-slate-800/50 border border-white/5 rounded-lg text-cyan-400 font-mono text-[11px] hover:bg-cyan-500/20 transition-all font-bold">20</button>
+                    <button onclick="setQuickAmount(50)" class="py-2 bg-slate-800/50 border border-white/5 rounded-lg text-cyan-400 font-mono text-[11px] hover:bg-cyan-500/20 transition-all font-bold">50</button>
+                    <button onclick="setQuickAmount(100)" class="py-2 bg-slate-800/50 border border-white/5 rounded-lg text-cyan-400 font-mono text-[11px] hover:bg-cyan-500/20 transition-all font-bold">100</button>
+                </div>
+            </div>
+            <div class="space-y-2">
+                <label class="block text-[10px] uppercase text-slate-500 ml-2 font-bold">Monto en Divisa</label>
+                <input type="number" id="calc-input" placeholder="0.00" 
+                       oninput="convertCurrency()"
+                       class="w-full bg-slate-900/50 border border-white/10 rounded-xl py-4 px-4 text-white font-mono focus:border-cyan-400 outline-none transition-all placeholder:text-slate-800">
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="setCurrency('USD')" id="btn-usd" class="py-3 rounded-xl border border-cyan-400 bg-cyan-400/10 text-cyan-400 font-mono text-[10px] font-bold transition-all">USD (Dólar)</button>
+                <button onclick="setCurrency('EUR')" id="btn-eur" class="py-3 rounded-xl border border-white/5 bg-slate-900/50 text-slate-500 font-mono text-[10px] font-bold transition-all">EUR (Euro)</button>
+            </div>
+        </div>
+    </div>
+</div>
         
         <!--Semaforo de conexion-->
         <script src="./ui-render.js"></script>
@@ -179,6 +227,10 @@
         <script src="./validador.js"></script>
         <!--Se anañade un supervisor para proteger la tasa del dolar-->
         <script src="./supervisor.js"></script>
+        <!--Monitor de la Tasa del Dolar-->
+        <script src="ui-features.js"></script>
+        <!--Logica de la calculadora-->
+        <script src="calc-logic.js"></script>
         
     <script>
 

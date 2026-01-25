@@ -37,3 +37,30 @@
 - **Validación Dinámica**: Implementación de comparación porcentual (10%) contra DolarApi para descartar datos erróneos del scraping.
 - **Documentación Pro**: Actualización total del README.md con arquitectura de triple capa.
 
+## [v1.4.0] - 2026-01-24
+### Añadido
+- **Módulo Scraper Independiente (`scraper-bcv.js`)**: Nuevo motor de extracción directa del portal BCV.
+- **Soporte para Euro (EUR)**: Endpoint `/api/euro` habilitado.
+- **Seguridad de Conexión**: Implementación de `httpsAgent` para bypass de certificados SSL inválidos.
+
+## [v1.5.0] - 2026-01-24
+### Añadido
+- **Módulo de Euro**: Nueva sección en el grid para mostrar la tasa EUR.
+- **Módulo de UI Features (`ui-features.js`)**: Nuevo archivo para manejar modales y datos secundarios.
+- **Calculadora Modal**: Estructura base (esqueleto) implementada con diseño Cyberpunk.
+
+## [v1.6.0] - 2026-01-24
+### Añadido
+- **Módulo de Calculadora (`calc-logic.js`)**: Lógica de conversión dinámica integrada.
+- **Interconectividad**: La calculadora ahora utiliza los datos en tiempo real del Supervisor (USD) y del Scraper BCV (EUR).
+- **UI de Calculadora**: Interfaz optimizada para móviles con selector de moneda y feedback visual "Neon".
+
+### Corregido
+- **Error 404/JSON**: Se diagnosticó fallo de endpoint en producción; se requiere despliegue de `scraper-bcv.js` en el backend.
+
+## [v1.7.0] - 2026-01-24
+### Añadido
+- **Quick-Tap Buttons**: Botones de acceso rápido (5, 10, 15, 20, 50, 100) en el modal de la calculadora.
+- **Funcionalidad Directa**: El sistema ahora calcula automáticamente al presionar un múltiplo sin necesidad de escribir.
+- **UI Refinada**: Mejoras en el layout del modal para visualización en pantallas pequeñas.
+
