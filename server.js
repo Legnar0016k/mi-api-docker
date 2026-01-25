@@ -66,3 +66,6 @@ app.get('/tasa-bcv', async (req, res) => {
 });
 
 app.listen(PORT, '0.0.0.0', () => console.log(`Puerto: ${PORT}`));
+
+const cors = require('cors');
+app.use(cors()); // Esto abre la puerta a las peticiones del frontend

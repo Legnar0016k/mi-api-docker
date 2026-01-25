@@ -64,3 +64,9 @@
 - **Funcionalidad Directa**: El sistema ahora calcula automáticamente al presionar un múltiplo sin necesidad de escribir.
 - **UI Refinada**: Mejoras en el layout del modal para visualización en pantallas pequeñas.
 
+## [v1.7.1] - 2026-01-24
+### Corregido
+- **Política CORS**: Implementación de middleware en el backend para permitir peticiones desde el dashboard.
+- **PWA Meta Tags**: Actualización de etiquetas meta según estándares modernos de Chrome.
+- **Estabilidad de red**: Resuelto error de conversión de respuesta en el Service Worker.
+
