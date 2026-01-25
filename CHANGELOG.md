@@ -121,3 +121,14 @@
 - **Código Muerto**: Se eliminaron más de 40 líneas de scripts manuales y funciones comentadas del `index.html`.
 - **Scripts redundantes**: Limpieza de etiquetas `<script>` individuales en favor del inyector dinámico.
 
+## [v2.1.0] - 2026-01-25
+### Añadido
+- **Módulo de Temas (`theme-logic.js`)**: Sistema de persistencia de tema mediante `localStorage`.
+- **Soporte Modo Claro**: Refactorización de estilos CSS para permitir legibilidad en entornos de alta luminosidad.
+- **Toggle de Interfaz**: Botón dinámico para cambio de tema en tiempo real sin recargar la página.
+
+## [v2.2.1] - 2026-01-25
+### Corregido
+- **Hotfix Calculadora**: Corregido Error de Referencia (`convertCurrency is not defined`) al sincronizar el evento `oninput` con la nueva lógica modular.
+- **Scope Global**: Se exponen funciones de cálculo al objeto `window` para compatibilidad con el cargador dinámico.
+

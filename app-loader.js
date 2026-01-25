@@ -3,7 +3,7 @@
  * El único punto de entrada para todos los módulos del sistema.
  */
 const AppLoader = {
-    // Definimos el orden de importancia (Jerarquía de carga)
+    // Definimos el orden de importancia (Jerarquía de carga)  
     modules: [
         'validador.js',
         'ui-render.js',

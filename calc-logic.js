@@ -58,3 +58,7 @@ function setQuickAmount(amount) {
         calcular(); // Ejecuta el cálculo inmediatamente
     }
 }
+
+// Al final de calc-logic.js añade esto:
+window.calcular = calcular;
+window.setCurrency = setCurrency;
