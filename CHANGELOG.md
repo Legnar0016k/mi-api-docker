@@ -333,3 +333,13 @@
 - **Visualización Persistente**: Se implementó el estado `sticky` en el visor de resultados de la calculadora.
 - **Legibilidad**: Añadido efecto `backdrop-blur` y ajuste de opacidad para mejorar el contraste del monto durante el scroll.
 
+## [v3.1.2] - 2026-01-26
+### UI/UX - Calculadora
+- **Visualización Persistente**: Implementado `sticky positioning` en el visor de resultados de la calculadora para mantener el total siempre visible durante el scroll.
+- **Mejora Visual**: Añadido `backdrop-blur` para garantizar legibilidad sobre el contenido desplazable.
+
+## [v3.1.3] - 2026-01-26
+### UI/UX - Calculadora
+- **Corrección Sticky**: Ajustada la estructura del modal con `overflow-y-auto` para permitir que el visor de resultados permanezca fijo mientras se desplaza el contenido.
+- **Optimización Visual**: Implementado fondo sólido en el contenedor sticky para evitar solapamiento de texto durante el scroll manual.
+
