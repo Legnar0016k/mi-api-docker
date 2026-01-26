@@ -256,6 +256,11 @@
 - **Enrutamiento de Respaldo**: Añadida ruta wildcard (`*`) para asegurar que el `index.html` se sirva correctamente incluso si falla la resolución de estáticos por defecto.
 - **Normalización de Rutas**: Refinamiento de `path.join` para compatibilidad total con el entorno de contenedores Docker.
 
+## [v2.4.9] - 2026-01-26
+### Corregido
+- **Configuración de Proyecto**: Actualizado `package.json` para corregir el punto de entrada (`main`) y el script de inicio (`start`) hacia la nueva ruta `backend/server.js`.
+- **Compatibilidad de Despliegue**: Alineación de scripts de ejecución con la arquitectura modular del repositorio.
+
 
 
 =======
