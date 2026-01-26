@@ -4,13 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terminal BCV v2.0 | Live Feed</title>
-<<<<<<< HEAD:public/index.html
-    <meta name="turbo-visit-control" content="reload">
-=======
->>>>>>> a0de666c6611c2e1325f70187ce6eb73ece8f609:index.html
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;800&display=swap" rel="stylesheet">
-    <link rel="manifest" href="./assets/manifest.json">
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#020617">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -28,13 +24,8 @@
 
 </script>
 
-<<<<<<< HEAD:public/index.html
     <link rel="stylesheet" href="./styles/style1.css">
     <link rel="stylesheet" href="./styles/style2.css">
-=======
-    <link rel="stylesheet" href="./Temas/style1.css">
-    <link rel="stylesheet" href="./Temas/style2.css">
->>>>>>> a0de666c6611c2e1325f70187ce6eb73ece8f609:index.html
     
 </head>
 <body class="flex items-center justify-center p-6">
@@ -70,7 +61,7 @@
                     </div>
                 </div>
             </div>
-            <!-------------------------------Arreglar------------------------------------------------------->
+            <!-------------------------------Arreglar-->
            <div class="grid grid-cols-3 gap-2">
     <div class="bg-slate-900/40 rounded-xl p-3 border border-white/5">
         <span class="block text-slate-500 text-[9px] uppercase font-bold tracking-wider mb-1">Última Act.</span>
@@ -86,10 +77,10 @@
     </div>
 </div>
 
-    <button onclick="AbrirCalculadora()" class="mt-4 w-full border border-cyan-500/30 rounded-xl py-3 flex          items-center justify-center gap-2 hover:bg-cyan-500/10 transition-all group">
-        <span class="mono text-[10px] font-bold text-cyan-400 tracking-widest uppercase">Abrir Calculadora Modular</span>
-    </button>
-    </div>
+    <button onclick="AbrirCalculadora()" class="mt-4 w-full border border-cyan-500/30 rounded-xl py-3 flex items-center justify-center gap-2 hover:bg-cyan-500/10 transition-all group">
+    <span class="mono text-[10px] font-bold text-cyan-400 tracking-widest uppercase">Abrir Calculadora Modular</span>
+</button>
+        </div>
 
         <button onclick="fetchTasa()" class="group relative mt-10 w-full overflow-hidden rounded-xl bg-cyan-600 p-[1px] transition-all hover:scale-[1.02] active:scale-95">
             <div class="relative flex items-center justify-center gap-2 bg-slate-950 py-4 transition-all group-hover:bg-transparent">
@@ -100,13 +91,7 @@
             </div>
         </button>
 
-<<<<<<< HEAD:public/index.html
-=======
-        <p class="text-center mt-8 mono text-[9px] text-slate-600 uppercase tracking-widest">
-            Source: <span class="text-slate-400">API personal v2.0</span>
-        </p>
 
->>>>>>> a0de666c6611c2e1325f70187ce6eb73ece8f609:index.html
                                          <!--Boton de intalacion para Android-->
         <div id="install-container" class="hidden mb-6">
             <button id="btnInstall" class="w-full bg-emerald-600/20 border border-emerald-500/50 text-emerald-400 py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-emerald-600/30 transition-all">
@@ -115,9 +100,6 @@
             </button>
         </div>
 
-        <p class="text-center mt-8 mono text-[9px] text-slate-600 uppercase tracking-widest">
-            Source: <span class="text-slate-400">API personal v2.0</span>
-        </p>
 
                                                 <!--Aviso legal-->
         <footer class="mt-10 pt-6 border-t border-white/5 space-y-4">
@@ -138,6 +120,10 @@
                     Data Source: Monitor de Divisa Venezuela
                 </p>
             </div>
+
+             <p class="text-center mt-8 mono text-[9px] text-slate-600 uppercase tracking-widest">
+            Source: <span class="text-slate-400">API personal v2.5.0</span>
+        </p>
         </footer>
         </div>
          <!--Modal de Calculadora-->
@@ -185,11 +171,7 @@
         <!--todos los script fueron eliminados por un JS central  src="./app-loader.js"...-->
 
 
-<<<<<<< HEAD:public/index.html
         <script src="./scripts/core/app-loader.js"></script>
-=======
-        <script src="./app-loader.js"></script>
->>>>>>> a0de666c6611c2e1325f70187ce6eb73ece8f609:index.html
 
     <script>
         // LÓGICA DE INSTALACIÓN PWA (Se queda en el index)
@@ -231,11 +213,7 @@
 
     <script>
 
-<<<<<<< HEAD:public/index.html
-        //todos los script fueron deshabilitados para poder centralizarlos...
-=======
         //todos los script fueron deshabilitados...
->>>>>>> a0de666c6611c2e1325f70187ce6eb73ece8f609:index.html
 
         /** RECUERDA: Cambia esta URL por la tuya de Railway
         const API_URL = 'https://mi-api-docker-production.up.railway.app/tasa-bcv';

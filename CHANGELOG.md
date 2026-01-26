@@ -261,6 +261,23 @@
 - **Configuración de Proyecto**: Actualizado `package.json` para corregir el punto de entrada (`main`) y el script de inicio (`start`) hacia la nueva ruta `backend/server.js`.
 - **Compatibilidad de Despliegue**: Alineación de scripts de ejecución con la arquitectura modular del repositorio.
 
+## [v2.4.10] - 2026-01-26
+### Entorno de Desarrollo
+- **Reconstrucción de Dependencias**: Reinstalación de módulos de Node tras la migración a la estructura v2.4.x para asegurar la operatividad local.
+- **Verificación de Rutas**: Confirmación de que el script `npm start` localiza correctamente el punto de entrada en `backend/server.js`.
+
+## [v2.5.0] - 2026-01-26
+### ✨ GRAN REESTRUCTURACIÓN COMPLETADA
+- **Arquitectura**: Migración exitosa a sistema modular (`/backend`, `/public`, `/assets`).
+- **DevOps**: Configuración de `Dockerfile` y `package.json` alineada con estándares de la industria.
+- **Rutas**: Implementación de `path.join` para servir archivos estáticos desde subdirectorios.
+- **Estabilidad**: Verificación de entorno local exitosa; servidor operativo en puerto 3000.
+
+
+## [v2.5.1] - 2026-01-26
+### Corregido
+- **Integración de Código**: Resolución de conflictos de merge en `index.html` causados por la sincronización de ramas.
+- **Limpieza de UI**: Eliminación de marcadores de conflicto de Git en el frontend.
 
 
 =======
