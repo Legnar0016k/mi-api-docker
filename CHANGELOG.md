@@ -114,3 +114,101 @@
 - **Estabilidad de UI**: El semáforo de sincronización ahora responde correctamente a los cambios de estado inducidos por fallos de red manuales.
 - **Persistencia**: Se asegura que el sistema retorne a `SINCRO OK` automáticamente una vez que la red se restablece en las pruebas de caos.
 
+## [v2.0.0] - 2026-01-25
+### Añadido
+- **Módulo Central (`app-loader.js`)**: Implementación de un "Cerebro" que gestiona la inyección dinámica de scripts.
+- **Manual de Emergencia**: Documentación técnica interna para protocolos de fallo y recuperación.
+- **Suite de Resiliencia**: Integración de `recovery-logic.js`, `fault-test.js` y `chaos-test.js`.
+
+### Cambios
+- **Refactorización de Index**: Limpieza total del `index.html`, reduciendo la carga de scripts manuales en un 90%.
+- **Optimización de Carga**: Se garantiza el orden de ejecución (Validador -> Render -> Supervisor) mediante carga asíncrona controlada.
+
+## [v2.0.1] - 2026-01-25
+### Corregido
+- **Sincronización de Calculadora**: Se restauró el enlace entre el input manual y la función modular `calcular()`.
+- **Scope Global**: Se forzó la visibilidad de `calcular`, `setCurrency` y `setQuickAmount` en el objeto `window` para compatibilidad con el cargador dinámico.
+
+## [v2.1.0] - 2026-01-25
+### Añadido
+- **Módulo de Temas (`theme-logic.js`)**: Sistema de persistencia de tema mediante `localStorage`.
+- **Soporte Modo Claro**: Refactorización de estilos CSS para permitir legibilidad en entornos de alta luminosidad.
+- **Toggle de Interfaz**: Botón dinámico para cambio de tema en tiempo real sin recargar la página.
+
+## [v2.2.0] - 2026-01-25
+### Añadido
+- **Estructura de Temas Externos**: Creada carpeta `/Temas` con `style1.css` para desacoplar el diseño del HTML.
+- **UI Neobanco**: Rediseño total del Modo Claro con estética profesional de banca moderna.
+- **Calculadora Tematizada**: Los botones e inputs de la calculadora ahora responden dinámicamente al cambio de tema.
+### Cambios
+- **CSS Inyectado**: El `app-loader.js` ahora gestiona la carga de hojas de estilo externas.
+
+## [v2.2.1] - 2026-01-25
+### Corregido
+- **Hotfix Calculadora**: Corregido Error de Referencia (`convertCurrency is not defined`) al sincronizar el evento `oninput` con la nueva lógica modular.
+- **Scope Global**: Se exponen funciones de cálculo al objeto `window` para compatibilidad con el cargador dinámico.
+
+## [v2.2.2] - 2026-01-25
+### Corregido
+- **Hotfix Calculadora**: Sincronización del atributo `oninput` con la función `calcular()` en el DOM.
+- **Scope Global**: Exportación explícita de funciones de cálculo al objeto `window`.
+
+## [v2.2.3] - 2026-01-25
+### Corregido
+- **Modularidad Total**: Se habilitó el acceso global a `setQuickAmount` para permitir el uso de botones de montos predefinidos en la calculadora modular.
+- **Interoperabilidad**: Sincronización final entre `index.html` y `calc-logic.js` mediante el objeto `window`.
+
+## [v2.2.5] - 2026-01-25
+### Corregido
+- **Sincronización HTML-JS**: Se vincularon las funciones `calcular`, `setCurrency` y `setQuickAmount` al objeto global `window` para asegurar compatibilidad con el cargador dinámico.
+- **Limpieza de Código**: Eliminados bloques de script comentados y redundantes en el `index.html` para mejorar la legibilidad y el peso de la carga.
+- **Interoperabilidad**: Corregida la referencia de `oninput` en el campo de monto para disparar el cálculo en tiempo real sin errores de referencia.
+
+## [v2.6.0] - 2026-01-25
+### Cambios Estructurales
+- **Refactorización de Arquitectura**: Separación total de responsabilidades (Cerebro vs. Vista).
+- **Limpieza de index.html**: Eliminación de +100 líneas de código muerto y funciones comentadas.
+- **Estandarización de Puentes**: Implementación del objeto global `window.calcModule` para una comunicación limpia entre módulos.
+- **Optimización de Memoria**: Los scripts se cargan de forma asíncrona sin colisiones de variables globales.
+
+## [v2.3.0] - 2026-01-25
+### Cambios Estructurales
+- **Refactorización de Directorios**: Migración a arquitectura separada `backend/` y `public/`.
+- **Organización de Scripts**: Clasificación de lógica en subcarpetas `/core`, `/ui` y `/debug` para evitar colisiones.
+- **Limpieza de Raíz**: Eliminación de archivos de prueba del flujo principal de carga para optimizar el rendimiento.
+
+## [v2.3.1] - 2026-01-25
+### Cambios Estructurales
+- **Organización de Directorios**: Proyecto migrado a estructura `/Public` con subcarpetas `/core`, `/ui` y `/debug`.
+- **Limpieza de Index**: Rediseño del `index.html` eliminando código muerto y actualizando rutas relativas.
+- **Rutas de Activos**: Iconos y manifiesto movidos a `/assets` para evitar desorden en la raíz.
+
+## [v2.3.2] - 2026-01-25
+### Corregido
+- **Rutas PWA**: Corregida la ruta del `manifest.json` hacia la nueva carpeta `/assets` para eliminar el error 404.
+- **Service Worker**: Verificada la posición del `sw.js` para asegurar el alcance (scope) correcto de la PWA.
+- **Limpieza de Consola**: Eliminadas advertencias de recursos no encontrados durante la carga inicial.
+
+## [v2.3.3] - 2026-01-25
+### Añadido
+- **Control de Versiones**: Implementación de archivo `.gitignore` para optimizar el repositorio y proteger archivos de configuración sensible.
+
+## [v2.3.4] - 2026-01-25
+### Corregido
+- **Rutas PWA**: Ajustado el `manifest.json` para reflejar la nueva posición en la carpeta `/assets`.
+- **Navegación**: Corregido error de resolución de rutas "Cannot GET" al estandarizar la ubicación del `index.html`.
+- **Redundancia**: Verificación de integridad en copia de seguridad v3 (Arquitectura Limpia).
+
+## [v2.4.0] - 2026-01-25
+### Arquitectura y Organización
+- **Migración a Estándar Industrial**: Reorganización de archivos en carpetas `/public`, `/scripts` y `/assets`.
+- **Preservación de Historial**: Los módulos fueron movidos manteniendo la integridad del repositorio.
+- **Optimización de Rutas**: Actualización de todas las referencias internas para el nuevo sistema de directorios.
+
+## [v2.4.1] - 2026-01-26
+### Corregido
+- **Sincronización de Repositorio**: Resolución de conflicto `non-fast-forward` mediante integración de historias no relacionadas tras la migración de directorios.
+- **Consolidación de Versión**: Sincronización exitosa entre el entorno local v2.4.0 y el origen remoto en GitHub.
+
+
+

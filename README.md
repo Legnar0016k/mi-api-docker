@@ -188,3 +188,40 @@ HTML
 <script src="ui-render.js"></script>
 <script src="supervisor.js"></script>
 <script src="recovery-logic.js"></script>
+
+
+/monitor-bcv-root
+│
+├── /backend              # Lógica de servidor y scraping
+│   ├── server.js
+│   └── scraper-bcv.js
+│
+├── /public               # Todo lo que el navegador puede ver
+│   ├── /assets           # Imágenes e iconos
+│   │   ├── icon-512.png
+│   │   └── manifest.json
+│   │
+│   ├── /scripts          # Módulos JS del cliente
+│   │   ├── /core         # Lógica vital
+│   │   │   ├── supervisor.js
+│   │   │   └── validador.js
+│   │   │
+│   │   ├── /ui           # Manejo visual
+│   │   │   ├── ui-render.js
+│   │   │   ├── ui-features.js
+│   │   │   └── calc-logic.js
+│   │   │
+│   │   └── /debug        # Herramientas de prueba
+│   │       ├── fault-test.js
+│   │       ├── recovery-logic.js
+│   │       └── chaos-and-recovery-test.js
+│   │
+│   ├── /styles           # CSS separado
+│   │   └── style1.css
+│   │
+│   ├── index.html        # Punto de entrada único
+│   └── sw.js             # Service Worker (debe estar en raíz del public)
+│
+├── CHANGELOG.md          # Tu bitácora de cambios
+├── package.json          # Dependencias (axios, express, cheerio)
+└── .gitignore            # Para ignorar node_modules

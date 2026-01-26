@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal BCV v2.0 | Live Feed</title>
+    <meta name="turbo-visit-control" content="reload">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;800&display=swap" rel="stylesheet">
+    <link rel="manifest" href="./assets/manifest.json">
+    <meta name="theme-color" content="#020617">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icon-512.png">
+
+    <script>
+    // Registrar el Service Worker
+    if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('PWA Lista!', reg))
+        .catch(err => console.log('Fallo PWA', err));
+    });
+    }
+
+</script>
+
+    <link rel="stylesheet" href="./styles/style1.css">
+    <link rel="stylesheet" href="./styles/style2.css">
+    
+</head>
+<body class="flex items-center justify-center p-6">
+
+    <div class="cyber-card w-full max-w-md rounded-3xl p-8 transition-all hover:border-cyan-400/40">
+        <div class="flex justify-between items-start mb-10">
+            <div>
+                <p class="mono text-[10px] uppercase tracking-[0.3em] text-cyan-500/70 mb-1">Terminal // Alpha-Build</p>
+                <h1 class="text-white text-2xl font-extrabold tracking-tight">DATA STREAM <span class="text-cyan-400">BCV</span></h1>
+            </div>
+            <div class="bg-slate-800/50 rounded-lg px-3 py-1 border border-slate-700">
+                <span class="live-dot mr-2"></span>
+                <span class="mono text-[10px] text-emerald-400 font-bold">LIVE</span>
+            </div>
+        </div>
+
+        <div id="loader" class="py-12 flex flex-col items-center">
+            <div class="relative w-16 h-16">
+                <div class="absolute inset-0 border-4 border-cyan-500/20 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-t-cyan-400 rounded-full animate-spin"></div>
+            </div>
+            <p class="mono text-xs text-slate-400 mt-6 tracking-widest animate-pulse">CONNECTING TO API...</p>
+        </div>
+        <!---------------------------------Visualizador-->
+        <div id="result" class="hidden space-y-6">
+            <div class="relative group">
+                <div class="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+                <div class="relative bg-black/40 border border-white/5 rounded-2xl p-6 text-center">
+                    <span class="text-slate-500 text-[10px] uppercase tracking-[0.2em] font-bold">Tasa de Cambio Oficial</span>
+                    <div class="flex items-center justify-center mt-2">
+                        <span id="price" class="text-white text-6xl font-black tracking-tighter glow-text">--.--</span>
+                        <span class="text-cyan-500 text-xl font-bold ml-3 mono">VES</span>
+                    </div>
+                </div>
+            </div>
+            <!-------------------------------Arreglar------------------------------------------------------->
+           <div class="grid grid-cols-3 gap-2">
+    <div class="bg-slate-900/40 rounded-xl p-3 border border-white/5">
+        <span class="block text-slate-500 text-[9px] uppercase font-bold tracking-wider mb-1">Última Act.</span>
+        <span id="date" class="text-slate-300 text-[11px] mono">--:--:--</span>
+    </div>
+    <div class="bg-slate-900/40 rounded-xl p-3 border border-cyan-500/20">
+        <span class="block text-cyan-500 text-[9px] uppercase font-bold tracking-wider mb-1">Euro BCV</span>
+        <span id="euro-price" class="text-slate-300 text-[11px] mono">--.--</span>
+    </div>
+    <div class="bg-slate-900/40 rounded-xl p-3 border border-white/5">
+        <span class="block text-slate-500 text-[9px] uppercase font-bold tracking-wider mb-1">Estado</span>
+        <span id="sync-status" class="text-emerald-400 text-[11px] mono font-bold text-[10px]">SINCRO OK</span>
+    </div>
+</div>
+
+    <button onclick="AbrirCalculadora()" class="mt-4 w-full border border-cyan-500/30 rounded-xl py-3 flex          items-center justify-center gap-2 hover:bg-cyan-500/10 transition-all group">
+        <span class="mono text-[10px] font-bold text-cyan-400 tracking-widest uppercase">Abrir Calculadora Modular</span>
+    </button>
+    </div>
+
+        <button onclick="fetchTasa()" class="group relative mt-10 w-full overflow-hidden rounded-xl bg-cyan-600 p-[1px] transition-all hover:scale-[1.02] active:scale-95">
+            <div class="relative flex items-center justify-center gap-2 bg-slate-950 py-4 transition-all group-hover:bg-transparent">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-cyan-400 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span class="mono text-xs font-bold tracking-[0.2em] text-cyan-400 group-hover:text-white uppercase">Refresh Datastream</span>
+            </div>
+        </button>
+
+                                         <!--Boton de intalacion para Android-->
+        <div id="install-container" class="hidden mb-6">
+            <button id="btnInstall" class="w-full bg-emerald-600/20 border border-emerald-500/50 text-emerald-400 py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-emerald-600/30 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                    <span class="mono text-xs font-bold uppercase tracking-widest">Instalar en Pantalla de Inicio</span>
+            </button>
+        </div>
+
+        <p class="text-center mt-8 mono text-[9px] text-slate-600 uppercase tracking-widest">
+            Source: <span class="text-slate-400">API personal v2.0</span>
+        </p>
+
+                                                <!--Aviso legal-->
+        <footer class="mt-10 pt-6 border-t border-white/5 space-y-4">
+
+            <div class="bg-red-500/5 border border-red-500/20 rounded-lg p-3">
+                <p class="warning-blink mono text-[10px] leading-relaxed text-center font-bold">
+                    ⚠️ ATENCIÓN: Esta es una API a manera de proyecto personal. 
+                    Para fines comerciales y legales, consulte SIEMPRE la tasa en la página oficial: 
+                    <a href="https://www.bcv.org.ve/" target="_blank" class="underline hover:text-white">bcv.org.ve</a>
+                </p>
+            </div>
+
+            <div class="flex flex-col items-center gap-2">
+                <p class="mono text-[9px] text-slate-500 uppercase tracking-[0.2em]">
+                    &copy; 2026 Raúl | <span class="text-cyan-500/70">MIT License</span>
+                </p>
+                <p class="mono text-[8px] text-slate-700 uppercase">
+                    Data Source: Monitor de Divisa Venezuela
+                </p>
+            </div>
+        </footer>
+        </div>
+         <!--Modal de Calculadora-->
+ <div id="modal-calc" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    
+    <div class="cyber-card w-full max-w-sm rounded-3xl p-6 border-cyan-400">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-white mono text-sm font-extrabold tracking-tighter uppercase">Calculadora de Cambio</h2>
+            <button onclick="CerrarCalculadora()" class="text-slate-500 hover:text-white transition-colors">✕</button>
+        </div>
+        
+        <div id="calc-content" class="space-y-4">
+            <div class="bg-black/60 border border-cyan-500/30 rounded-2xl p-4 text-right">
+                <span class="block text-[9px] uppercase text-cyan-500/50 mb-1 tracking-tighter">Total Estimado (VES)</span>
+                <div id="calc-result" class="text-3xl font-black text-white glow-text">0.00</div>
+            </div>
+
+            <div class="space-y-3">
+                <span class="block text-[9px] uppercase text-slate-500 ml-2 tracking-widest font-bold">Accesos Rápidos (Divisa)</span>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="setQuickAmount(5)" class="py-2 bg-slate-800/50 border border-white/5 rounded-lg text-cyan-400 font-mono text-[11px] hover:bg-cyan-500/20 transition-all font-bold">5</button>
+                    <button onclick="setQuickAmount(10)" class="py-2 bg-slate-800/50 border border-white/5 rounded-lg text-cyan-400 font-mono text-[11px] hover:bg-cyan-500/20 transition-all font-bold">10</button>
+                    <button onclick="setQuickAmount(15)" class="py-2 bg-slate-800/50 border border-white/5 rounded-lg text-cyan-400 font-mono text-[11px] hover:bg-cyan-500/20 transition-all font-bold">15</button>
+                    <button onclick="setQuickAmount(20)" class="py-2 bg-slate-800/50 border border-white/5 rounded-lg text-cyan-400 font-mono text-[11px] hover:bg-cyan-500/20 transition-all font-bold">20</button>
+                    <button onclick="setQuickAmount(50)" class="py-2 bg-slate-800/50 border border-white/5 rounded-lg text-cyan-400 font-mono text-[11px] hover:bg-cyan-500/20 transition-all font-bold">50</button>
+                    <button onclick="setQuickAmount(100)" class="py-2 bg-slate-800/50 border border-white/5 rounded-lg text-cyan-400 font-mono text-[11px] hover:bg-cyan-500/20 transition-all font-bold">100</button>
+                </div>
+            </div>
+            <div class="space-y-2">
+                <label class="block text-[10px] uppercase text-slate-500 ml-2 font-bold">Monto en Divisa</label>
+                <input type="number" id="calc-input" placeholder="0.00" 
+                       oninput="calcular()"
+                       class="w-full bg-slate-900/50 border border-white/10 rounded-xl py-4 px-4 text-white font-mono focus:border-cyan-400 outline-none transition-all placeholder:text-slate-800">
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="setCurrency('USD')" id="btn-usd" class="py-3 rounded-xl border border-cyan-400 bg-cyan-400/10 text-cyan-400 font-mono text-[10px] font-bold transition-all">USD (Dólar)</button>
+                <button onclick="setCurrency('EUR')" id="btn-eur" class="py-3 rounded-xl border border-white/5 bg-slate-900/50 text-slate-500 font-mono text-[10px] font-bold transition-all">EUR (Euro)</button>
+            </div>
+        </div>
+    </div>
+</div>
+        
+
+        <!--todos los script fueron eliminados por un JS central  src="./app-loader.js"...-->
+
+
+        <script src="./scripts/core/app-loader.js"></script>
+
+    <script>
+        // LÓGICA DE INSTALACIÓN PWA (Se queda en el index)
+        let deferredPrompt;
+        const installContainer = document.getElementById('install-container');
+        const btnInstall = document.getElementById('btnInstall');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installContainer.classList.remove('hidden');
+        });
+
+        btnInstall.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                installContainer.classList.add('hidden');
+            }
+        });
+
+        window.addEventListener('appinstalled', () => {
+            installContainer.classList.add('hidden');
+            console.log('PWA instalada con éxito');
+        });
+
+        // CARGA INICIAL: Llamamos al supervisor una vez que el cerebro inyecte todo
+        window.onload = () => {
+            setTimeout(() => {
+                if (typeof supervisorFetch === 'function') {
+                    supervisorFetch();
+                } else {
+                    console.error("Error: supervisorFetch no cargó a tiempo.");
+                }
+            }, 200); // Pequeño delay para asegurar inyección
+        };
+    </script>
+
+    <script>
+
+        //todos los script fueron deshabilitados para poder centralizarlos...
+
+        /** RECUERDA: Cambia esta URL por la tuya de Railway
+        const API_URL = 'https://mi-api-docker-production.up.railway.app/tasa-bcv';
+       
+        async function fetchTasa() {
+            const loader = document.getElementById('loader');
+            const result = document.getElementById('result');
+                     
+            loader.classList.remove('hidden');
+            result.classList.add('hidden');
+
+            try {
+                const response = await fetch(`${API_URL}?t=${new Date().getTime()}`, { mode: 'cors' });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('price').innerText = data.tasa.toFixed(2);
+                    // Formatear fecha corta
+                    const hora = data.fecha_consulta.split(' ')[1] || data.fecha_consulta;
+                    document.getElementById('date').innerText = hora;
+                    
+                    loader.classList.add('hidden');
+                    result.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("CONEXIÓN FALLIDA: Verifica el servidor.");
+                loader.classList.add('hidden');
+            }
+        }
+            **/
+
+        // Carga inicial
+
+        
+//         window.onload = fetchTasa;
+
+//         let deferredPrompt;
+//             const installContainer = document.getElementById('install-container');
+//             const btnInstall = document.getElementById('btnInstall');
+
+// window.addEventListener('beforeinstallprompt', (e) => {
+//     // Evita que Chrome muestre el aviso automático
+//     e.preventDefault();
+//     // Guarda el evento para activarlo luego
+//     deferredPrompt = e;
+//     // Muestra nuestro botón personalizado
+//     installContainer.classList.remove('hidden');
+// });
+
+// btnInstall.addEventListener('click', async () => {
+//     if (deferredPrompt) {
+//         deferredPrompt.prompt();
+//         const { outcome } = await deferredPrompt.userChoice;
+//         if (outcome === 'accepted') {
+//             console.log('Usuario aceptó la instalación');
+//         }
+//         deferredPrompt = null;
+//         installContainer.classList.add('hidden');
+//     }
+// });
+
+// window.addEventListener('appinstalled', () => {
+//     installContainer.classList.add('hidden');
+//     console.log('PWA instalada con éxito');
+// });
+//     </script>
+    
+</body>
+</html>
