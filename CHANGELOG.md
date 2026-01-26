@@ -313,3 +313,8 @@
 - **Rutas de Inyección**: Eliminados los selectores de nivel superior `../` en `app-loader.js`. 
 - **Resolución de Assets**: Ajuste de rutas relativas para alinearlas con la ubicación del `index.html` en la raíz del repositorio.
 
+## [v3.0.7] - 2026-01-26
+### Corregido
+- **Módulo de Recuperación**: Corregido error 404 en `recovery-logic.js` mediante la verificación de nomenclatura y ruta en el inyector dinámico.
+- **Consola**: Depuración final de scripts para alcanzar un estado de "Zero Errors" en producción.
+

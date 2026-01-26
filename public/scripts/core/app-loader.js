@@ -13,8 +13,8 @@ const AppLoader = {
      //logica de renderisado de la aplicacion   
     'public/scripts/ui/ui-render.js',
      // sistema de recuperacion en dado caso que todo falle   
-    'public/scripts/core/recovery-logic.js',
-    
+    'public/scripts/debug/recovery-logic.js',
+    //Maneja exclusivamente los cambios visuales y estados de sincronización.
     'public/scripts/ui/ui-features.js',
      // logica de la culculadora   
     'public/scripts/ui/calc-logic.js'
