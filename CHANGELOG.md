@@ -114,3 +114,31 @@
 - **Estabilidad de UI**: El semáforo de sincronización ahora responde correctamente a los cambios de estado inducidos por fallos de red manuales.
 - **Persistencia**: Se asegura que el sistema retorne a `SINCRO OK` automáticamente una vez que la red se restablece en las pruebas de caos.
 
+## [v2.0.0] - 2026-01-25
+### Añadido
+- **Cerebro Central**: Implementación de `app-loader.js` para gestión modular.
+### Eliminado
+- **Código Muerto**: Se eliminaron más de 40 líneas de scripts manuales y funciones comentadas del `index.html`.
+- **Scripts redundantes**: Limpieza de etiquetas `<script>` individuales en favor del inyector dinámico.
+
+## [v2.1.0] - 2026-01-25
+### Añadido
+- **Módulo de Temas (`theme-logic.js`)**: Sistema de persistencia de tema mediante `localStorage`.
+- **Soporte Modo Claro**: Refactorización de estilos CSS para permitir legibilidad en entornos de alta luminosidad.
+- **Toggle de Interfaz**: Botón dinámico para cambio de tema en tiempo real sin recargar la página.
+
+## [v2.2.1] - 2026-01-25
+### Corregido
+- **Hotfix Calculadora**: Corregido Error de Referencia (`convertCurrency is not defined`) al sincronizar el evento `oninput` con la nueva lógica modular.
+- **Scope Global**: Se exponen funciones de cálculo al objeto `window` para compatibilidad con el cargador dinámico.
+
+## [v2.2.3] - 2026-01-25
+### Corregido
+- **Modularidad Total**: Se habilitó el acceso global a `setQuickAmount` para permitir el uso de botones de montos predefinidos en la calculadora modular.
+- **Interoperabilidad**: Sincronización final entre `index.html` y `calc-logic.js` mediante el objeto `window`.
+
+## [v2.2.5] - 2026-01-25
+### Corregido
+- **Sincronización HTML-JS**: Se vincularon las funciones `calcular`, `setCurrency` y `setQuickAmount` al objeto global `window` para asegurar compatibilidad con el cargador dinámico.
+- **Limpieza de Código**: Eliminados bloques de script comentados y redundantes en el `index.html` para mejorar la legibilidad y el peso de la carga.
+- **Interoperabilidad**: Corregida la referencia de `oninput` en el campo de monto para disparar el cálculo en tiempo real sin errores de referencia.

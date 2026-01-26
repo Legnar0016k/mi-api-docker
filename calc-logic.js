@@ -58,3 +58,8 @@ function setQuickAmount(amount) {
         calcular(); // Ejecuta el cálculo inmediatamente
     }
 }
+
+// Exponer al scope global para que los onclick/oninput del HTML funcionen
+window.calcular = calcular;
+window.setCurrency = setCurrency;
+window.setQuickAmount = setQuickAmount;
