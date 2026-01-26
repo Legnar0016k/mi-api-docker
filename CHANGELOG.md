@@ -308,3 +308,8 @@
 - **Rutas de Servidor**: Ajustada la ruta del comodín (`*`) en `server.js` para apuntar explícitamente al archivo `index.html` en la raíz.
 - **Middleware Estático**: Configurado para servir desde el directorio base, permitiendo la coexistencia de la API y el frontend en la raíz para compatibilidad con GitHub Pages.
 
+## [v3.0.6] - 2026-01-26
+### Corregido
+- **Rutas de Inyección**: Eliminados los selectores de nivel superior `../` en `app-loader.js`. 
+- **Resolución de Assets**: Ajuste de rutas relativas para alinearlas con la ubicación del `index.html` en la raíz del repositorio.
+

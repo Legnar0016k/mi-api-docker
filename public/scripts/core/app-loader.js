@@ -5,13 +5,20 @@
 const AppLoader = {
     // Definimos el orden de importancia (Jerarquía de carga)  
     modules: [
-        
-        './scripts/core/validador.js',
-        './scripts/ui/ui-render.js',
-        './scripts/core/supervisor.js',
-        './scripts/ui/ui-features.js',
-        './scripts/ui/calc-logic.js',
-        './scripts/debug/recovery-logic.js'
+     
+     //supervisor general del sistema   
+    'public/scripts/core/supervisor.js',
+     //compara apis para evitar resultados incoherente    
+    'public/scripts/core/validador.js',
+     //logica de renderisado de la aplicacion   
+    'public/scripts/ui/ui-render.js',
+     // sistema de recuperacion en dado caso que todo falle   
+    'public/scripts/core/recovery-logic.js',
+    
+    'public/scripts/ui/ui-features.js',
+     // logica de la culculadora   
+    'public/scripts/core/calc-logic.js'
+
     ],
 
     // Módulos de prueba (Solo se cargan si estamos en modo debug)
