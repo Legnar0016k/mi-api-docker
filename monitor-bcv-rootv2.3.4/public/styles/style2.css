@@ -1,0 +1,8 @@
+        /* Animación de parpadeo para el aviso legal */
+        @keyframes warning-fade {
+            0%, 100% { color: #ef4444; opacity: 1; } /* Rojo intenso */
+            50% { color: #7f1d1d; opacity: 0.6; }   /* Rojo oscuro */
+        }
+        .warning-blink {
+            animation: warning-fade 1.5s infinite;
+        }

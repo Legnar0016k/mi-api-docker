@@ -1,0 +1,82 @@
+PROYECTO: TERMINAL BCV
+├── 🌐 Backend (Railway/Node.js)
+│   ├── server.js           # Orquestador de la API
+│   └── scraper-bcv.js      # Minería de datos (BCV/Monitor)
+│
+├── 💻 Frontend (Cliente PWA)
+│   ├── index.html          # Estructura y carga de scripts
+│   ├── manifest.json       # Configuración PWA
+│   ├── sw.js               # Service Worker (Cache & Offline)
+│   │
+│   ├── ⚙️ CORE LOGIC
+│   │   ├── supervisor.js   # Toma de decisiones (Fetch A o B)
+│   │   └── validador.js    # Inteligencia de comparación (Umbral 10%)
+│   │
+│   ├── 🎨 UI & RENDER
+│   │   ├── ui-render.js    # El "Pintor" (Semáforo y Precios)
+│   │   ├── ui-features.js  # Modales y Euro
+│   │   └── calc-logic.js   # Calculadora y botones rápidos
+│   │
+│   └── 🛡️ RESILIENCIA & TEST (Nuevos)
+│       ├── recovery-logic.js       # Reintento tras fallo (Centinela)
+│       ├── fault-test.js           # Inyector de errores manual
+│       └── chaos-and-recovery-test.js # Test de sabotaje automático
+│
+└── 📖 DOCUMENTACIÓN
+    └── CHANGELOG.md        # Historial técnico de cambios
+
+    🔄 Flujo de Datos y Jerarquía
+Para que no se te crucen los cables en el futuro, el orden de mando es este:
+
+El Supervisor (supervisor.js): Es el jefe. Decide qué API llamar.
+
+El Validador (validador.js): Es el perito. Le dice al supervisor si la tasa es real o un error de scraping.
+
+El Renderer (ui-render.js): Es el último eslabón. Solo recibe órdenes de "qué poner y de qué color".
+
+El Centinela (recovery-logic.js): Corre en paralelo. Solo actúa si ve que el Renderer puso la luz en ROJO.
+
+
+
+[v2.3.2]
+/monitor-bcv-root
+│
+├── /backend              # Lógica de servidor y scraping
+│   ├── server.js
+│   └── scraper-bcv.js
+│
+├── /public               # Todo lo que el navegador puede ver
+│   ├── /assets           # Imágenes e iconos
+│   │   ├── icon-512.png
+│   │   └── manifest.json
+│   │
+│   ├── /scripts          # Módulos JS del cliente
+│   │   ├── /core         # Lógica vital
+│   │   │   ├── supervisor.js
+│   │   │   └── validador.js
+│   │   │
+│   │   ├── /ui           # Manejo visual
+│   │   │   ├── ui-render.js
+│   │   │   ├── ui-features.js
+│   │   │   └── calc-logic.js
+│   │   │
+│   │   └── /debug        # Herramientas de prueba
+│   │       ├── fault-test.js
+│   │       ├── recovery-logic.js
+│   │       └── chaos-and-recovery-test.js
+│   │
+│   ├── /styles           # CSS separado
+│   │   └── style1.css    # Carga de stylos principal
+│   │   └── style2.css    # Carga de Stylos de la calculadora
+│   │
+│   ├── index.html        # Punto de entrada único
+│   └── sw.js             # Service Worker (debe estar en raíz del public)
+│
+├── CHANGELOG.md          # Tu bitácora de cambios
+├── package.json          # Dependencias (axios, express, cheerio)
+└── .gitignore            # Para ignorar node_modules
+└── Estructura
+└── README.md
+└── LICENCE
+
+
