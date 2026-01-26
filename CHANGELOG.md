@@ -291,3 +291,9 @@
 - **Ruta del Manifiesto**: Corregido error de redundancia en la ruta del `manifest.json` que causaba un fallo 404 por duplicación del prefijo de directorio.
 - **PWA**: Restaurada la capacidad de detección del manifiesto para la instalación de la aplicación.
 
+## [v3.0.0] - 2026-01-26
+### ✨ REINICIO TOTAL DEL REPOSITORIO
+- **Limpieza**: Eliminación de archivos legacy y duplicados en el repositorio remoto.
+- **Arquitectura**: Re-implementación desde cero de la estructura modular (/backend y /public).
+- **Estabilidad**: Sincronización forzada para asegurar que Railway lea únicamente la versión estable.
+
