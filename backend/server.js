@@ -3,12 +3,17 @@ const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const cheerio = require('cheerio');
+const path = require('path'); // <-- 1. IMPORTANTE: Añadir esto
 const bcvScraper = require('./scraper-bcv.js');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 
 app.use(cors());
+
+// 2. ESTA ES LA LÍNEA NUEVA:
+// Hace que cuando alguien entre a la IP, vea tu index.html
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Configuración de CORS manual y automática // elimminado
 
@@ -23,7 +28,7 @@ app.get('/api/euro', async (req, res) => {
     }
 });
 
-app.get('/', (req, res) => res.send('API Operativa 🚀'));
+app.get('/status', (req, res) => res.send('API Operativa 🚀'));
 
 app.get('/tasa-bcv', async (req, res) => {
     try {

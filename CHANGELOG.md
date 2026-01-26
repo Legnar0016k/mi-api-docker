@@ -224,6 +224,33 @@
 - **Sincronización de Repositorio**: Resolución de conflicto `non-fast-forward` mediante integración de historias no relacionadas tras la migración de directorios.
 - **Consolidación de Versión**: Sincronización exitosa entre el entorno local v2.4.0 y el origen remoto en GitHub.
 
+## [v2.4.2] - 2026-01-26
+### Organización de Repositorio
+- **Reestructuración de Raíz**: Migración final de archivos a carpetas `/public` y `/backend` para visualización profesional.
+- **Sincronización Crítica**: Resolución de conflictos de historial mediante merge de historias no relacionadas.
+- **Limpieza de Assets**: Reubicación de iconos y manifest a `/public/assets`.
+
+## [v2.4.3] - 2026-01-26
+### Añadido
+- **Contenedorización**: Implementado `Dockerfile` para despliegue automatizado en Railway/Docker.
+- **Consistencia de Entorno**: Se incluye `package-lock.json` para garantizar paridad de versiones entre desarrollo y producción.
+- **Optimización de Build**: Añadido `.dockerignore` para acelerar el proceso de construcción del servidor.
+
+## [v2.4.4] - 2026-01-26
+### Corregido
+- **Configuración Docker**: Actualizado el `Dockerfile` para reflejar la nueva ruta del punto de entrada en `backend/server.js`.
+- **Despliegue**: Optimización del proceso de instalación con el flag `--production` para entornos de nube.
+
+## [v2.4.5] - 2026-01-26
+### Corregido
+- **Rutas Estáticas**: Implementado `path.join` con backtracking (`../public`) para servir la interfaz desde la nueva ubicación del servidor en `/backend`.
+- **Limpieza de Endpoints**: Se movió el mensaje de estado a `/status` para permitir que la raíz (`/`) sirva el `index.html` automáticamente.
+
+## [v2.4.6] - 2026-01-26
+### Consolidación
+- **Backend**: Verificada la integridad del módulo `scraper-bcv.js` tras la migración.
+- **Seguridad**: Mantenimiento del agente HTTPS personalizado para ignorar errores de certificado SSL en el origen gubernamental, asegurando la continuidad del servicio.
+
 
 
 =======
