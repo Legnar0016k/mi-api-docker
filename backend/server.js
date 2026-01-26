@@ -67,6 +67,11 @@ app.get('/tasa-bcv', async (req, res) => {
 
 // Comodín para manejar el index.html en cualquier ruta no definida
 // ESTO ES LO CORRECTO: Apunta directamente al archivo index.html en la raíz
+// Redirección de seguridad para usuarios con rutas viejas
+app.get('/public/index.html', (req, res) => {
+    res.redirect(301, '/');
+});
+// Y asegúrate de que el comodín al final del archivo sea este:
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../index.html'));
 });

@@ -1,5 +1,10 @@
 const CACHE_NAME = 'bcv-monitor-v' + new Date().getTime(); // Esto genera un nombre único cada vez
-const assets = ['./','./index.html', './assets/manifest.json','./assets/icon-512.png'];
+const assets = [
+  '/',           // Referencia a la raíz
+  'index.html',  // El archivo en la raíz
+  'public/assets/manifest.json',
+  'public/assets/icon-512.png'
+];
 
 // Instalación
 self.addEventListener('install', event => {

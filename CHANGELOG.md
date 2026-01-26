@@ -343,3 +343,21 @@
 - **Corrección Sticky**: Ajustada la estructura del modal con `overflow-y-auto` para permitir que el visor de resultados permanezca fijo mientras se desplaza el contenido.
 - **Optimización Visual**: Implementado fondo sólido en el contenedor sticky para evitar solapamiento de texto durante el scroll manual.
 
+## [v3.1.4] - 2026-01-26
+### Optimización - Infraestructura
+- **Build Efficiency**: Implementado `.railwayignore` para evitar reconstrucciones innecesarias del servidor ante cambios en el frontend.
+- **Caché**: Ajustada la lógica de construcción para reducir el consumo de recursos en Railway.
+
+## [v3.1.8] - 2026-01-26
+### Corregido
+- **PWA Routing**: Eliminadas referencias de ruta absoluta `./` en el Service Worker e Index para mejorar la compatibilidad con GitHub Pages.
+- **Path Resolution**: Ajustadas todas las llamadas a assets para usar rutas relativas directas desde la raíz.
+
+### 📝 Registro para el CHANGELOG.md (v3.1.9)
+
+
+## [v3.1.9] - 2026-01-26
+### Corregido
+- **PWA Manifest**: Corregidas las rutas `start_url` y `scope` para apuntar correctamente a la raíz del proyecto desde la nueva ubicación en `public/assets/`.
+- **Acceso PWA**: Resuelto error 404 que impedía la carga de la aplicación en instalaciones nuevas desde dispositivos móviles.
+
