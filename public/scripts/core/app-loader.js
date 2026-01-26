@@ -19,6 +19,8 @@ const AppLoader = {
      // logica de la culculadora   
     'public/scripts/ui/calc-logic.js'
 
+    
+
     ],
 
     // Módulos de prueba (Solo se cargan si estamos en modo debug)

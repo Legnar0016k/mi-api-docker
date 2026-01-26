@@ -1,0 +1,53 @@
+📘 Guía de Despliegue y Mantenimiento (v1.0)
+Esta guía contiene las reglas de oro para no romper la aplicación al subir cambios a Railway o GitHub Pages.
+
+🏗️ Estructura del Proyecto
+Plaintext
+/ (Raíz)
+├── index.html           <-- El corazón (DEBE estar en la raíz para GitHub)
+├── server.js            <-- Servidor Node.js (Configurado para servir la raíz)
+├── Dockerfile           <-- Instrucciones para Railway
+├── package.json         <-- "start": "node backend/server.js"
+└── public/              <-- La bodega de recursos
+    ├── assets/          <-- Imágenes y manifiesto
+    ├── scripts/         <-- Lógica (core y ui)
+    └── styles/          <-- CSS
+
+🚀 Proceso de Subida a Producción
+Antes de hacer un git push, verifica estos 3 puntos:
+
+1. El Validador de Rutas (index.html)
+Como el index.html está en la raíz, todas las llamadas a archivos deben empezar con public/.
+
+Correcto: <script src="public/scripts/core/app-loader.js"></script>
+
+Incorrecto: <script src="scripts/core/app-loader.js"></script>
+
+2. El Cargador de Módulos (app-loader.js)
+Si agregas un nuevo archivo .js a la lógica, agrégalo en la lista de app-loader.js usando la ruta completa desde la raíz:
+
+Ejemplo: 'public/scripts/core/nuevo-modulo.js'
+
+3. Configuración del Servidor (server.js)
+El servidor debe estar configurado para "mirar hacia afuera":
+
+app.use(express.static(path.join(__dirname, '../')));
+
+res.sendFile(path.join(__dirname, '../index.html'));
+
+🛠️ Comandos de Emergencia
+Si algo sale mal y la consola se llena de errores 404:
+
+Limpiar archivos fantasma: git clean -fd
+
+Verificar Case-Sensitivity: Asegúrate de que no haya mayúsculas en los nombres de archivos (ej. Logic.js vs logic.js).
+
+Rollback Local: Si quieres que tu PC sea igual a GitHub: git reset --hard origin/main.
+
+
+ok hoy vamos con 3 cosas que quiero implementar la primera
+    1. en calculadora necesito que donde se visualisa el monto permanesca simpre visible 
+    2. hacer scraper al directo BVC dolar de la pagina del banco central y la fecha
+    3. implementar el tema claro, lo primero que se implemento no funciono 
+    4. Un menu desplegable en la parde arriba
+    5. covertir el monitor de euro en un boton para desplegar un modal que haga que se vea mas grande el monitor de euro 

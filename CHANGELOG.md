@@ -318,3 +318,18 @@
 - **Módulo de Recuperación**: Corregido error 404 en `recovery-logic.js` mediante la verificación de nomenclatura y ruta en el inyector dinámico.
 - **Consola**: Depuración final de scripts para alcanzar un estado de "Zero Errors" en producción.
 
+## [v3.1.0] - 2026-01-26
+### ✨ ESTADO DE RÉGIMEN PERMANENTE
+- **Consolidación**: El proyecto opera bajo una estructura híbrida (index en raíz, lógica en subcarpetas) optimizada para producción.
+- **Estabilidad**: Eliminados todos los errores 404 de inyección dinámica en GitHub Pages.
+- **Mantenibilidad**: Sistema de carga modular (app-loader) sincronizado con el entorno de despliegue.
+
+## [3.1.1] - 2026-01-26
+### Documentación
+- **README.dev**: Creada guía de mantenimiento técnico para estandarizar el proceso de despliegue y evitar regresiones en las rutas de los assets.
+
+## [v3.1.2] - 2026-01-26
+### UI/UX - Calculadora
+- **Visualización Persistente**: Se implementó el estado `sticky` en el visor de resultados de la calculadora.
+- **Legibilidad**: Añadido efecto `backdrop-blur` y ajuste de opacidad para mejorar el contraste del monto durante el scroll.
+
