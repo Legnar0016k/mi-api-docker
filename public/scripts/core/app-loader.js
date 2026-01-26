@@ -17,7 +17,7 @@ const AppLoader = {
     
     'public/scripts/ui/ui-features.js',
      // logica de la culculadora   
-    'public/scripts/core/calc-logic.js'
+    'public/scripts/ui/calc-logic.js'
 
     ],
 
