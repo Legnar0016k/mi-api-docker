@@ -116,7 +116,7 @@
 
 ## [v2.0.0] - 2026-01-25
 ### Añadido
-<<<<<<< HEAD
+
 - **Módulo Central (`app-loader.js`)**: Implementación de un "Cerebro" que gestiona la inyección dinámica de scripts.
 - **Manual de Emergencia**: Documentación técnica interna para protocolos de fallo y recuperación.
 - **Suite de Resiliencia**: Integración de `recovery-logic.js`, `fault-test.js` y `chaos-test.js`.
@@ -134,7 +134,7 @@
 ### Eliminado
 - **Código Muerto**: Se eliminaron más de 40 líneas de scripts manuales y funciones comentadas del `index.html`.
 - **Scripts redundantes**: Limpieza de etiquetas `<script>` individuales en favor del inyector dinámico.
->>>>>>> a0de666c6611c2e1325f70187ce6eb73ece8f609
+
 
 ## [v2.1.0] - 2026-01-25
 ### Añadido
@@ -142,7 +142,7 @@
 - **Soporte Modo Claro**: Refactorización de estilos CSS para permitir legibilidad en entornos de alta luminosidad.
 - **Toggle de Interfaz**: Botón dinámico para cambio de tema en tiempo real sin recargar la página.
 
-<<<<<<< HEAD
+
 ## [v2.2.0] - 2026-01-25
 ### Añadido
 - **Estructura de Temas Externos**: Creada carpeta `/Temas` con `style1.css` para desacoplar el diseño del HTML.
@@ -152,20 +152,20 @@
 - **CSS Inyectado**: El `app-loader.js` ahora gestiona la carga de hojas de estilo externas.
 
 =======
->>>>>>> a0de666c6611c2e1325f70187ce6eb73ece8f609
+
 ## [v2.2.1] - 2026-01-25
 ### Corregido
 - **Hotfix Calculadora**: Corregido Error de Referencia (`convertCurrency is not defined`) al sincronizar el evento `oninput` con la nueva lógica modular.
 - **Scope Global**: Se exponen funciones de cálculo al objeto `window` para compatibilidad con el cargador dinámico.
 
-<<<<<<< HEAD
+
 ## [v2.2.2] - 2026-01-25
 ### Corregido
 - **Hotfix Calculadora**: Sincronización del atributo `oninput` con la función `calcular()` en el DOM.
 - **Scope Global**: Exportación explícita de funciones de cálculo al objeto `window`.
 
 =======
->>>>>>> a0de666c6611c2e1325f70187ce6eb73ece8f609
+
 ## [v2.2.3] - 2026-01-25
 ### Corregido
 - **Modularidad Total**: Se habilitó el acceso global a `setQuickAmount` para permitir el uso de botones de montos predefinidos en la calculadora modular.
@@ -280,5 +280,14 @@
 - **Limpieza de UI**: Eliminación de marcadores de conflicto de Git en el frontend.
 
 
-=======
->>>>>>> a0de666c6611c2e1325f70187ce6eb73ece8f609
+## [v2.5.6] - 2026-01-26
+### Corregido
+- **Sincronización de Módulos**: Resolución exitosa de los errores de carga de scripts core (Supervisor, Validador, Recovery).
+- **Estabilidad Local**: El sistema central ahora es capaz de iniciar y validar tasas correctamente bajo la nueva estructura de directorios.
+- **PWA**: Identificado error de ruta en `manifest.json` tras el movimiento del index a la raíz.
+
+## [v2.5.7] - 2026-01-26
+### Corregido
+- **Ruta del Manifiesto**: Corregido error de redundancia en la ruta del `manifest.json` que causaba un fallo 404 por duplicación del prefijo de directorio.
+- **PWA**: Restaurada la capacidad de detección del manifiesto para la instalación de la aplicación.
+
