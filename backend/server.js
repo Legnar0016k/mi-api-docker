@@ -65,5 +65,9 @@ app.get('/tasa-bcv', async (req, res) => {
     }
 });
 
+// Comodín para manejar el index.html en cualquier ruta no definida
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+});
 app.listen(PORT, '0.0.0.0', () => console.log(`Puerto: ${PORT}`));
 

@@ -251,6 +251,11 @@
 - **Backend**: Verificada la integridad del módulo `scraper-bcv.js` tras la migración.
 - **Seguridad**: Mantenimiento del agente HTTPS personalizado para ignorar errores de certificado SSL en el origen gubernamental, asegurando la continuidad del servicio.
 
+## [v2.4.8] - 2026-01-26
+### Corregido
+- **Enrutamiento de Respaldo**: Añadida ruta wildcard (`*`) para asegurar que el `index.html` se sirva correctamente incluso si falla la resolución de estáticos por defecto.
+- **Normalización de Rutas**: Refinamiento de `path.join` para compatibilidad total con el entorno de contenedores Docker.
+
 
 
 =======
