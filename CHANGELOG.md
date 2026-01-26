@@ -297,3 +297,14 @@
 - **Arquitectura**: Re-implementación desde cero de la estructura modular (/backend y /public).
 - **Estabilidad**: Sincronización forzada para asegurar que Railway lea únicamente la versión estable.
 
+## [v3.0.2] - 2026-01-26
+### Corregido
+- **Prioridad de Servicio**: Se movió `index.html` a la raíz del repositorio para garantizar la compatibilidad inmediata con GitHub Pages.
+- **Rutas de Producción**: Ajustadas las referencias de assets en el frontend para apuntar al subdirectorio `/public` desde la raíz.
+- **Configuración de Servidor**: Actualizado `server.js` para servir archivos desde el directorio base, manteniendo la operatividad en Railway.
+
+## [v3.0.3] - 2026-01-26
+### Corregido
+- **Rutas de Servidor**: Ajustada la ruta del comodín (`*`) en `server.js` para apuntar explícitamente al archivo `index.html` en la raíz.
+- **Middleware Estático**: Configurado para servir desde el directorio base, permitiendo la coexistencia de la API y el frontend en la raíz para compatibilidad con GitHub Pages.
+

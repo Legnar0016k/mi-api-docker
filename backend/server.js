@@ -13,7 +13,7 @@ app.use(cors());
 
 // 2. ESTA ES LA LÍNEA NUEVA:
 // Hace que cuando alguien entre a la IP, vea tu index.html
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../')));
 
 // Configuración de CORS manual y automática // elimminado
 
@@ -66,8 +66,9 @@ app.get('/tasa-bcv', async (req, res) => {
 });
 
 // Comodín para manejar el index.html en cualquier ruta no definida
+// ESTO ES LO CORRECTO: Apunta directamente al archivo index.html en la raíz
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/index.html'));
+    res.sendFile(path.join(__dirname, '../index.html'));
 });
 app.listen(PORT, '0.0.0.0', () => console.log(`Puerto: ${PORT}`));
 
