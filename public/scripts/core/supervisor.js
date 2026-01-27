@@ -15,9 +15,15 @@ const CONFIG = {
 async function supervisorFetch() {
     const loader = document.getElementById('loader');
     const result = document.getElementById('result');
+    // 1. Verificamos si ya hay una tasa válida puesta por monitor-master
+    const sourceElem = document.getElementById('debug-source');
+    if (sourceElem && sourceElem.innerText.includes('BCV_Oficial')) {
+        console.log("Supervisor: API Principal ya entregó datos. Monitoreo pasivo.");
+        return; // Detenemos el supervisor para que no pise el dato bueno
+    }
     // Crear un controlador para abortar si tarda mucho
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4000); // 4 segundos max
+    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 segundos max
 
 
     try {
@@ -138,3 +144,7 @@ function actualizarUI(tasa, fecha) {
 
 // Exportar si fuera necesario, o simplemente usar globalmente
 window.fetchTasa = supervisorFetch;
+// Al final de supervisor.js
+window.onload = () => {
+    setTimeout(supervisorFetch, 3000); // Dale 3 segundos al Monitor para que trabaje tranquilo
+};

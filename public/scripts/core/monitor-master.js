@@ -20,6 +20,6 @@ async function iniciarMonitoreoRespaldo() {
 
 // Arrancar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
-    // Un pequeño delay de 500ms para asegurar que todos los scripts cargaron bien
-    setTimeout(iniciarMonitoreoRespaldo, 500);
+    // Un pequeño delay de 300ms para asegurar que todos los scripts cargaron bien
+    setTimeout(iniciarMonitoreoRespaldo, 300);
 });

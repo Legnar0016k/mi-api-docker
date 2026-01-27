@@ -435,3 +435,31 @@
 - **Mantenimiento de Módulos**: Confirmada la permanencia de Supervisores y Validadores para control de calidad en el lado del cliente (Frontend).
 - **Limpieza**: Depuración de archivos obsoletos tras la migración de lógica al servidor central.
 - **Flujo de Ejecución**: Sincronización final entre el Orquestador (Monitor-Master) y el Consumidor de API (Scraper-Respaldo).
+
+## [v3.3.4] - 2026-01-26
+### Añadido
+- **Triple Respaldo USD**: Implementada jerarquía de seguridad (BCV Scraper -> Monitor Scraper -> DolarAPI).
+- **Consolidación de Backend**: El archivo `scraper-bcv.js` ahora centraliza la extracción de EUR y USD usando lógica genérica.
+### Corregido
+- **Visibilidad de Origen**: Activado el visor `debug-source` en el frontend para monitorear qué fuente está proveyendo la tasa.
+### Limpieza
+- Depuración de módulos redundantes (`scraper-dolar-bcv.js` eliminado) para optimizar la carga.
+
+## [v3.3.5] - 2026-01-26
+### Corregido
+- **Jerarquía de Mando**: Se ajustó `supervisor.js` para evitar condiciones de carrera (Race Conditions) con `monitor-master.js`.
+- **Latencia de Scrapeo**: Aumentado el timeout del supervisor para permitir que el backend complete el proceso de extracción en Railway.
+- **Validación de UI**: El sistema ahora respeta la tasa del BCV si esta ya fue inyectada en el DOM, evitando el downgrade automático a DolarApi.
+
+## [v3.3.7] - 2026-01-26
+### Ajustes de Sincronización
+- **Prioridad de Carga**: Se redujo el delay del Monitor Master a 300ms para asegurar el inicio temprano de la captura de datos.
+- **Modo Emergencia**: Se retrasó la activación del Supervisor a 3000ms para actuar estrictamente como respaldo en caso de latencia en la API principal.
+
+## [v3.3.8] - 2026-01-26
+### Corregido
+- **Guerra de Scripts**: Resuelto el conflicto de sobreescritura entre `monitor-master.js` y `supervisor.js`.
+- **Sincronización de Tiempos**: 
+    - Monitor Master: Ajustado a 300ms (Prioridad Alta).
+    - Supervisor: Ajustado a 3000ms (Respaldo Pasivo).
+- **Lógica de Bloqueo**: El Supervisor ahora valida correctamente la presencia de `BCV_Oficial` antes de intentar cualquier acción de respaldo.
