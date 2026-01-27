@@ -5,21 +5,30 @@
 const AppLoader = {
     // Definimos el orden de importancia (Jerarquía de carga)  
     modules: [
-     
-     //supervisor general del sistema   
-    'public/scripts/core/supervisor.js',
-     //compara apis para evitar resultados incoherente    
-    'public/scripts/core/validador.js',
-     //logica de renderisado de la aplicacion   
-    'public/scripts/ui/ui-render.js',
-     // sistema de recuperacion en dado caso que todo falle   
-    'public/scripts/debug/recovery-logic.js',
-    //Maneja exclusivamente los cambios visuales y estados de sincronización.
-    'public/scripts/ui/ui-features.js',
-     // logica de la culculadora   
-    'public/scripts/ui/calc-logic.js'
 
+   
+        // 1. UTILIDADES Y OBTENCIÓN (Los cimientos)
+        'public/scripts/core/scraper-respaldo.js', // Trae el dato del servidor
+
+        // 2. PROCESAMIENTO Y VALIDACIÓN (La inteligencia)
+        'public/scripts/core/validador.js',        // Base original
+        'public/scripts/core/validador-pro.js',    // Lógica avanzada
+        'public/scripts/core/validador-ui.js',     // Conexión lógica-pantalla
+
+        // 3. RENDERIZADO Y UI (Lo que el usuario ve)
+        'public/scripts/ui/ui-render.js',
+        'public/scripts/ui/ui-features.js',
+        'public/scripts/ui/calc-logic.js',
+
+        // 4. CONTROL Y SUPERVISIÓN (Los directores de orquesta)
+        // Se cargan al final para asegurar que todas las funciones anteriores ya existan
+        'public/scripts/core/supervisor.js',
+        'public/scripts/core/monitor-master.js',
+
+        // 5. SISTEMAS DE EMERGENCIA
+        'public/scripts/debug/recovery-logic.js'
     
+
 
     ],
 

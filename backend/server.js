@@ -30,6 +30,9 @@ app.get('/api/euro', async (req, res) => {
 
 app.get('/status', (req, res) => res.send('API Operativa 🚀'));
 
+
+
+
 app.get('/tasa-bcv', async (req, res) => {
     try {
         const { data } = await axios.get('https://www.monitordedivisavenezuela.com/', {

@@ -361,3 +361,30 @@
 - **PWA Manifest**: Corregidas las rutas `start_url` y `scope` para apuntar correctamente a la raíz del proyecto desde la nueva ubicación en `public/assets/`.
 - **Acceso PWA**: Resuelto error 404 que impedía la carga de la aplicación en instalaciones nuevas desde dispositivos móviles.
 
+## [v3.2.0] - 2026-01-26
+### Añadido
+- **Sistema de Triple Redundancia (USD)**: Implementada cadena de fallos: MonitorDivisa -> Scraper BCV -> DolarAPI.
+- **Scraper BCV Extendido**: Actualizada la lógica para extraer USD además de EUR mediante selectores de ID dinámicos.
+- **Robustez de Servidor**: Añadidos bloques try/catch independientes por cada fuente para garantizar respuesta incluso ante fallos parciales.
+
+## [v3.2.3] - 2026-01-26
+### Añadido
+- **Modularización de Scrapers**: Creado `scraper-dolar-bcv.js` para manejar la lógica de obtención de divisas sin tocar el core.
+- **Validador Pro**: Nueva lógica de procesamiento que soporta metadatos (fuente y timestamp).
+- **UI Debug**: Añadido indicador de origen de datos para validación en tiempo real.
+
+## [v3.2.4] - 2026-01-26
+### UI/UX
+- **Debug View**: Añadido contenedor `debug-source` en el index para identificar el origen de la tasa en tiempo real.
+### Arquitectura
+- **Estrategia Non-Intrusive**: Implementados `scraper-respaldo.js` y `validador-ui.js` como módulos independientes para proteger el código fuente original.
+
+## [v3.2.5] - 2026-01-26
+### Arquitectura
+- **Reordenamiento de dependencias**: Ajustado `app-loader.js` para seguir una jerarquía de carga lógica (Fetch -> Logic -> UI -> Supervisor).
+- **Estabilidad**: Eliminados errores potenciales de funciones no definidas durante el arranque de la aplicación.
+
+## [v3.2.6] - 2026-01-26
+### Corregido
+- **Sincronización**: Implementado trigger de arranque en `monitor-master.js` con retardo de seguridad para garantizar la ejecución de la lógica de respaldo tras la carga de módulos.
+- **Flujo de Datos**: Vinculación corregida entre `obtenerDolarConRespaldo` y `actualizarInterfazDolar`.
