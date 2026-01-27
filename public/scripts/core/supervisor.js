@@ -12,96 +12,123 @@ const CONFIG = {
     }
 };
 
+
+
 async function supervisorFetch() {
-    const loader = document.getElementById('loader');
-    const result = document.getElementById('result');
-    // 1. Verificamos si ya hay una tasa válida puesta por monitor-master
-    const sourceElem = document.getElementById('debug-source');
-    if (sourceElem && sourceElem.innerText.includes('BCV_Oficial')) {
-        console.log("Supervisor: API Principal ya entregó datos. Monitoreo pasivo.");
-        return; // Detenemos el supervisor para que no pise el dato bueno
-    }
-    // Crear un controlador para abortar si tarda mucho
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 segundos max
-
-
-    try {
-        console.log("Supervisor: Iniciando chequeo...");
-        const response = await fetch(`${CONFIG.API_PRIMARY}?t=${new Date().getTime()}`);
-        const data = await response.json();
-
-        if (data.success) {
-            // SOLICITUD AL VALIDADOR DINÁMICO
-            const esValidaDinamicamente = await ValidadorTecnico.esTasaValida(data.tasa);
-
-            if (esValidaDinamicamente === true) {
-                actualizarUI(data.tasa, data.fecha_consulta);
-            } 
-            else if (esValidaDinamicamente === false) {
-                console.warn("Dato rechazado por el Validador Dinámico.");
-                await llamarRespaldo();
-            }
-            else {
-                // Si el validador falla (ej. DolarApi caído), usa tus límites manuales actuales
-                if (data.tasa > CONFIG.LIMITS.MIN && data.tasa < CONFIG.LIMITS.MAX) {
-                    actualizarUI(data.tasa, data.fecha_consulta);
-                } else {
-                    await llamarRespaldo();
-                }
-            }
-        }
-    } catch (err) {
-        await llamarRespaldo();
-    }
-
-    // Crear un controlador para abortar si tarda mucho
+// ... dentro de supervisorFetch() en supervisor.js
 try {
-        console.log("Supervisor: Iniciando chequeo...");
-        const response = await fetch(`${CONFIG.API_PRIMARY}?t=${new Date().getTime()}`, {
-            signal: controller.signal 
-        });
-        
-        clearTimeout(timeoutId);
-        const data = await response.json();
+    console.log("Supervisor: Iniciando chequeo...");
+    const response = await fetch(`${CONFIG.API_PRIMARY}?t=${new Date().getTime()}`);
+    const data = await response.json();
 
-        if (data.success && data.tasa > CONFIG.LIMITS.MIN && data.tasa < CONFIG.LIMITS.MAX) {
+    if (data.success) {
+        const esValidaDinamicamente = await ValidadorTecnico.esTasaValida(data.tasa);
+
+        if (esValidaDinamicamente) {
             console.log("Supervisor: API Principal validada ✅");
-            actualizarUI(data.tasa, data.fecha_consulta);
-        } else {
-            console.warn("Supervisor: Dato incoherente. Saltando a respaldo...");
-            await llamarRespaldo();
+            actualizarUI(data.tasa, data.fecha || new Date().toLocaleTimeString());
+            
+            // AGREGAR ESTO: Si es válida, salimos de la función aquí.
+            return; 
         }
-
-    } catch (err) {
-        clearTimeout(timeoutId);
-        console.error("Supervisor: API Principal lenta o caída. Usando respaldo...");
-        await llamarRespaldo();
     }
-    
-    
-    try {
-        console.log("Supervisor: Iniciando chequeo en API Principal...");
-        const response = await fetch(`${CONFIG.API_PRIMARY}?t=${new Date().getTime()}`);
-        
-        if (!response.ok) throw new Error("Servidor Railway Offline");
-        
-        const data = await response.json();
+    // Si llegamos aquí, es porque data.success fue false o no fue válida
+    throw new Error("Tasa no válida o error en API");
 
-        // VALIDACIÓN: ¿El número tiene sentido?
-        if (data.success && data.tasa > CONFIG.LIMITS.MIN && data.tasa < CONFIG.LIMITS.MAX) {
-            console.log("Supervisor: API Principal validada ✅");
-            actualizarUI(data.tasa, data.fecha_consulta);
-        } else {
-            console.warn("Supervisor: ¡Dato loco detectado! Activando Plan B...");
-            await llamarRespaldo();
-        }
-
-    } catch (err) {
-        console.error("Supervisor: Fallo crítico en Principal. Buscando respaldo...");
-        await llamarRespaldo();
-    }
+} catch (error) {
+    console.log("Supervisor: Fallo en Principal. Buscando respaldo...");
+    // Aquí es donde entra DolarApi solo si lo de arriba falló
+    await llamarRespaldo();
 }
+}
+
+// async function supervisorFetch() {
+//     const loader = document.getElementById('loader');
+//     const result = document.getElementById('result');
+//     // 1. Verificamos si ya hay una tasa válida puesta por monitor-master
+//     const sourceElem = document.getElementById('debug-source');
+//     if (sourceElem && sourceElem.innerText.includes('BCV_Oficial')) {
+//         console.log("Supervisor: API Principal ya entregó datos. Monitoreo pasivo.");
+//         return; // Detenemos el supervisor para que no pise el dato bueno
+//     }
+//     
+
+//     try {
+//         console.log("Supervisor: Iniciando chequeo...");
+//         const response = await fetch(`${CONFIG.API_PRIMARY}?t=${new Date().getTime()}`);
+//         const data = await response.json();
+
+//         if (data.success) {
+//             // SOLICITUD AL VALIDADOR DINÁMICO
+//             const esValidaDinamicamente = await ValidadorTecnico.esTasaValida(data.tasa);
+
+//             if (esValidaDinamicamente === true) {
+//                 actualizarUI(data.tasa, data.fecha_consulta);
+//             } 
+//             else if (esValidaDinamicamente === false) {
+//                 console.warn("Dato rechazado por el Validador Dinámico.");
+//                 await llamarRespaldo();
+//             }
+//             else {
+//                 // Si el validador falla (ej. DolarApi caído), usa tus límites manuales actuales
+//                 if (data.tasa > CONFIG.LIMITS.MIN && data.tasa < CONFIG.LIMITS.MAX) {
+//                     actualizarUI(data.tasa, data.fecha_consulta);
+//                 } else {
+//                     await llamarRespaldo();
+//                 }
+//             }
+//         }
+//     } catch (err) {
+//         await llamarRespaldo();
+//     }
+
+//     // Crear un controlador para abortar si tarda mucho
+// try {
+//         console.log("Supervisor: Iniciando chequeo...");
+//         const response = await fetch(`${CONFIG.API_PRIMARY}?t=${new Date().getTime()}`, {
+//             signal: controller.signal 
+//         });
+        
+//         clearTimeout(timeoutId);
+//         const data = await response.json();
+
+//         if (data.success && data.tasa > CONFIG.LIMITS.MIN && data.tasa < CONFIG.LIMITS.MAX) {
+//             console.log("Supervisor: API Principal validada ✅");
+//             actualizarUI(data.tasa, data.fecha_consulta);
+//         } else {
+//             console.warn("Supervisor: Dato incoherente. Saltando a respaldo...");
+//             await llamarRespaldo();
+//         }
+
+//     } catch (err) {
+//         clearTimeout(timeoutId);
+//         console.error("Supervisor: API Principal lenta o caída. Usando respaldo...");
+//         await llamarRespaldo();
+//     }
+    
+    
+//     try {
+//         console.log("Supervisor: Iniciando chequeo en API Principal...");
+//         const response = await fetch(`${CONFIG.API_PRIMARY}?t=${new Date().getTime()}`);
+        
+//         if (!response.ok) throw new Error("Servidor Railway Offline");
+        
+//         const data = await response.json();
+
+//         // VALIDACIÓN: ¿El número tiene sentido?
+//         if (data.success && data.tasa > CONFIG.LIMITS.MIN && data.tasa < CONFIG.LIMITS.MAX) {
+//             console.log("Supervisor: API Principal validada ✅");
+//             actualizarUI(data.tasa, data.fecha_consulta);
+//         } else {
+//             console.warn("Supervisor: ¡Dato loco detectado! Activando Plan B...");
+//             await llamarRespaldo();
+//         }
+
+//     } catch (err) {
+//         console.error("Supervisor: Fallo crítico en Principal. Buscando respaldo...");
+//         await llamarRespaldo();
+//     }
+// }
 //============================================================================
 async function llamarRespaldo() {
     try {

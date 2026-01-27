@@ -463,3 +463,9 @@
     - Monitor Master: Ajustado a 300ms (Prioridad Alta).
     - Supervisor: Ajustado a 3000ms (Respaldo Pasivo).
 - **Lógica de Bloqueo**: El Supervisor ahora valida correctamente la presencia de `BCV_Oficial` antes de intentar cualquier acción de respaldo.
+
+## [v3.3.9] - 2026-01-26
+### Corregido
+- **Lógica de Interrupción**: Añadido `return` faltante en `supervisor.js` para evitar que el sistema active el respaldo innecesariamente cuando la API principal es válida.
+- **Flujo de Ejecución**: Eliminados disparos múltiples del supervisor durante la carga inicial.
+- **Estabilidad de UI**: Corregido error donde la tasa de DolarApi sobreescribía la tasa oficial del BCV.
