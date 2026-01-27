@@ -7,8 +7,8 @@ const CONFIG = {
     API_PRIMARY: 'https://mi-api-docker-production.up.railway.app/tasa-bcv',
     API_FALLBACK: 'https://ve.dolarapi.com/v1/dolares/oficial', // Corregido a /dolares/
     LIMITS: {
-        MIN: 300,  // Si baja de 40, algo anda mal
-        MAX: 450  // Si sube de 120, es un salto sospechoso (ajustar según realidad)
+        MIN: 300,  // Si baja de 300, algo anda mal
+        MAX: 450  // Si sube de 450, es un salto sospechoso (ajustar según realidad)
     }
 };
 

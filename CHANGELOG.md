@@ -367,6 +367,11 @@
 - **Scraper BCV Extendido**: Actualizada la lógica para extraer USD además de EUR mediante selectores de ID dinámicos.
 - **Robustez de Servidor**: Añadidos bloques try/catch independientes por cada fuente para garantizar respuesta incluso ante fallos parciales.
 
+## [v3.2.2] - 2026-01-26
+### Refactorización - Frontend
+- **Validador dinámico**: Actualizado `validador.js` para procesar la nueva estructura de respuesta del servidor (tasa + fuente).
+- **Depuración**: Añadido soporte para visualización de origen de datos en el frontend para facilitar pruebas de redundancia.
+
 ## [v3.2.3] - 2026-01-26
 ### Añadido
 - **Modularización de Scrapers**: Creado `scraper-dolar-bcv.js` para manejar la lógica de obtención de divisas sin tocar el core.
@@ -388,3 +393,45 @@
 ### Corregido
 - **Sincronización**: Implementado trigger de arranque en `monitor-master.js` con retardo de seguridad para garantizar la ejecución de la lógica de respaldo tras la carga de módulos.
 - **Flujo de Datos**: Vinculación corregida entre `obtenerDolarConRespaldo` y `actualizarInterfazDolar`.
+
+## [v3.2.7] - 2026-01-26
+### Añadido
+- **Estructura de Respaldo**: Implementados nuevos módulos independientes (`scraper-respaldo.js`, `validador-pro.js`, `validador-ui.js`) para la redundancia de USD.
+- **Vista de Depuración**: Añadido el elemento `debug-source` en el frontend para identificar el origen de la tasa.
+- **Orquestación**: Integrado `monitor-master.js` para coordinar el nuevo flujo de datos sin afectar el core original.
+### Ajustes
+- **Orden de Carga**: Reestructurado `app-loader.js` para garantizar la jerarquía de dependencias.
+
+## [v3.2.8] - 2026-01-26
+### Corregido
+- **CORS & Mixed Content**: Ajustada la URL del scraper de respaldo para apuntar explícitamente a la instancia de producción en Railway vía HTTPS.
+- **Path Resolution**: Corregida la carga de módulos en entornos de subdirectorios (GitHub Pages).
+
+## [v3.2.9] - 2026-01-26
+### Refactorización
+- **Unificación de Scrapers**: Se migró la lógica de extracción de USD al backend (`scraper-bcv.js`) para igualar la robustez del Euro.
+- **Optimización de Código**: Implementada función genérica de extracción en servidor para reducir redundancia.
+- **Seguridad**: Se mantiene el agente HTTPS para evitar bloqueos por certificados en ambas monedas.
+
+## [v3.3.0] - 2026-01-26
+### Refactorización
+- **Data Flow Unification**: Se estableció una jerarquía clara donde el servidor procesa el scrapeo y el frontend actúa como consumidor.
+- **Fix**: Corregido el endpoint de `scraper-respaldo.js` para apuntar a la instancia de producción correcta.
+
+## [v3.3.1] - 2026-01-26
+### Simplificación de Arquitectura
+- **Eliminación de Redundancia**: Se eliminó `scraper-dolar-bcv.js` al quedar obsoleto por la lógica unificada en el backend.
+- **Backend Core**: `scraper-bcv.js` ahora centraliza toda la extracción de tasas oficiales mediante selectores dinámicos.
+- **Refactorización**: Movida la lógica de respaldo al lado del servidor para mejorar la velocidad de respuesta del cliente.
+
+## [v3.3.2] - 2026-01-26
+### Optimización de Backend
+- **Algoritmo de Prioridad**: Reestructurada la ruta `/tasa-bcv` para establecer el BCV como fuente primaria y DolarAPI como último recurso (Safe-Fail).
+- **Estabilidad de Datos**: Implementada jerarquía de tres niveles para mitigar la volatilidad de fuentes externas.
+- **Logs de Servidor**: Mejorada la trazabilidad de errores en el flujo de redundancia.
+
+## [v3.3.3] - 2026-01-26
+### Arquitectura de Sistema
+- **Mantenimiento de Módulos**: Confirmada la permanencia de Supervisores y Validadores para control de calidad en el lado del cliente (Frontend).
+- **Limpieza**: Depuración de archivos obsoletos tras la migración de lógica al servidor central.
+- **Flujo de Ejecución**: Sincronización final entre el Orquestador (Monitor-Master) y el Consumidor de API (Scraper-Respaldo).

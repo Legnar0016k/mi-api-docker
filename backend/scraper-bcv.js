@@ -1,4 +1,4 @@
-//Scraper para monitorear la tasa del Euro
+//Scraper para monitorear la tasa del Euro y Dolar
 const axios = require('axios');
 const cheerio = require('cheerio');
 const https = require('https');
@@ -10,7 +10,8 @@ const agent = new https.Agent({
   rejectUnauthorized: false
 });
 
-const getEuroBCV = async () => {
+// Función genérica para no repetir código
+const getTasaFromBCV = async (divId) => {
     try {
         const response = await axios.get(BCV_URL, {
             httpsAgent: agent,
@@ -23,23 +24,23 @@ const getEuroBCV = async () => {
             }
         });
 
-        const $ = cheerio.load(response.data);
-        
-        // Buscamos el valor dentro de la estructura que me pasaste
-        let valorEuro = $('#euro strong').text().trim();
+       const $ = cheerio.load(response.data);
+        // Usamos el ID dinámico: #euro o #dolar
+        let valor = $(`#${divId} strong`).text().trim();
 
-        // Limpieza: "417,58609701" -> 417.58
-        if (valorEuro) {
-            valorEuro = valorEuro.replace(',', '.');
-            return parseFloat(valorEuro);
+        if (valor) {
+            // Transformamos "35,55280000" -> "35.55280000"
+            return parseFloat(valor.replace(',', '.'));
         }
-        
-        throw new Error("No se pudo localizar el valor del Euro");
-
+        return null;
     } catch (error) {
-        console.error("Error en Scraper BCV:", error.message);
+        console.error(`Error scrapeando ${divId}:`, error.message);
         return null;
     }
 };
 
-module.exports = { getEuroBCV };
+// Exportamos ambas funciones con la misma potencia
+const getEuroBCV = () => getTasaFromBCV('euro');
+const getDolarBCV = () => getTasaFromBCV('dolar');
+
+module.exports = { getEuroBCV, getDolarBCV };

@@ -29,42 +29,61 @@ app.get('/api/euro', async (req, res) => {
 });
 
 app.get('/status', (req, res) => res.send('API Operativa 🚀'));
-
-
-
-
+//nueva logica para manejar la tasa del dolar
 app.get('/tasa-bcv', async (req, res) => {
+    let tasaFinal = null;
+    let fuenteUtilizada = '';
+
     try {
-        const { data } = await axios.get('https://www.monitordedivisavenezuela.com/', {
-            timeout: 10000,
-            headers: { 'User-Agent': 'Mozilla/5.0' }
-        });
-
-        const $ = cheerio.load(data);
-        let tasaFinal = null;
-
-        // Buscamos el div que contiene el texto de la tasa
-        $('div.text-3xl.font-bold').each((i, el) => {
-            const texto = $(el).text().trim();
-            if (texto.includes('Bs/USD')) {
-                const match = texto.match(/[\d.]+/);
-                if (match) {
-                    tasaFinal = parseFloat(match[0]);
-                    return false;
+        // --- PASO 1: INTENTAR BCV DIRECTO (Tu nueva joya) ---
+        const tasaBCV = await bcvScraper.getDolarBCV();
+        
+        if (tasaBCV && tasaBCV > 0) {
+            tasaFinal = tasaBCV;
+            fuenteUtilizada = 'BCV_Oficial';
+            console.log("✅ Datos obtenidos de BCV Directo");
+        } else {
+            // --- PASO 2: SI BCV FALLA, SALTAR A MONITOR ---
+            console.log("⚠️ BCV falló, intentando Monitor...");
+            const { data } = await axios.get('https://www.monitordedivisavenezuela.com/', { timeout: 5000 });
+            const $ = cheerio.load(data);
+            
+            $('div.text-3xl.font-bold').each((i, el) => {
+                const texto = $(el).text().trim();
+                if (texto.includes('Bs/USD')) {
+                    const match = texto.match(/[\d.]+/);
+                    if (match) tasaFinal = parseFloat(match[0]);
                 }
+            });
+            
+            if (tasaFinal) fuenteUtilizada = 'Monitor_Alternativo';
+        }
+
+        // --- PASO 3: EL SEGURO DE VIDA (DolarAPI) ---
+        // Si después de los dos intentos seguimos sin tasa, DolarAPI nos salva
+        if (!tasaFinal) {
+            console.log("🚨 Fuentes primarias caídas. Activando DolarAPI...");
+            const resp = await axios.get('https://ve.dolarapi.com/v1/dolares/oficial');
+            if (resp.data && resp.data.promedio) {
+                tasaFinal = resp.data.promedio;
+                fuenteUtilizada = 'DolarAPI_Respaldo';
             }
-        });
+        }
 
-        if (!tasaFinal) throw new Error("No se encontró el dato");
+        if (tasaFinal) {
+            return res.json({
+                success: true,
+                tasa: tasaFinal,
+                fuente: fuenteUtilizada,
+                fecha: new Date().toLocaleString('es-VE')
+            });
+        }
 
-        res.json({
-            success: true,
-            tasa: tasaFinal,
-            fecha_consulta: new Date().toLocaleString('es-VE')
-        });
+        throw new Error("Apagón total de fuentes");
 
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error("❌ Error crítico en servidor:", error.message);
+        res.status(500).json({ success: false, message: "No se pudo sincronizar ninguna tasa" });
     }
 });
 
