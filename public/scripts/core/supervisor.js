@@ -13,7 +13,6 @@ const CONFIG = {
 };
 
 
-
 async function supervisorFetch() {
 // ... dentro de supervisorFetch() en supervisor.js
 try {
@@ -26,7 +25,7 @@ try {
 
         if (esValidaDinamicamente) {
             console.log("Supervisor: API Principal validada ✅");
-            actualizarUI(data.tasa, data.fecha || new Date().toLocaleTimeString());
+            actualizarUI(data.tasa, data.fecha || new Date().toLocaleTimeString(), data.fuente);
             
             // AGREGAR ESTO: Si es válida, salimos de la función aquí.
             return; 
@@ -41,7 +40,68 @@ try {
     await llamarRespaldo();
 }
 }
+//==============================================================================
+//Logica Antigua del SUPERVISOR.JS linea 103
+//==============================================================================
 
+async function llamarRespaldo() {
+    try {
+        const response = await fetch(CONFIG.API_FALLBACK);
+        const data = await response.json();
+        
+        // DolarApi usa 'promedio' o 'compra'
+        const tasaSegura = data.promedio || data.compra || data.venta;
+
+      if (tasaSegura) {
+        console.log("Supervisor: Respaldo DolarApi activado exitosamente 🛡️");
+        // CAMBIA LA LÍNEA DE ABAJO:
+        UIRenderer.actualizar(tasaSegura, "SWAP", true); // Enviamos el flag de respaldo
+        }
+        
+        else {
+            throw new Error("DolarApi no devolvió valores");
+        }
+    } catch (error) {
+        console.error("Supervisor: TODO FALLÓ. Mostrando error en pantalla.");
+        document.querySelector('#loader p').innerText = "ERROR TOTAL DE SEÑAL";
+    }
+}
+//=============================================================================
+function actualizarUI(tasa, fecha, fuenteReal) { // <-- Añadimos fuenteReal
+    const loader = document.getElementById('loader');
+    const result = document.getElementById('result');
+    const priceElement = document.getElementById('price');
+    const dateElement = document.getElementById('date');
+    const sourceElem = document.getElementById('debug-source'); // <-- CAPTURAMOS EL ELEMENTO
+
+    priceElement.innerText = tasa.toFixed(2);
+    
+    // Ahora mostramos la fuente REAL que envió el servidor
+    if (sourceElem) {
+        // Si no viene fuenteReal (por si acaso), ponemos un genérico
+        const nombreFuente = fuenteReal || "Desconocida";
+        sourceElem.innerText = `FUENTE: ${nombreFuente} (Vía Supervisor)`;
+        sourceElem.classList.remove('hidden');
+    }
+
+    // Si la fecha tiene espacio (YYYY-MM-DD HH:MM:SS), saca solo la hora
+    const horaFinal = fecha.includes(' ') ? fecha.split(' ')[1] : fecha;
+    dateElement.innerText = horaFinal;
+
+    loader.classList.add('hidden');
+    result.classList.remove('hidden');
+}
+
+    // Exportar si fuera necesario, o simplemente usar globalmente
+    window.fetchTasa = supervisorFetch;
+    // Al final de supervisor.js
+    window.onload = () => {
+    setTimeout(supervisorFetch, 3000); // Dale 3 segundos al Monitor para que trabaje tranquilo
+    };
+
+
+
+//=Logica antigua del supervisro================================================================================
 // async function supervisorFetch() {
 //     const loader = document.getElementById('loader');
 //     const result = document.getElementById('result');
@@ -129,49 +189,3 @@ try {
 //         await llamarRespaldo();
 //     }
 // }
-//============================================================================
-async function llamarRespaldo() {
-    try {
-        const response = await fetch(CONFIG.API_FALLBACK);
-        const data = await response.json();
-        
-        // DolarApi usa 'promedio' o 'compra'
-        const tasaSegura = data.promedio || data.compra || data.venta;
-
-      if (tasaSegura) {
-        console.log("Supervisor: Respaldo DolarApi activado exitosamente 🛡️");
-        // CAMBIA LA LÍNEA DE ABAJO:
-        UIRenderer.actualizar(tasaSegura, "SWAP", true); // Enviamos el flag de respaldo
-        }
-        
-        else {
-            throw new Error("DolarApi no devolvió valores");
-        }
-    } catch (error) {
-        console.error("Supervisor: TODO FALLÓ. Mostrando error en pantalla.");
-        document.querySelector('#loader p').innerText = "ERROR TOTAL DE SEÑAL";
-    }
-}
-//=============================================================================
-function actualizarUI(tasa, fecha) {
-    const loader = document.getElementById('loader');
-    const result = document.getElementById('result');
-    const priceElement = document.getElementById('price');
-    const dateElement = document.getElementById('date');
-
-    priceElement.innerText = tasa.toFixed(2);
-    
-    // Si la fecha tiene espacio (YYYY-MM-DD HH:MM:SS), saca solo la hora
-    const horaFinal = fecha.includes(' ') ? fecha.split(' ')[1] : fecha;
-    dateElement.innerText = horaFinal;
-
-    loader.classList.add('hidden');
-    result.classList.remove('hidden');
-}
-
-// Exportar si fuera necesario, o simplemente usar globalmente
-window.fetchTasa = supervisorFetch;
-// Al final de supervisor.js
-window.onload = () => {
-    setTimeout(supervisorFetch, 3000); // Dale 3 segundos al Monitor para que trabaje tranquilo
-};

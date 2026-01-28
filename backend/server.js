@@ -17,7 +17,6 @@ app.use(express.static(path.join(__dirname, '../')));
 
 // Configuración de CORS manual y automática // elimminado
 
-
 //Monitor del Euro
 app.get('/api/euro', async (req, res) => {
     const tasa = await bcvScraper.getEuroBCV();
@@ -29,6 +28,7 @@ app.get('/api/euro', async (req, res) => {
 });
 
 app.get('/status', (req, res) => res.send('API Operativa 🚀'));
+
 //nueva logica para manejar la tasa del dolar
 app.get('/tasa-bcv', async (req, res) => {
     let tasaFinal = null;

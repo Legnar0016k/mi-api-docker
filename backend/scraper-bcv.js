@@ -2,7 +2,6 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 const https = require('https');
-
 const BCV_URL = "https://www.bcv.org.ve/";
 
 // Agente para evitar errores de certificado SSL comunes en entes gubernamentales
@@ -33,6 +32,7 @@ const getTasaFromBCV = async (divId) => {
             return parseFloat(valor.replace(',', '.'));
         }
         return null;
+        
     } catch (error) {
         console.error(`Error scrapeando ${divId}:`, error.message);
         return null;

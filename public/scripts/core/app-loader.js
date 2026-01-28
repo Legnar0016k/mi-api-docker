@@ -2,6 +2,7 @@
  * 🧠 APP-LOADER (CENTRAL CORE)
  * El único punto de entrada para todos los módulos del sistema.
  */
+
 const AppLoader = {
     // Definimos el orden de importancia (Jerarquía de carga)  
     modules: [

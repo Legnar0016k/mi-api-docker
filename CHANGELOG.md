@@ -469,3 +469,25 @@
 - **Lógica de Interrupción**: Añadido `return` faltante en `supervisor.js` para evitar que el sistema active el respaldo innecesariamente cuando la API principal es válida.
 - **Flujo de Ejecución**: Eliminados disparos múltiples del supervisor durante la carga inicial.
 - **Estabilidad de UI**: Corregido error donde la tasa de DolarApi sobreescribía la tasa oficial del BCV.
+## [v3.4.0] - 2026-01-26
+### Hito Alcanzado
+- **Estabilización de Concurrencia**: Lograda la sincronización perfecta entre el Monitor Master (300ms) y el Supervisor (3000ms).
+- **Validación Cruzada Activa**: El sistema ahora discrimina correctamente entre la tasa oficial de Railway (358.92) y la referencia de DolarApi (355.55) sin entrar en conflicto.
+- **Control de Flujo**: Implementada la interrupción de procesos (`return`) tras validación exitosa, optimizando el uso de recursos y ancho de banda.
+
+## [v3.4.1] - 2026-01-27
+### Corregido
+- **Visibilidad de Fuente**: Se vinculó el elemento `debug-source` dentro de la función `actualizarUI` del Supervisor para eliminar el estado perpetuo de "Cargando fuente...".
+- **Sincronización de UI**: Asegurada la limpieza de estados de carga (Loaders) tras una validación exitosa de la API Principal.
+
+## [v3.4.2] - 2026-01-27
+### Mejorado
+- **Dinámica de Fuentes**: Sincronizada la respuesta del Servidor (Railway) con la Interfaz de Usuario.
+- **Transparencia de Datos**: El visor `debug-source` ahora refleja la fuente real utilizada por el backend (BCV, Monitor o DolarAPI) en lugar de un texto estático.
+- **Precisión de Supervisor**: Se ajustó la función `actualizarUI` para procesar metadatos de origen enviados por el API Principal.
+
+## [v3.4.3] - 2026-01-27
+### Mejorado
+- **Comunicación End-to-End**: El Supervisor ahora recibe y procesa el parámetro `fuente` enviado desde el backend en Railway.
+- **Interfaz Informativa**: El elemento `debug-source` ahora muestra dinámicamente si el dato viene de `BCV_Oficial`, `Monitor_Alternativo` o `DolarAPI_Respaldo`.
+- **Refactorización de UI**: Se optimizó la función `actualizarUI` para manejar múltiples orígenes de datos sin sobreescribir información crítica de auditoría.
