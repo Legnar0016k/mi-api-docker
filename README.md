@@ -225,3 +225,15 @@ HTML
 ├── CHANGELOG.md          # Tu bitácora de cambios
 ├── package.json          # Dependencias (axios, express, cheerio)
 └── .gitignore            # Para ignorar node_modules
+
+
+**🏁 Estado actual del proyecto**
+Backend (Railway): Scrapeo triple con redundancia (BCV -> Monitor -> DolarAPI).
+
+Frontend (GitHub Pages): * Monitor Master y Supervisor coordinados por tiempo.
+
+Validador técnico verificando desviaciones.
+
+Modo Claro/Oscuro totalmente funcional.
+
+PWA lista (siempre que el sw.js esté en la raíz).

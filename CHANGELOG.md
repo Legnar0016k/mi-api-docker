@@ -491,3 +491,24 @@
 - **Comunicación End-to-End**: El Supervisor ahora recibe y procesa el parámetro `fuente` enviado desde el backend en Railway.
 - **Interfaz Informativa**: El elemento `debug-source` ahora muestra dinámicamente si el dato viene de `BCV_Oficial`, `Monitor_Alternativo` o `DolarAPI_Respaldo`.
 - **Refactorización de UI**: Se optimizó la función `actualizarUI` para manejar múltiples orígenes de datos sin sobreescribir información crítica de auditoría.
+
+## [v3.5.0] - 2026-01-28
+### Añadido
+- **Sistema de Temas**: Implementado `ThemeManager` para soporte de modo claro/oscuro.
+- **Persistencia**: Preferencia de tema guardada en `localStorage`.
+- **Nuevos Estilos**: Integrados `style3.css` y `theme-toggle.css`.
+### Corregido
+- **Error de Carga**: Corregido typo en nombre de archivo (`teme` -> `theme`) y error 404 en la inyección de módulos.
+
+## [v3.5.1] - 2026-01-28
+### Corregido
+- **UI Calculadora**: Se corrigió el contraste del visor de resultados en el modal de la calculadora para el Modo Claro.
+- **Refactor de Estilos**: Sobrescritas las clases fijas `bg-black/80` y `text-white` mediante selectores de atributo en `style3.css`.
+
+## [v3.5.2] - 2026-01-28
+### Añadido
+- **Sistema de Temas Dinámico**: Implementación completa de `ThemeManager` con persistencia en `localStorage`.
+- **Estilos Adaptativos**: Integración de `style3.css` y `theme-toggle.css` para una transición suave entre modos.
+### Corregido
+- **Contraste de Calculadora**: Se forzó el esquema de colores en el modal de la calculadora para evitar texto invisible en modo claro.
+- **Jerarquía de Archivos**: Corregidos errores de nombrado (typos) y rutas en el cargador central (`app-loader.js`).

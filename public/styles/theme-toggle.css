@@ -1,0 +1,41 @@
+/* theme-toggle.css - Estilos para el botón de cambio de tema */
+.theme-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Estilos específicos para tema claro */
+body[data-theme="light"] .theme-toggle-btn {
+    background-color: #f1f5f9 !important;
+    border-color: #e2e8f0 !important;
+}
+
+body[data-theme="light"] .theme-toggle-btn:hover {
+    background-color: #e2e8f0 !important;
+    transform: rotate(15deg);
+}
+
+body[data-theme="light"] .theme-toggle-btn svg {
+    color: #475569;
+}
+
+/* Estilos específicos para tema oscuro */
+body[data-theme="dark"] .theme-toggle-btn:hover {
+    background-color: #334155 !important;
+    transform: rotate(15deg);
+}
+
+/* Animación suave */
+.theme-toggle-btn {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}

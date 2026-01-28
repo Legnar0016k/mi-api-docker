@@ -27,9 +27,10 @@ const AppLoader = {
         'public/scripts/core/monitor-master.js',
 
         // 5. SISTEMAS DE EMERGENCIA
-        'public/scripts/debug/recovery-logic.js'
-    
+        'public/scripts/debug/recovery-logic.js',
 
+        // 6. LOGICA PARA MANEJAR EL THEMA CLARO
+        'public/scripts/core/theme-manager.js'
 
     ],
 
@@ -38,6 +39,8 @@ const AppLoader = {
         // 'fault-test.js',
         // 'chaos-and-recovery-test.js'
     ],
+
+    
 
     init() {
         console.log("🚀 Iniciando sistema central...");
@@ -53,6 +56,18 @@ const AppLoader = {
         console.log(`📦 ${allToLoad.length} módulos inyectados correctamente.`);
     }
 };
+
+
+// // En app-loader.js, después de cargar tus módulos
+// document.addEventListener('themeChanged', (event) => {
+//     console.log('Tema cambiado a:', event.detail.theme);
+    
+//     // Si necesitas recargar algún dato o reinicializar componentes
+//     // Por ejemplo, si usas gráficos que necesitan recolorearse
+//     if (typeof supervisorFetch === 'function') {
+//         supervisorFetch();
+//     }
+// });
 
 // Arrancamos el motor
 AppLoader.init();

@@ -1,0 +1,197 @@
+/* style3.css - TEMA CLARO */
+:root[data-theme="light"] {
+    /* Colores principales */
+    --bg-primary: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-secondary: #f1f5f9;
+    --text-primary: #1e293b;
+    --text-secondary: #475569;
+    --accent-primary: #0284c7;
+    --accent-secondary: #0ea5e9;
+    --border-color: #e2e8f0;
+    --shadow-color: rgba(0, 0, 0, 0.05);
+    --live-color: #059669;
+    --warning-bg: #fef2f2;
+    --warning-border: #fca5a5;
+}
+
+/* Aplicar tema claro al body */
+body[data-theme="light"] {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+/* Card principal */
+body[data-theme="light"] .cyber-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px var(--shadow-color);
+}
+
+/* Textos */
+body[data-theme="light"] .mono {
+    color: var(--text-secondary);
+}
+
+body[data-theme="light"] .text-slate-500 {
+    color: var(--text-secondary) !important;
+}
+
+body[data-theme="light"] .text-slate-400 {
+    color: #64748b !important;
+}
+
+body[data-theme="light"] .text-slate-300 {
+    color: #475569 !important;
+}
+
+body[data-theme="light"] .text-white {
+    color: var(--text-primary) !important;
+}
+
+/* Elementos acentuados */
+body[data-theme="light"] .text-cyan-400,
+body[data-theme="light"] .text-cyan-500 {
+    color: var(--accent-primary) !important;
+}
+
+body[data-theme="light"] .border-cyan-400 {
+    border-color: var(--accent-primary) !important;
+}
+
+body[data-theme="light"] .bg-cyan-600 {
+    background-color: var(--accent-primary) !important;
+}
+
+body[data-theme="light"] .bg-cyan-500\/10 {
+    background-color: rgba(2, 132, 199, 0.1) !important;
+}
+
+/* Tarjetas secundarias */
+body[data-theme="light"] .bg-slate-900\/40,
+body[data-theme="light"] .bg-slate-800\/50,
+body[data-theme="light"] .bg-black\/40 {
+    background-color: var(--bg-secondary) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* Botones */
+body[data-theme="light"] button {
+    background-color: white;
+}
+
+body[data-theme="light"] .hover\:bg-cyan-500\/10:hover {
+    background-color: rgba(2, 132, 199, 0.1) !important;
+}
+
+/* Live indicator */
+body[data-theme="light"] .live-dot {
+    background-color: var(--live-color);
+}
+
+body[data-theme="light"] .text-emerald-400 {
+    color: var(--live-color) !important;
+}
+
+/* Inputs */
+body[data-theme="light"] input {
+    background-color: white;
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+body[data-theme="light"] input:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+}
+
+/* Modal */
+body[data-theme="light"] #modal-calc {
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(4px);
+}
+
+body[data-theme="light"] #modal-calc .cyber-card {
+    background: var(--bg-card);
+    border-color: var(--border-color);
+}
+
+/* Footer y advertencia */
+body[data-theme="light"] footer {
+    border-top-color: var(--border-color);
+}
+
+body[data-theme="light"] .bg-red-500\/5 {
+    background-color: var(--warning-bg) !important;
+    border-color: var(--warning-border) !important;
+}
+
+body[data-theme="light"] .warning-blink {
+    color: #991b1b;
+}
+
+/* Efectos y animaciones */
+body[data-theme="light"] .glow-text {
+    text-shadow: 0 0 10px rgba(2, 132, 199, 0.3);
+}
+
+body[data-theme="light"] .relative.group > .absolute.-inset-1 {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    opacity: 0.1;
+}
+
+/* Loader */
+body[data-theme="light"] #loader .border-cyan-500\/20 {
+    border-color: rgba(2, 132, 199, 0.2);
+}
+
+body[data-theme="light"] #loader .border-t-cyan-400 {
+    border-top-color: var(--accent-primary);
+}
+
+/* Botón de instalación */
+body[data-theme="light"] #btnInstall {
+    background-color: rgba(5, 150, 105, 0.1);
+    border-color: rgba(5, 150, 105, 0.3);
+    color: var(--live-color);
+}
+
+body[data-theme="light"] #btnInstall:hover {
+    background-color: rgba(5, 150, 105, 0.2);
+}
+
+/* Botón de refresh */
+body[data-theme="light"] button .bg-slate-950 {
+    background-color: white !important;
+}
+
+/* Placeholders */
+body[data-theme="light"] ::placeholder {
+    color: #94a3b8 !important;
+}
+
+/********Logica adicional para que se superponga el color claron en el modal de la calculadora *************/
+
+/* Corrección específica para el visor de la calculadora en Modo Claro */
+body[data-theme="light"] #modal-calc .bg-black\/80 {
+    background-color: rgba(226, 232, 240, 0.8) !important; /* Un gris muy claro azulado */
+    border-color: var(--accent-primary) !important;
+    backdrop-filter: blur(10px);
+}
+
+body[data-theme="light"] #modal-calc .text-white {
+    color: var(--text-primary) !important; /* El color pizarra oscuro que definiste */
+}
+
+body[data-theme="light"] #modal-calc .text-cyan-500\/50 {
+    color: var(--accent-primary) !important;
+    opacity: 0.7;
+}
+
+/* Ajuste del brillo del texto en modo claro para que no "desaparezca" */
+body[data-theme="light"] #modal-calc .glow-text {
+    text-shadow: 0 0 10px rgba(2, 132, 199, 0.2) !important;
+}
+
+
+
