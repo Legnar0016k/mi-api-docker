@@ -632,3 +632,20 @@
 ### Mejorado
 - **Estructura de Assets**: Se movió el `manifest.json` a la carpeta `/public/assets/` para centralizar recursos gráficos.
 - **Rutas Relativas**: Ajustada la referencia del icono dentro del manifiesto y la referencia del manifiesto en el `index.html` para compatibilidad con Vercel.
+
+## [v4.1.0] - 2026-01-29
+### Añadido
+- **Módulo de Análisis Histórico**: Implementación de gráficas de tendencia usando Chart.js.
+- **Memoria de Tasas**: Sistema de almacenamiento en LocalStorage para registro de variaciones diarias.
+- **Indicadores de Color**: Diferenciación visual de tendencia (Rojo: Alza / Verde: Baja).
+- **Interfaz Modal**: Nueva ventana emergente para visualización de datos históricos sin recargar la página.
+### Mejorado
+- **UX**: Se añadió un acceso directo a la gráfica para análisis rápido de la economía.
+
+## [v4.1.0] - 2026-01-29
+### Añadido
+- **Persistencia en Railway**: Implementada base de datos SQLite para almacenamiento histórico de tasas.
+- **API de Historial**: Nueva ruta `/api/historial` que sirve los últimos 30 registros económicos.
+- **Gráficas Inteligentes**: Integración con Chart.js para visualización de tendencias con semáforo de color (Rojo/Verde).
+### Mejorado
+- **Robustez de Datos**: Se eliminó la dependencia de LocalStorage en favor de almacenamiento persistente en servidor.

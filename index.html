@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terminal BCV v.3.8.0 | Live Feed</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;800&display=swap" rel="stylesheet">
-    <link rel="manifest" href="/public/assets/manifest.json">
     <meta name="theme-color" content="#020617">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="/public/assets/manifest.json">
     <link rel="apple-touch-icon" href="/public/assets/icon-512.png">
 
     <script>
@@ -28,10 +29,12 @@
     <link rel="stylesheet" href="public/styles/style1.css">
     <!--Carga de Stylos de calculadora-->
     <link rel="stylesheet" href="public/styles/style2.css">
-    <!-- tema claro  -->
+    <!-- tema claro para la calculadora -->
     <link rel="stylesheet" href="public/styles/style3.css">
     <!-- stylos del boton de modo calro y oscuro -->
     <link rel="stylesheet" href="public/styles/theme-toggle.css">
+    <!--Stylos historial de eventos-->
+    <link rel="stylesheet" href="public/styles/history.css">
     
     
 </head>
@@ -100,6 +103,9 @@
                 <span class="mono text-xs font-bold tracking-[0.2em] text-cyan-400 group-hover:text-white uppercase">Refresh Datastream</span>
             </div>
         </button>
+
+        <!--BOTON PARA ABRIL EL HISTORIAL-->
+        <button id="btn-history" onclick="HistoryModule.renderChart()">📊 Ver Gráfica de Tendencia</button>
 
 
                                          <!--Boton de intalacion para Android-->
@@ -187,8 +193,8 @@
 
         <!-- sistema principal y cerebro del progrma -->
         <script src="public/scripts/core/app-loader.js"></script>
-      
-
+        <!--Boton de historial de eventos-->
+        <script src="public/scripts/ui/history-charts.js"></script>
 
     <script>
         // LÓGICA DE INSTALACIÓN PWA (Se queda en el index)

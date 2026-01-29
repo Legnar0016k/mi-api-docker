@@ -30,7 +30,10 @@ const AppLoader = {
         'public/scripts/debug/recovery-logic.js',
 
         // 6. LOGICA PARA MANEJAR EL THEMA CLARO
-        'public/scripts/core/theme-manager.js'
+        'public/scripts/core/theme-manager.js',
+
+        // 7. LOGICA DEL BOTON DE HISTORIAL DE EVENTOS MONITOR
+        
 
     ],
 
