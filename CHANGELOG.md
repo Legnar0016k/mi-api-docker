@@ -541,3 +541,9 @@
 - **Sincronización de Cache**: El sistema ahora fuerza un `window.location.reload()` automático al detectar cambios en los assets de GitHub.
 ### Mejorado
 - **Robustez PWA**: El ciclo de vida del Service Worker ahora es menos "terco", eliminando la necesidad de actualizaciones manuales por parte del usuario.
+
+## [v3.7.0] - 2026-01-28
+### Añadido
+- **Respaldo para Euro**: Implementada lógica de redundancia en la ruta `/api/euro`.
+- **Integración DolarAPI**: Se configuró `ve.dolarapi.com` como fuente secundaria para el Euro en caso de falla del scraper original del BCV.
+- **Metadatos de Fuente**: La respuesta del Euro ahora incluye el campo `fuente` para auditoría en el frontend.

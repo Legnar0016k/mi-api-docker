@@ -17,15 +17,52 @@ app.use(express.static(path.join(__dirname, '../')));
 
 // Configuración de CORS manual y automática // elimminado
 
-//Monitor del Euro
+// Monitor nueva logica 28/01/2026 del Euro con Respaldo Inteligente
 app.get('/api/euro', async (req, res) => {
-    const tasa = await bcvScraper.getEuroBCV();
-    if (tasa) {
-        res.json({ success: true, tasa: tasa, moneda: 'EUR' });
-    } else {
-        res.status(500).json({ success: false, message: 'Error al conectar con BCV' });
+    let tasaFinal = null;
+    let fuenteUtilizada = 'BCV_Oficial';
+
+    try {
+        // Intento 1: BCV (Tu lógica actual)
+        tasaFinal = await bcvScraper.getEuroBCV();
+
+        // Intento 2: Respaldo (DolarApi) si el BCV falla
+        if (!tasaFinal) {
+            console.log("⚠️ Euro BCV caído. Aplicando respaldo DolarAPI...");
+            const resp = await axios.get('https://ve.dolarapi.com/v1/monedas/euro');
+            if (resp.data && resp.data.valor) {
+                tasaFinal = resp.data.valor;
+                fuenteUtilizada = 'DolarAPI_Respaldo';
+            }
+        }
+
+        if (tasaFinal) {
+            return res.json({ 
+                success: true, 
+                tasa: tasaFinal, 
+                moneda: 'EUR',
+                fuente: fuenteUtilizada,
+                fecha: new Date().toLocaleString('es-VE')
+            });
+        }
+
+        throw new Error("No se pudo obtener la tasa del Euro");
+
+    } catch (error) {
+        console.error("❌ Error en ruta Euro:", error.message);
+        res.status(500).json({ success: false, message: 'Fuentes de Euro no disponibles' });
     }
 });
+
+//Monitor del Euro // logica antigua... 28/enero/2026
+// app.get('/api/euro', async (req, res) => {
+//     const tasa = await bcvScraper.getEuroBCV();
+//     if (tasa) {
+//         res.json({ success: true, tasa: tasa, moneda: 'EUR' });
+//     } else {
+//         res.status(500).json({ success: false, message: 'Error al conectar con BCV' });
+//     }
+// });
 
 app.get('/status', (req, res) => res.send('API Operativa 🚀'));
 
