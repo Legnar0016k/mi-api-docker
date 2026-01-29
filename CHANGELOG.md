@@ -574,3 +574,46 @@
 - **Configuración Vercel (`vercel.json`)**: Implementadas reglas de cabeceras HTTP para optimizar la entrega del Service Worker.
 - **Políticas de Caché**: Forzada la revalidación de `sw.js` para garantizar que el sistema de Auto-Update detecte cambios en tiempo real.
 - **Clean URLs**: Activada la limpieza de rutas para una navegación más estética.
+
+## [v3.9.2] - 2026-01-29
+### Corregido
+- **Deployment Vercel**: Resuelto error 404 NOT_FOUND mediante el ajuste del Root Directory y Framework Preset.
+- **Estructura de Rutas**: Verificada la jerarquía de `index.html` para asegurar la compatibilidad con el despliegue automático de Vercel.
+
+## [v3.9.4] - 2026-01-29
+### Corregido
+- **Vercel NOT_FOUND**: Se forzó el Framework Preset a 'Other' y se anularon los comandos de Build automáticos.
+- **Punto de Entrada**: Confirmada la disponibilidad de `index.html` en la raíz del despliegue.
+
+## [v3.9.5] - 2026-01-29
+### Corregido
+- **Error de Build en Vercel**: Se corrigió la referencia errónea al Root Directory (`./`).
+- **Configuración de Despliegue**: Se restableció el directorio raíz a su valor por defecto (vacío) para permitir que Vercel localice correctamente el `index.html` en la base del repositorio.
+
+## [v3.9.6] - 2026-01-29
+### Corregido
+- **Vercel Build Path**: Eliminada la ruta relativa `./` del Root Directory cumpliendo con las políticas de despliegue de Vercel.
+- **Configuración Estática**: Establecido el Framework Preset en 'Other' para prevenir errores de compilación en archivos HTML/JS puros.
+
+## [v3.9.7] - 2026-01-29
+### Investigando
+- **Vercel Deployment**: Diagnosticando error 404 persistente. 
+- **Ajuste de Salida**: Se probó configurar el 'Output Directory' como `.` para forzar el reconocimiento de archivos estáticos en la raíz.
+
+## [v3.9.8] - 2026-01-29
+### Corregido
+- **Vercel Routing**: Se añadió la regla `rewrites` y `public: true` en `vercel.json` para forzar el modo de renderizado estático.
+- **Identidad del Proyecto**: Corregido conflicto donde Vercel interpretaba el frontend como una Serverless Function debido a la presencia de archivos de configuración de Node.
+
+## [v3.9.9] - 2026-01-29
+### Corregido
+- **Vercel Build Engine**: Implementada configuración de construcción estática (`@vercel/static`) para anular la detección automática de Node.js causada por el `package.json`.
+- **Manifest PWA**: Corregidas las rutas de `start_url` y `scope` para asegurar la instalación desde el dominio de Vercel.
+- **Rutas de Despliegue**: Mapeo explícito de activos públicos y el Service Worker en `vercel.json`.
+
+## [v4.0.0] - 2026-01-29
+### Añadido
+- **Soporte Multi-Hosting**: Configuración terminada para despliegue simultáneo en Vercel y GitHub Pages.
+- **Vercel Static Engine**: Forzado el uso de `@vercel/static` en `vercel.json` para ignorar la lógica de backend en el despliegue del cliente.
+### Corregido
+- **PWA Manifest**: Se migraron las rutas relativas (`../../`) a rutas raíz (`/`) para garantizar que la app sea instalable desde cualquier dominio o subcarpeta.
