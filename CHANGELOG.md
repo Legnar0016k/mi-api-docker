@@ -512,3 +512,13 @@
 ### Corregido
 - **Contraste de Calculadora**: Se forzó el esquema de colores en el modal de la calculadora para evitar texto invisible en modo claro.
 - **Jerarquía de Archivos**: Corregidos errores de nombrado (typos) y rutas en el cargador central (`app-loader.js`).
+
+## [v3.5.4] - 2026-01-28
+### Corregido
+- **PWA Manifest Assets**: Sincronizada la lista de precaché del `sw.js` con el `app-loader.js`.
+- **Estabilidad Offline**: Eliminados archivos inexistentes de la lista de recursos del Service Worker para evitar fallos de instalación.
+
+## [v3.5.5] - 2026-01-28
+### Corregido
+- **PWA Integrity**: Depurada la lista de assets en `sw.js` eliminando referencias a estilos antiguos (`style1`, `style2`) que causaban el error `Request failed`.
+- **Rutas Relativas**: Implementado el uso de `./` para asegurar la compatibilidad con GitHub Pages.
