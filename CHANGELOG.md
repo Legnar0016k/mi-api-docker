@@ -547,3 +547,17 @@
 - **Respaldo para Euro**: Implementada lógica de redundancia en la ruta `/api/euro`.
 - **Integración DolarAPI**: Se configuró `ve.dolarapi.com` como fuente secundaria para el Euro en caso de falla del scraper original del BCV.
 - **Metadatos de Fuente**: La respuesta del Euro ahora incluye el campo `fuente` para auditoría en el frontend.
+
+## [v3.8.0] - 2026-01-28
+### Añadido
+- **Recovery Sentinel Pro**: Evolución del módulo de auto-recuperación a la versión 2.0.
+- **Network Awareness**: Detección inteligente de estado online/offline para evitar bucles de error sin conexión.
+- **Cache Purge Logic**: Capacidad de auto-limpieza de caché tras fallos persistentes (anti-corrupción de SW).
+- **Backoff Algorítmico**: Optimización del consumo de recursos mediante intervalos de reintento incrementales.
+
+## [v3.8.1] - 2026-01-28
+### Añadido
+- **Sentinel Súper Soldado**: Activada la versión 2.0 de `recovery-logic.js` con consciencia de red (online/offline) y auto-purga de caché.
+- **Blindaje de Divisas**: Finalizada la integración de respaldo para el Euro vía DolarAPI, garantizando disponibilidad 24/7.
+### Seguridad
+- **Resiliencia de SW**: Implementado sistema de mensajería para evitar el estado "terco" del Service Worker y asegurar actualizaciones inmediatas tras cada push.
