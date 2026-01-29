@@ -561,3 +561,16 @@
 - **Blindaje de Divisas**: Finalizada la integración de respaldo para el Euro vía DolarAPI, garantizando disponibilidad 24/7.
 ### Seguridad
 - **Resiliencia de SW**: Implementado sistema de mensajería para evitar el estado "terco" del Service Worker y asegurar actualizaciones inmediatas tras cada push.
+
+## [v3.9.0] - 2026-01-29
+### Añadido
+- **Despliegue en Vercel**: Migración/Espejo del frontend a Vercel para mejorar los tiempos de respuesta globales.
+- **Optimización de Entrega**: Configuración de cabeceras de caché automáticas mediante el borde de Vercel.
+### Mejorado
+- **Redundancia de Hosting**: El proyecto ahora cuenta con presencia en GitHub Pages y Vercel simultáneamente.
+
+## [v3.9.1] - 2026-01-29
+### Añadido
+- **Configuración Vercel (`vercel.json`)**: Implementadas reglas de cabeceras HTTP para optimizar la entrega del Service Worker.
+- **Políticas de Caché**: Forzada la revalidación de `sw.js` para garantizar que el sistema de Auto-Update detecte cambios en tiempo real.
+- **Clean URLs**: Activada la limpieza de rutas para una navegación más estética.
