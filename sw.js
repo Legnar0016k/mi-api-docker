@@ -74,3 +74,10 @@ self.addEventListener('fetch', event => {
         })
     );
 });
+
+// Al final de tu sw.js
+self.addEventListener('message', (event) => {
+    if (event.data === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
+});

@@ -522,3 +522,22 @@
 ### Corregido
 - **PWA Integrity**: Depurada la lista de assets en `sw.js` eliminando referencias a estilos antiguos (`style1`, `style2`) que causaban el error `Request failed`.
 - **Rutas Relativas**: Implementado el uso de `./` para asegurar la compatibilidad con GitHub Pages.
+
+## [v3.5.8] - 2026-01-28
+### Mejorado
+- **Estrategia de Caché**: Implementado cache-busting dinámico mediante marcas de tiempo para forzar la actualización del Service Worker.
+- **Gestión de Ciclo de Vida**: Optimizado el evento 'activate' para asegurar la purga de archivos obsoletos en el almacenamiento local del cliente.
+
+## [v3.6.0] - 2026-01-28
+### Añadido
+- **Auto-Update System**: Implementada lógica de mensajería entre Service Worker y Cliente para forzar actualizaciones inmediatas.
+- **Skip Waiting**: El sistema ahora ignora el periodo de espera de los Service Workers, asegurando que los cambios en GitHub se reflejen al instante tras la descarga.
+- **UX Improvement**: Eliminada la necesidad de recarga manual por parte del usuario para ver nuevas versiones.
+
+## [v3.6.1] - 2026-01-28
+### Añadido
+- **Sistema de Auto-Actualización**: Integrada lógica en `app-loader.js` para detectar nuevas versiones del Service Worker en tiempo real.
+- **Activación Inmediata**: Implementado el evento `message` con `SKIP_WAITING` en `sw.js` para forzar la actualización sin cerrar la pestaña.
+- **Sincronización de Cache**: El sistema ahora fuerza un `window.location.reload()` automático al detectar cambios en los assets de GitHub.
+### Mejorado
+- **Robustez PWA**: El ciclo de vida del Service Worker ahora es menos "terco", eliminando la necesidad de actualizaciones manuales por parte del usuario.

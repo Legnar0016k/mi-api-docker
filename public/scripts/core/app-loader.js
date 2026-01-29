@@ -57,6 +57,32 @@ const AppLoader = {
     }
 };
 
+// Lógica de actualización automática
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+        reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            newWorker.addEventListener('statechange', () => {
+                // Cuando el nuevo SW esté instalado pero esperando
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    console.log('✨ Nueva versión detectada. Actualizando...');
+                    
+                    // Enviamos la orden al SW para que se active
+                    newWorker.postMessage('SKIP_WAITING');
+                }
+            });
+        });
+    });
+
+    // Este evento se dispara cuando el nuevo SW toma el control
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) {
+            window.location.reload(); // Recarga la página automáticamente
+            refreshing = true;
+        }
+    });
+}
 
 // // En app-loader.js, después de cargar tus módulos
 // document.addEventListener('themeChanged', (event) => {
