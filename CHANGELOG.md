@@ -617,3 +617,18 @@
 - **Vercel Static Engine**: Forzado el uso de `@vercel/static` en `vercel.json` para ignorar la lógica de backend en el despliegue del cliente.
 ### Corregido
 - **PWA Manifest**: Se migraron las rutas relativas (`../../`) a rutas raíz (`/`) para garantizar que la app sea instalable desde cualquier dominio o subcarpeta.
+
+## [v4.0.1] - 2026-01-29
+### Corregido
+- **PWA Asset Path**: Ajustada la ruta de los iconos en el manifest para resolver el error de descarga en el despliegue de Vercel.
+- **Estabilidad PWA**: Confirmado el registro exitoso del Service Worker y la activación del modo standalone.
+
+## [v4.0.2] - 2026-01-29
+### Corregido
+- **Ruta de Recursos**: Corregida la ubicación del icono en el `manifest.json` apuntando a la ruta física real `/public/assets/icon-512.png`.
+- **Sincronización PWA**: Actualizado el Service Worker para incluir el asset del icono en la estrategia de pre-caché, eliminando el error de descarga en consola.
+
+## [v4.0.3] - 2026-01-29
+### Mejorado
+- **Estructura de Assets**: Se movió el `manifest.json` a la carpeta `/public/assets/` para centralizar recursos gráficos.
+- **Rutas Relativas**: Ajustada la referencia del icono dentro del manifiesto y la referencia del manifiesto en el `index.html` para compatibilidad con Vercel.

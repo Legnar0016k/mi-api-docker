@@ -27,8 +27,7 @@ const assets = [
     
     // Otros
     './public/scripts/debug/recovery-logic.js',
-    './manifest.json',
-    './favicon.ico',
+    './public/assets/manifest.json',
     './public/assets/icon-512.png'
 
 ];
