@@ -649,3 +649,14 @@
 - **Gráficas Inteligentes**: Integración con Chart.js para visualización de tendencias con semáforo de color (Rojo/Verde).
 ### Mejorado
 - **Robustez de Datos**: Se eliminó la dependencia de LocalStorage en favor de almacenamiento persistente en servidor.
+
+## [v4.1.0] - 2026-01-29
+### Añadido
+- **Módulo de Análisis Histórico (Estilo Google Finance)**: Implementación de gráfica de área con degradado dinámico y diseño minimalista.
+- **Persistencia en el Servidor**: Integración de SQLite en Railway para el almacenamiento de datos históricos sin depender del navegador.
+- **Auto-Scraper Programado**: Tarea automatizada (Cron Job) en el backend que recolecta y guarda la tasa oficial diariamente a las 11:59 PM.
+- **Visualización de Tendencias**: Colores dinámicos basados en la variación del bolívar (Rojo para alzas del dólar, Verde para bajas).
+
+### Mejorado
+- **Interfaz de Usuario (UX)**: Panel lateral/modal optimizado con Chart.js para visualización fluida en dispositivos móviles.
+- **Arquitectura de Datos**: Migración de LocalStorage a una API REST propia en Railway,

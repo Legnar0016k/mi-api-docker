@@ -7,8 +7,11 @@ const path = require('path'); // <-- 1. IMPORTANTE: Añadir esto
 const bcvScraper = require('./scraper-bcv.js');
 const app = express();
 const PORT = process.env.PORT || 3000;
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database('./backend/history.db');
+const cron = require('node-cron');
 
-
+// Permite que Vercel lea los datos de Railway
 app.use(cors());
 
 // 2. ESTA ES LA LÍNEA NUEVA:
@@ -54,15 +57,7 @@ app.get('/api/euro', async (req, res) => {
     }
 });
 
-//Monitor del Euro // logica antigua... 28/enero/2026
-// app.get('/api/euro', async (req, res) => {
-//     const tasa = await bcvScraper.getEuroBCV();
-//     if (tasa) {
-//         res.json({ success: true, tasa: tasa, moneda: 'EUR' });
-//     } else {
-//         res.status(500).json({ success: false, message: 'Error al conectar con BCV' });
-//     }
-// });
+
 
 app.get('/status', (req, res) => res.send('API Operativa 🚀'));
 
@@ -121,6 +116,41 @@ app.get('/tasa-bcv', async (req, res) => {
     } catch (error) {
         console.error("❌ Error crítico en servidor:", error.message);
         res.status(500).json({ success: false, message: "No se pudo sincronizar ninguna tasa" });
+    }
+});
+
+// Crear tabla
+db.serialize(() => {
+    db.run("CREATE TABLE IF NOT EXISTS history (id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT UNIQUE, usd_val REAL)");
+});
+
+// Ruta para el historial
+app.get('/api/historial', (req, res) => {
+    db.all("SELECT date, usd_val FROM history ORDER BY date ASC LIMIT 30", [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
+    });
+});
+
+// Tarea automática: Guarda la tasa a las 11:59 PM
+cron.schedule('59 23 * * *', async () => {
+    try {
+        console.log("🕒 Iniciando guardado diario de tasa...");
+        const tasa = await bcvScraper.getDolarBCV();
+        
+        if (tasa && tasa > 0) {
+            const today = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
+            db.run(
+                "INSERT OR IGNORE INTO history (date, usd_val) VALUES (?, ?)", 
+                [today, tasa],
+                (err) => {
+                    if (err) console.error("❌ Error al guardar historial:", err.message);
+                    else console.log(`✅ Historial guardado: ${today} -> ${tasa} Bs.`);
+                }
+            );
+        }
+    } catch (error) {
+        console.error("❌ Error en tarea programada:", error.message);
     }
 });
 

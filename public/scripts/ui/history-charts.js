@@ -1,41 +1,28 @@
 /**
- * 📊 MÓDULO DE ANÁLISIS HISTÓRICO (V1.0)
- * Visualización de tendencias y memoria de tasas.
+ * 📊 MÓDULO DE ANÁLISIS HISTÓRICO (V1.1)
+ * Integración con SQLite Railway + Estilo Google Finance
  */
 
 const HistoryModule = {
-    storageKey: 'bcv_history_data',
+    // URL de tu API en Railway (ajustada a tu endpoint)
+    apiUrl: '/api/historial',
 
     init() {
-        console.log("📊 Módulo de Historia: Activado.");
-        this.saveTodayRate();
+        console.log("📊 Módulo de Historia: Inicializando...");
         this.createModal();
     },
 
-    // 💾 Guarda la tasa del día si no existe
-    saveTodayRate() {
-        const currentData = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
-        const today = new Date().toLocaleDateString('es-VE');
-        
-        // Obtenemos la tasa actual desde el DOM (donde la pone tu monitor-master)
-        const rateText = document.getElementById('usd-rate')?.innerText || "0";
-        const rate = parseFloat(rateText.replace(',', '.'));
-
-        if (rate > 0 && !currentData.find(d => d.date === today)) {
-            currentData.push({ date: today, rate: rate });
-            // Solo guardamos los últimos 30 días
-            if (currentData.length > 30) currentData.shift();
-            localStorage.setItem(this.storageKey, JSON.stringify(currentData));
-        }
-    },
-
     createModal() {
+        if (document.getElementById('historyModal')) return;
+        
         const modalHTML = `
-            <div id="historyModal" class="modal">
-                <div class="modal-content">
-                    <span class="close-history">&times;</span>
-                    <h2>Historial de Tendencia (USD)</h2>
-                    <canvas id="rateChart"></canvas>
+            <div id="historyModal" class="modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px);">
+                <div class="modal-content" style="background:#0f172a; margin:10% auto; padding:20px; border:1px solid #334155; width:90%; max-width:600px; border-radius:15px; color:white; position:relative;">
+                    <span class="close-history" style="position:absolute; right:20px; top:10px; cursor:pointer; font-size:28px;">&times;</span>
+                    <h2 style="margin-bottom:20px; font-size:1.2rem; font-weight:bold;">Historial de Tendencia (BCV)</h2>
+                    <div style="height: 300px; width: 100%;">
+                        <canvas id="rateChart"></canvas>
+                    </div>
                 </div>
             </div>
         `;
@@ -46,41 +33,72 @@ const HistoryModule = {
         };
     },
 
-    renderChart() {
-        const ctx = document.getElementById('rateChart').getContext('2d');
-        const data = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
+    async renderChart() {
+        const modal = document.getElementById('historyModal');
+        modal.style.display = "block";
         
-        if (data.length < 2) {
-            alert("Necesitamos al menos 2 días de datos para generar la tendencia.");
-            return;
+        const canvas = document.getElementById('rateChart');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        try {
+            const response = await fetch(this.apiUrl);
+            const data = await response.json();
+
+            // Mensaje si no hay datos suficientes (necesitamos al menos 2 para una línea)
+            if (!data || data.length < 2) {
+                if (window.myChart) window.myChart.destroy();
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.font = "16px Arial";
+                ctx.fillStyle = "#94a3b8";
+                ctx.textAlign = "center";
+                ctx.fillText("Recopilando datos... Vuelve en 24h.", canvas.width / 2, canvas.height / 2);
+                return;
+            }
+
+            const labels = data.map(d => d.date);
+            const usdValues = data.map(d => d.usd_val);
+            
+            // Lógica de color: Rojo si sube (devaluación), Verde si baja
+            const isUp = usdValues[usdValues.length - 1] > usdValues[usdValues.length - 2];
+            const color = isUp ? '#ef4444' : '#22c55e'; 
+
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, color + '66');
+            gradient.addColorStop(1, color + '00');
+
+            if (window.myChart) window.myChart.destroy();
+
+            window.myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: usdValues,
+                        borderColor: color,
+                        borderWidth: 2,
+                        fill: true,
+                        backgroundColor: gradient,
+                        pointRadius: 0,
+                        pointHoverRadius: 5,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: true, grid: { display: false } },
+                        y: { display: true, position: 'right', grid: { color: '#334155' } }
+                    }
+                }
+            });
+        } catch (e) {
+            console.error("❌ Error en la gráfica:", e);
         }
-
-        const labels = data.map(d => d.date);
-        const values = data.map(d => d.rate);
-        
-        // Lógica de color: Comparar hoy vs ayer
-        const isUp = values[values.length - 1] > values[values.length - 2];
-        const color = isUp ? '#ef4444' : '#22c55e'; // Rojo si sube, Verde si baja
-
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Tasa Oficial BCV',
-                    data: values,
-                    borderColor: color,
-                    backgroundColor: color + '22',
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: { responsive: true }
-        });
-        
-        document.getElementById('historyModal').style.display = "block";
     }
 };
 
-// Iniciar cuando el DOM esté listo
+// Iniciar módulo
 document.addEventListener('DOMContentLoaded', () => HistoryModule.init());
