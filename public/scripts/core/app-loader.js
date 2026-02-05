@@ -19,7 +19,7 @@ const AppLoader = {
         // 3. RENDERIZADO Y UI (Lo que el usuario ve)
         'public/scripts/ui/ui-render.js',
         'public/scripts/ui/ui-features.js',
-        'public/scripts/ui/calc-logic.js',
+        'public/scripts/ui/calc-logic.js', 
 
         // 4. CONTROL Y SUPERVISIÓN (Los directores de orquesta)
         // Se cargan al final para asegurar que todas las funciones anteriores ya existan

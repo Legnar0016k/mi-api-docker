@@ -9,6 +9,7 @@ const assets = [
     './public/css/style1.css',
     './public/css/style2.css', 
     './public/css/style3.css',
+    './public/css/history.css',
     './public/css/theme-toggle.css',
   
     // Core (Sigue el mismo orden de tu app-loader)

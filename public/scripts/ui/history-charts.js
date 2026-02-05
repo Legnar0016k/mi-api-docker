@@ -11,6 +11,7 @@ const HistoryModule = {
         console.log("📊 Módulo de Historia: Inicializando...");
         this.createModal();
     },
+    
 
     createModal() {
         if (document.getElementById('historyModal')) return;
