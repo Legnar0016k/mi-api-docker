@@ -5,7 +5,7 @@
 
 const HistoryModule = {
     // URL de tu API en Railway (ajustada a tu endpoint)
-    apiUrl: '/api/historial',
+    apiUrl: 'https://mi-api-docker-production.up.railway.app/api/historial',
 
     init() {
         console.log("📊 Módulo de Historia: Inicializando...");
