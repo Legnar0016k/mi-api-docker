@@ -1,6 +1,7 @@
 /** logica nueva 05/02/2026
- * 💾 SISTEMA DE CACHÉ DE TASAS (Integrado)
- * Optimiza el consumo de recursos de Railway para el Dólar
+/**
+ * 💾 SISTEMA DE CACHÉ DE TASAS
+ * Optimiza el consumo de recursos de Railway (USD)
  */
 const RateCache = {
     set(key, data, expirationInMinutes = 120) {
@@ -25,7 +26,7 @@ const RateCache = {
 
 async function obtenerDolarConRespaldo() {
     try {
-        // 1. Intentar obtener del caché local primero (Expiración: 2 horas)
+        // 1. Intentar obtener del caché local primero
         const cached = RateCache.get('cache_tasa_bcv_usd');
         if (cached) {
             console.log("⚡ Usando tasa Dólar desde caché (Ahorro de API)");
@@ -44,7 +45,7 @@ async function obtenerDolarConRespaldo() {
                 origen: data.fuente || 'Respaldo'
             };
 
-            // 2. Guardar en caché local por 120 minutos
+            // 2. Guardar en caché por 2 horas (120 min)
             RateCache.set('cache_tasa_bcv_usd', resultado, 120);
             return resultado;
         }
