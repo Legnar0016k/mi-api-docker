@@ -174,3 +174,18 @@ bcvScraper.getDolarBCV().then(tasa => {
     });
 });
 
+// SIMULACIÓN: Crear un punto de ayer para que la gráfica tenga 2 puntos
+bcvScraper.getDolarBCV().then(tasa => {
+    // Restamos 1 día a la fecha actual
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const dateStr = yesterday.toISOString().split('T')[0];
+    
+    // Insertamos un valor ligeramente menor para ver la tendencia en ROJO (subida)
+    const tasaSimulada = tasa - 0.50; 
+
+    db.run("INSERT OR IGNORE INTO history (date, usd_val) VALUES (?, ?)", [dateStr, tasaSimulada], () => {
+        console.log("📈 Punto de ayer simulado para activar la gráfica");
+    });
+});
+
