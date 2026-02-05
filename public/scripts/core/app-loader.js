@@ -87,16 +87,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// // En app-loader.js, después de cargar tus módulos
-// document.addEventListener('themeChanged', (event) => {
-//     console.log('Tema cambiado a:', event.detail.theme);
-    
-//     // Si necesitas recargar algún dato o reinicializar componentes
-//     // Por ejemplo, si usas gráficos que necesitan recolorearse
-//     if (typeof supervisorFetch === 'function') {
-//         supervisorFetch();
-//     }
-// });
+
 
 // Arrancamos el motor
 AppLoader.init();

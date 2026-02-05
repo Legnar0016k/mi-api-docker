@@ -1,3 +1,4 @@
+//*********************************************************************** */
 const CACHE_NAME = 'bcv-monitor-v' + new Date().getTime(); // Esto genera un nombre único cada vez
 const assets = [
 
@@ -24,6 +25,7 @@ const assets = [
     './public/scripts/ui/ui-render.js',
     './public/scripts/ui/ui-features.js',
     './public/scripts/ui/calc-logic.js',
+    './public/scripts/ui/history-charts.js',
     
     // Otros
     './public/scripts/debug/recovery-logic.js',
@@ -31,14 +33,14 @@ const assets = [
     './public/assets/icon-512.png'
 
 ];
-
+//*********************************************************************** */
 // // Instalación (Logica antigua de instalacion)
 // self.addEventListener('install', event => {
 //     event.waitUntil(
 //         caches.open(CACHE_NAME).then(cache => cache.addAll(assets))
 //     );
 // });
-
+//*********************************************************************** */
 // Instalación corregida con captura de errores
 self.addEventListener('install', event => {
     event.waitUntil(
@@ -50,7 +52,7 @@ self.addEventListener('install', event => {
         })
     );
 });
-
+//*********************************************************************** */
 // Activación y limpieza de caches viejos
 self.addEventListener('activate', event => {
     event.waitUntil(
@@ -59,7 +61,7 @@ self.addEventListener('activate', event => {
         ))
     );
 });
-
+//*********************************************************************** */
 // Estrategia: Red primero, si falla, usar cache
 self.addEventListener('fetch', event => {
     // No cachear peticiones a la API para evitar conflictos de CORS en el SW
@@ -74,9 +76,10 @@ self.addEventListener('fetch', event => {
     );
 });
 
-// Al final de tu sw.js
+// Al final de tu sw.js*****************************************************
 self.addEventListener('message', (event) => {
     if (event.data === 'SKIP_WAITING') {
         self.skipWaiting();
     }
 });
+//*********************************************************************** */

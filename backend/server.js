@@ -12,8 +12,12 @@ const db = new sqlite3.Database('./backend/history.db');
 const cron = require('node-cron');
 
 // Permite que Vercel lea los datos de Railway
-app.use(cors());
-
+const corsOptions = {
+    origin: 'https://monitor-bcv-venezuela.vercel.app', // Tu URL de Vercel
+    optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
+//**************************************************************************** */
 // 2. ESTA ES LA LÍNEA NUEVA:
 // Hace que cuando alguien entre a la IP, vea tu index.html
 app.use(express.static(path.join(__dirname, '../')));
