@@ -166,3 +166,11 @@ app.get('*', (req, res) => {
 });
 app.listen(PORT, '0.0.0.0', () => console.log(`Puerto: ${PORT}`));
 
+// Forzar un registro inmediato para probar la base de datos
+bcvScraper.getDolarBCV().then(tasa => {
+    const today = new Date().toISOString().split('T')[0];
+    db.run("INSERT OR IGNORE INTO history (date, usd_val) VALUES (?, ?)", [today, tasa], () => {
+        console.log("🚀 Registro inicial forzado con éxito");
+    });
+});
+
