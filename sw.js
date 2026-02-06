@@ -26,7 +26,7 @@ const assets = [
     './public/scripts/ui/ui-render.js',
     './public/scripts/ui/ui-features.js',
     './public/scripts/ui/calc-logic.js',
-    'public/scripts/ui/history-charts.js',
+    './public/scripts/ui/history-charts.js',
     
     // Otros
     './public/scripts/debug/recovery-logic.js',

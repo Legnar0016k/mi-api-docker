@@ -3,38 +3,37 @@
  * Integración con SQLite Railway + Estilo Google Finance
  */
 
-window.HistoryModule = window.HistoryModule || {
-    // URL de tu API en Railway
+const HistoryModule = {
+    // URL de tu API en Railway (ajustada a tu endpoint)
     apiUrl: 'https://mi-api-docker-production.up.railway.app/api/historial',
 
     init() {
-        console.log("📊 Módulo de Historia: Inicializado...");
+        console.log("📊 Módulo de Historia: Inicializando...");
         this.createModal();
     },
     
-//======================================================================================
+
     createModal() {
         if (document.getElementById('historyModal')) return;
-
+        
         const modalHTML = `
             <div id="historyModal" class="modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px);">
                 <div class="modal-content" style="background:#0f172a; margin:10% auto; padding:20px; border:1px solid #334155; width:90%; max-width:600px; border-radius:15px; color:white; position:relative;">
                     <span class="close-history" style="position:absolute; right:20px; top:10px; cursor:pointer; font-size:28px;">&times;</span>
-                    <h2 style="margin-bottom:20px; font-size:1.2rem; font-family:'Plus Jakarta Sans', sans-serif;">Historial BCV (7 días)</h2>
-                    <div class="chart-container" style="position:relative; height:300px; width:100%;">
+                    <h2 style="margin-bottom:20px; font-size:1.2rem; font-weight:bold;">Historial de Tendencia (BCV)</h2>
+                    <div style="height: 300px; width: 100%;">
                         <canvas id="rateChart"></canvas>
                     </div>
                 </div>
             </div>
         `;
         document.body.insertAdjacentHTML('beforeend', modalHTML);
-
-        // Evento para cerrar
+        
         document.querySelector('.close-history').onclick = () => {
             document.getElementById('historyModal').style.display = "none";
         };
     },
-//======================================================================================
+
     async renderChart() {
         const modal = document.getElementById('historyModal');
         modal.style.display = "block";
@@ -102,12 +101,5 @@ window.HistoryModule = window.HistoryModule || {
     }
 };
 
-// // Iniciar módulo
-// document.addEventListener('DOMContentLoaded', () => HistoryModule.init());
-
-// Al final de history-charts.js
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => HistoryModule.init());
-} else {
-    HistoryModule.init();
-}
+// Iniciar módulo
+document.addEventListener('DOMContentLoaded', () => HistoryModule.init());
