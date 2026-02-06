@@ -86,30 +86,28 @@ app.get('/tasa-bcv', async (req, res) => {
 
 app.get('/api/euro', async (req, res) => {
     try {
-        // Implementación del límite de 5000ms para la respuesta del BCV
-        const tasaRaw = await withTimeout(bcvScraper.getEuroBCV(), 5000);
-
-        if (!tasaRaw) throw new Error("Scraper de Euro fallido");
-
-        // Procesamiento y validación cruzada (EUR)
-        const resultado = await validarYProcesar(tasaRaw, 'eur');
-
-        res.json({ 
-            success: true, 
-            tasa: resultado.tasa, 
-            fuente: resultado.fuente,
-            timestamp: new Date().toISOString()
-        });
+        // 1. Intento ultrarrápido con el BCV (máximo 4 segundos)
+        const tasaRaw = await withTimeout(bcvScraper.getEuroBCV(), 4000);
+        
+        if (tasaRaw) {
+            const resultado = await validarYProcesar(tasaRaw, 'eur');
+            return res.json({ success: true, tasa: resultado.tasa, fuente: 'BCV_Oficial' });
+        }
+        throw new Error("BCV_FALLO");
 
     } catch (error) {
-        // Registro de error específico en los logs del servidor
-        console.error(`🚨 [EURO TIMEOUT/ERROR]: ${error.message}`);
-
-        res.status(503).json({ 
-            success: false, 
-            error: 'Error en consulta Euro',
-            detalles: error.message === 'Timeout' ? 'El servidor BCV excedió el tiempo de respuesta (5s)' : error.message
-        });
+        console.warn("⚠️ Servidor: BCV lento/caído. Autogestionando respaldo para Euro...");
+        try {
+            // 2. Si el BCV falla, EL SERVIDOR busca la solución (No el cliente)
+            const backup = await axios.get('https://ve.dolarapi.com/v1/dolares/euro', { timeout: 3000 });
+            return res.json({ 
+                success: true, 
+                tasa: backup.data.promedio || backup.data.compra, 
+                fuente: 'Servidor_Respaldo_Dinamico' 
+            });
+        } catch (err) {
+            res.status(500).json({ success: false, error: 'Fallo total de fuentes' });
+        }
     }
 });
 
