@@ -54,7 +54,7 @@
             
             // Re-activación de arterias
             if (typeof supervisorFetch === 'function') supervisorFetch();
-            if (typeof fetchEuro === 'function') fetchEuro();
+            
         },
 
         iniciarVigilancia() {

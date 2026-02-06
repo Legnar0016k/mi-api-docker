@@ -68,5 +68,5 @@ const getTasaFromBCV = async (divId) => {
 // Exportamos las funciones específicas
 module.exports = {
     getDolarBCV: () => getTasaFromBCV('dolar'),
-    getEuroBCV: () => getTasaFromBCV('euro')
+    
 };

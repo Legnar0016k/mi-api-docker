@@ -84,33 +84,6 @@ app.get('/tasa-bcv', async (req, res) => {
     }
 });
 
-app.get('/api/euro', async (req, res) => {
-    try {
-        // 1. Intento ultrarrápido con el BCV (máximo 4 segundos)
-        const tasaRaw = await withTimeout(bcvScraper.getEuroBCV(), 4000);
-        
-        if (tasaRaw) {
-            const resultado = await validarYProcesar(tasaRaw, 'eur');
-            return res.json({ success: true, tasa: resultado.tasa, fuente: 'BCV_Oficial' });
-        }
-        throw new Error("BCV_FALLO");
-
-    } catch (error) {
-        console.warn("⚠️ Servidor: BCV lento/caído. Autogestionando respaldo para Euro...");
-        try {
-            // 2. Si el BCV falla, EL SERVIDOR busca la solución (No el cliente)
-            const backup = await axios.get('https://ve.dolarapi.com/v1/dolares/euro', { timeout: 3000 });
-            return res.json({ 
-                success: true, 
-                tasa: backup.data.promedio || backup.data.compra, 
-                fuente: 'Servidor_Respaldo_Dinamico' 
-            });
-        } catch (err) {
-            res.status(500).json({ success: false, error: 'Fallo total de fuentes' });
-        }
-    }
-});
-
 // --- CRON JOB INTELIGENTE ---
 // Ahora solo guarda en el historial si la tasa es válida
 cron.schedule('0 9,13,17 * * *', async () => {
