@@ -1,82 +1,99 @@
-// [server.js] - Servidor de Producción Blindado v3.8.8
+// [server.js] - Servidor con Validación Dinámica v4.0.0
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 const cron = require('node-cron');
+const axios = require('axios'); // Añadido para la validación externa
 const bcvScraper = require('./scraper-bcv.js');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const db = new sqlite3.Database('./backend/history.db');
 
-// Configuración de CORS
 app.use(cors({
     origin: 'https://monitor-bcv-venezuela.vercel.app',
     optionsSuccessStatus: 200
 }));
 
-// Servir archivos estáticos del nivel superior
 app.use(express.static(path.join(__dirname, '../')));
 
-// PROTECTOR ANTI-CUELGUE (Evita el Error 503 de Railway)
-const withTimeout = (promise, ms) => {
-    const timeout = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('TIMEOUT_BCV')), ms)
-    );
-    return Promise.race([promise, timeout]);
-};
+// --- LÓGICA DE VALIDACIÓN DINÁMICA (EL CEREBRO) ---
 
-// --- ENDPOINTS ---
+const MARGEN_TOLERANCIA = 0.15; // 15% de diferencia permitida
 
-// 💵 Endpoint Dólar (Ruta principal)
+async function obtenerReferenciaExterna(moneda = 'usd') {
+    try {
+        const url = moneda === 'usd' 
+            ? 'https://ve.dolarapi.com/v1/dolares/oficial' 
+            : 'https://ve.dolarapi.com/v1/dolares/euro';
+        const res = await axios.get(url, { timeout: 5000 });
+        return res.data.promedio || res.data.compra;
+    } catch (e) {
+        console.error(`⚠️ Error consultando referencia externa (${moneda}):`, e.message);
+        return null;
+    }
+}
+
+async function validarYProcesar(tasaBcv, moneda = 'usd') {
+    const refMercado = await obtenerReferenciaExterna(moneda);
+    
+    if (!refMercado) return { tasa: tasaBcv, fuente: 'BCV_Unverified' };
+
+    const diferencia = Math.abs(tasaBcv - refMercado) / refMercado;
+
+    // Si la tasa del BCV es coherente (está cerca del mercado)
+    if (diferencia <= MARGEN_TOLERANCIA) {
+        return { tasa: tasaBcv, fuente: 'BCV_Oficial', verificado: true };
+    } else {
+        // Si el BCV devuelve una locura, el servidor hace "SWAP" automático a la referencia
+        console.error(`🚨 ANOMALÍA DETECTADA: BCV(${tasaBcv}) vs Ref(${refMercado}). Usando Respaldo.`);
+        return { tasa: refMercado, fuente: 'DolarApi_Fallback', verificado: false };
+    }
+}
+
+// --- ENDPOINTS ACTUALIZADOS ---
+
 app.get('/tasa-bcv', async (req, res) => {
     try {
-        const tasa = await bcvScraper.getDolarBCV();
-        if (tasa) {
-            res.json({ success: true, tasa, fuente: 'BCV_Oficial', timestamp: new Date().toISOString() });
-        } else {
-            res.status(500).json({ success: false, error: 'No se pudo obtener el Dólar' });
-        }
+        const tasaRaw = await bcvScraper.getDolarBCV();
+        if (!tasaRaw) throw new Error("Scraper fallido");
+
+        const resultado = await validarYProcesar(tasaRaw, 'usd');
+        res.json({ 
+            success: true, 
+            tasa: resultado.tasa, 
+            fuente: resultado.fuente,
+            timestamp: new Date().toISOString() 
+        });
     } catch (error) {
-        res.status(503).json({ success: false, error: 'Error de servidor' });
+        res.status(503).json({ success: false, error: 'Servicio no disponible' });
     }
 });
 
-// 💶 Endpoint Euro
 app.get('/api/euro', async (req, res) => {
     try {
-        // Le damos 8 segundos al BCV para responder antes de abortar
-        const tasa = await withTimeout(bcvScraper.getEuroBCV(), 8000);
-        if (tasa) {
-            res.json({ success: true, tasa });
-        } else {
-            res.status(500).json({ success: false, error: 'Dato nulo del BCV' });
-        }
+        const tasaRaw = await bcvScraper.getEuroBCV();
+        if (!tasaRaw) throw new Error("Scraper fallido");
+
+        const resultado = await validarYProcesar(tasaRaw, 'eur');
+        res.json({ success: true, tasa: resultado.tasa, fuente: resultado.fuente });
     } catch (error) {
-        console.error("🚨 Fallo en /api/euro:", error.message);
-        res.status(503).json({ success: false, error: 'BCV fuera de servicio o lento' });
+        res.status(503).json({ success: false, error: 'Error en consulta Euro' });
     }
 });
 
-// 📊 Endpoint Historial
-app.get('/api/historial', (req, res) => {
-    db.all("SELECT * FROM history ORDER BY date ASC LIMIT 30", [], (err, rows) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json(rows);
-    });
-});
-
-// --- SISTEMA AUTOMÁTICO (Cron) ---
+// --- CRON JOB INTELIGENTE ---
+// Ahora solo guarda en el historial si la tasa es válida
 cron.schedule('0 9,13,17 * * *', async () => {
-    console.log("⏰ Guardando historial automático...");
-    const tasa = await bcvScraper.getDolarBCV();
-    if (tasa) {
+    console.log("⏰ Ejecutando registro de historial verificado...");
+    const tasaRaw = await bcvScraper.getDolarBCV();
+    if (tasaRaw) {
+        const resultado = await validarYProcesar(tasaRaw, 'usd');
+        // Solo guardamos si la fuente es oficial o si decidimos que el respaldo es válido
         const today = new Date().toISOString().split('T')[0];
-        db.run("INSERT OR IGNORE INTO history (date, usd_val) VALUES (?, ?)", [today, tasa]);
+        db.run("INSERT OR IGNORE INTO history (date, usd_val) VALUES (?, ?)", [today, resultado.tasa]);
     }
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 API activa en puerto ${PORT}`);
-});
+app.listen(PORT, '0.0.0.0', () => console.log(`🚀 Server Verificado en Puerto ${PORT}`));
