@@ -1,69 +1,91 @@
-// [server.js] - Servidor con Validación Dinámica v4.0.0
+// [server.js] - Servidor con Validación Dinámica (Solo USD) v4.1.0
+// Fecha: 2026-02-06
+// Descripción: Eliminación total de lógica de Euro y optimización de validación cruzada.
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 const cron = require('node-cron');
-const axios = require('axios'); // Añadido para la validación externa
+const axios = require('axios');
 const bcvScraper = require('./scraper-bcv.js');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const db = new sqlite3.Database('./backend/history.db');
 
+// Configuración de CORS
 app.use(cors({
     origin: 'https://monitor-bcv-venezuela.vercel.app',
     optionsSuccessStatus: 200
 }));
 
+// Servir archivos estáticos
 app.use(express.static(path.join(__dirname, '../')));
 
 // --- LÓGICA DE VALIDACIÓN DINÁMICA (EL CEREBRO) ---
 
-const MARGEN_TOLERANCIA = 0.15; // 15% de diferencia permitida
+const MARGEN_TOLERANCIA = 0.15; // 15% de diferencia permitida respecto a referencia
 
-async function obtenerReferenciaExterna(moneda = 'usd') {
+/**
+ * Obtiene la tasa de referencia oficial desde una API externa (DolarApi)
+ */
+async function obtenerReferenciaExterna() {
     try {
-        const url = moneda === 'usd' 
-            ? 'https://ve.dolarapi.com/v1/dolares/oficial' 
-            : 'https://ve.dolarapi.com/v1/dolares/euro';
+        const url = 'https://ve.dolarapi.com/v1/dolares/oficial';
         const res = await axios.get(url, { timeout: 4000 });
         return res.data.promedio || res.data.compra;
     } catch (e) {
-        console.error(`⚠️ Error consultando referencia externa (${moneda}):`, e.message);
+        console.error("🛡️ Validador: Imposible contactar referencia externa.");
         return null;
     }
 }
 
-async function validarYProcesar(tasaBcv, moneda = 'usd') {
-    const refMercado = await obtenerReferenciaExterna(moneda);
+/**
+ * Compara el dato extraído del BCV contra el mercado para evitar "tasas locas"
+ */
+async function validarYProcesar(tasaRaw) {
+    const refMercado = await obtenerReferenciaExterna();
     
-    if (!refMercado) return { tasa: tasaBcv, fuente: 'BCV_Unverified' };
+    if (!refMercado) {
+        console.warn("⚠️ Sin referencia externa. Usando dato de scraper con precaución.");
+        return { tasa: tasaRaw, fuente: 'BCV_Scraper' };
+    }
 
-    const diferencia = Math.abs(tasaBcv - refMercado) / refMercado;
+    const diferencia = Math.abs(tasaRaw - refMercado) / refMercado;
 
-    // Si la tasa del BCV es coherente (está cerca del mercado)
     if (diferencia <= MARGEN_TOLERANCIA) {
-        return { tasa: tasaBcv, fuente: 'BCV_Oficial', verificado: true };
+        console.log(`✅ Validación exitosa. Dif: ${(diferencia * 100).toFixed(2)}%`);
+        return { tasa: tasaRaw, fuente: 'BCV_Oficial' };
     } else {
-        // Si el BCV devuelve una locura, el servidor hace "SWAP" automático a la referencia
-        console.error(`🚨 ANOMALÍA DETECTADA: BCV(${tasaBcv}) vs Ref(${refMercado}). Usando Respaldo.`);
-        return { tasa: refMercado, fuente: 'DolarApi_Fallback', verificado: false };
+        console.error(`🚨 ANOMALÍA DETECTADA: BCV(${tasaRaw}) vs REF(${refMercado}). Usando Respaldo.`);
+        return { tasa: refMercado, fuente: 'DolarApi_Respaldo' };
     }
 }
 
-// --- ENDPOINTS ACTUALIZADOS ---
+// --- ENDPOINTS ---
 
+/**
+ * 💵 Endpoint Dólar (Ruta principal)
+ * Implementa un timeout manual para evitar colgar el servidor si el BCV no responde
+ */
 app.get('/tasa-bcv', async (req, res) => {
     try {
-        // Envolvemos el scraper en la promesa de tiempo límite
-        // Si el BCV no responde en 5 segundos, saltará al 'catch'
-        const tasaRaw = await withTimeout(bcvScraper.getDolarBCV(), 5000);
+        console.log("🔍 Consulta recibida: Iniciando peritaje de Dólar...");
+        
+        // Timeout de seguridad de 7 segundos para el scraper
+        const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Timeout')), 7000)
+        );
 
-        if (!tasaRaw) throw new Error("Scraper fallido o vacío");
+        const tasaRaw = await Promise.race([
+            bcvScraper.getDolarBCV(),
+            timeoutPromise
+        ]);
 
-        // Continuamos con el peritaje y validación (Railway vs DolarApi)
-        const resultado = await validarYProcesar(tasaRaw, 'usd');
+        if (!tasaRaw) throw new Error("Scraper entregó dato nulo o vacío");
+
+        const resultado = await validarYProcesar(tasaRaw);
         
         res.json({ 
             success: true, 
@@ -73,28 +95,50 @@ app.get('/tasa-bcv', async (req, res) => {
         });
 
     } catch (error) {
-        // Si el error fue por tiempo (Timeout), lo registramos específicamente
-        console.error(`🚨 [BCV TIMEOUT/ERROR]: ${error.message}`);
+        console.error(`🚨 [ERROR CRÍTICO]: ${error.message}`);
         
         res.status(503).json({ 
             success: false, 
             error: 'Servicio no disponible',
-            detalles: error.message === 'Timeout' ? 'El BCV tardó demasiado en responder' : 'Error de scraping'
+            detalles: error.message === 'Timeout' ? 'El BCV tardó demasiado' : 'Fallo de scraping'
         });
     }
 });
 
+/**
+ * 📊 Endpoint Historial (Solo USD)
+ */
+app.get('/api/historial', (req, res) => {
+    db.all("SELECT * FROM history ORDER BY date ASC LIMIT 30", [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
+    });
+});
+
 // --- CRON JOB INTELIGENTE ---
-// Ahora solo guarda en el historial si la tasa es válida
+// Registra la tasa oficial en la base de datos 3 veces al día
 cron.schedule('0 9,13,17 * * *', async () => {
     console.log("⏰ Ejecutando registro de historial verificado...");
-    const tasaRaw = await bcvScraper.getDolarBCV();
-    if (tasaRaw) {
-        const resultado = await validarYProcesar(tasaRaw, 'usd');
-        // Solo guardamos si la fuente es oficial o si decidimos que el respaldo es válido
-        const today = new Date().toISOString().split('T')[0];
-        db.run("INSERT OR IGNORE INTO history (date, usd_val) VALUES (?, ?)", [today, resultado.tasa]);
+    try {
+        const tasaRaw = await bcvScraper.getDolarBCV();
+        if (tasaRaw) {
+            const resultado = await validarYProcesar(tasaRaw);
+            const today = new Date().toISOString().split('T')[0];
+            
+            db.run(`INSERT OR REPLACE INTO history (date, rate, source) VALUES (?, ?, ?)`, 
+                [today, resultado.tasa, resultado.fuente], 
+                (err) => {
+                    if (err) console.error("❌ Error en DB Cron:", err.message);
+                    else console.log("✅ Historial USD actualizado correctamente.");
+                }
+            );
+        }
+    } catch (e) {
+        console.error("❌ Error en tarea programada:", e.message);
     }
 });
 
-app.listen(PORT, '0.0.0.0', () => console.log(`🚀 Server Verificado en Puerto ${PORT}`));
+// Inicio del servidor
+app.listen(PORT, () => {
+    console.log(`🚀 Servidor Dólar Pro activo en puerto ${PORT}`);
+});
