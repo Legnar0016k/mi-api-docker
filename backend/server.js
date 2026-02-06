@@ -27,7 +27,7 @@ async function obtenerReferenciaExterna(moneda = 'usd') {
         const url = moneda === 'usd' 
             ? 'https://ve.dolarapi.com/v1/dolares/oficial' 
             : 'https://ve.dolarapi.com/v1/dolares/euro';
-        const res = await axios.get(url, { timeout: 5000 });
+        const res = await axios.get(url, { timeout: 4000 });
         return res.data.promedio || res.data.compra;
     } catch (e) {
         console.error(`⚠️ Error consultando referencia externa (${moneda}):`, e.message);

@@ -692,3 +692,16 @@
 ### 🚀 Mejora de Inteligencia Artificial de Recuperación
 - **recovery-logic.js**: Implementada validación dinámica. Se eliminaron los límites fijos (MIN/MAX) reemplazándolos por una consulta en tiempo real a DolarApi para establecer rangos de seguridad automáticos.
 - **Auto-Corrección**: El sistema ahora detecta desviaciones mayores al 10% respecto al mercado y fuerza la resincronización.
+
+# Changelog
+
+## [4.6.0] - 2026-02-06
+### 🛡️ Sistema de Validación Dinámica y Autocuración (Actualización Crítica)
+
+Esta versión introduce una arquitectura de "Referencia Cruzada" que elimina la necesidad de ajustes manuales ante cambios bruscos en la economía (inflación o reconversión).
+
+#### Backend (Server & Scraper)
+- **Validación Dinámica**: El servidor ahora consulta `DolarApi` en tiempo real para validar la coherencia de los datos extraídos del BCV.
+- **Filtro de Anomalías**: Se implementó un margen de tolerancia del 15%. Si el BCV arroja un dato incoherente (error de lectura o caída), el servidor conmuta automáticamente a la tasa de respaldo.
+- **Liberación de Rangos**: Se eliminaron los límites fijos (`num < 100`) en `scraper-bcv.js`. Ahora el scraper es un extractor puro y la lógica de negocio reside en el servidor.
+- **Resiliencia del Euro**: El endpoint `/api/euro
