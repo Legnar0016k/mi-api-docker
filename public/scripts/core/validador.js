@@ -4,7 +4,8 @@
  */
 
 const ValidadorTecnico = {
-    UMBRAL: 0.10, // 10% de tolerancia
+    // Bajamos el umbral al 5% para ser más estrictos con la fuente principal
+    UMBRAL: 0.05, 
 
     async esTasaValida(tasaPrincipal) {
         try {
@@ -16,6 +17,8 @@ const ValidadorTecnico = {
             if (!tasaRef) return false;
 
             const diferencia = Math.abs(tasaPrincipal - tasaRef) / tasaRef;
+            
+            // Si la diferencia es mayor al 5%, rechazamos CUALQUIER cosa que diga Railway
             const esValida = diferencia <= this.UMBRAL;
 
             console.log(`Validador: Ref ${tasaRef} vs Tuya ${tasaPrincipal}`);
@@ -23,8 +26,8 @@ const ValidadorTecnico = {
 
             return esValida;
         } catch (e) {
-            console.error("Validador: Error en referencia, se usará el límite manual por seguridad.");
-            return null; // Indica que no se pudo validar dinámicamente
+            // Si DolarApi (referencia) falla, por seguridad rechazamos si es un número loco
+            return (tasaPrincipal > 30 && tasaPrincipal < 50); 
         }
     }
 };
