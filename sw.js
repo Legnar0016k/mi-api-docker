@@ -6,31 +6,31 @@ const assets = [
     'index.html',  // El archivo en la raíz
 
     // Estilos
-    'public/css/style1.css',
-    'public/css/style2.css',
-    'public/css/style3.css',
-    'public/css/history.css',
+    './public/css/style1.css',
+    './public/css/style2.css',
+    './public/css/style3.css',
+    './public/css/history.css',
   
     // Core (Sigue el mismo orden de tu app-loader)
-    'public/scripts/core/app-loader.js',
-    'public/scripts/core/theme-manager.js',
-    'public/scripts/core/scraper-respaldo.js',
-    'public/scripts/core/validador.js',
-    'public/scripts/core/validador-pro.js',
-    'public/scripts/core/validador-ui.js',
-    'public/scripts/core/supervisor.js',
-    'public/scripts/core/monitor-master.js',
+    './public/scripts/core/app-loader.js',
+    './public/scripts/core/theme-manager.js',
+    './public/scripts/core/scraper-respaldo.js',
+    './public/scripts/core/validador.js',
+    './public/scripts/core/validador-pro.js',
+    './public/scripts/core/validador-ui.js',
+    './public/scripts/core/supervisor.js',
+    './public/scripts/core/monitor-master.js',
   
     // UI
-    'public/scripts/ui/ui-render.js',
-    'public/scripts/ui/ui-features.js',
-    'public/scripts/ui/calc-logic.js',
-    'public/scripts/ui/history-charts.js', // Agregado explícitamente
+    './public/scripts/ui/ui-render.js',
+    './public/scripts/ui/ui-features.js',
+    './public/scripts/ui/calc-logic.js',
+    './public/scripts/ui/history-charts.js', // Agregado explícitamente
     
     // Otros
-    'public/scripts/debug/recovery-logic.js',
-    'public/assets/manifest.json',
-    'public/assets/icon-512.png'
+    './public/scripts/debug/recovery-logic.js',
+    './public/assets/manifest.json',
+    './public/assets/icon-512.png'
 
 ];
 //*********************************************************************** */
