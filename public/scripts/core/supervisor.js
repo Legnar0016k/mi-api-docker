@@ -6,7 +6,7 @@
 const CONFIG_SUPERVISOR = {
     API_PRIMARY: 'https://mi-api-docker-production.up.railway.app/tasa-bcv',
     API_FALLBACK: 'https://ve.dolarapi.com/v1/dolares/oficial',
-    TIMEOUT_MS: 6000 // Aumentamos a 6s para dar margen a la validación del server
+    TIMEOUT_MS: 7000 // Aumentamos a 6s para dar margen a la validación del server
 };
 
 async function supervisorFetch() {

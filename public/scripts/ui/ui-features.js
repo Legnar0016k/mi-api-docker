@@ -9,7 +9,7 @@ async function fetchEuro() {
 
     // Aumentamos ligeramente el margen de espera para Railway
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    const timeoutId = setTimeout(() => controller.abort(), 7000);
 
     try {
         // 1. Intentamos obtener el dato validado de nuestro servidor

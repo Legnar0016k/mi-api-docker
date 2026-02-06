@@ -56,30 +56,60 @@ async function validarYProcesar(tasaBcv, moneda = 'usd') {
 
 app.get('/tasa-bcv', async (req, res) => {
     try {
-        const tasaRaw = await bcvScraper.getDolarBCV();
-        if (!tasaRaw) throw new Error("Scraper fallido");
+        // Envolvemos el scraper en la promesa de tiempo límite
+        // Si el BCV no responde en 5 segundos, saltará al 'catch'
+        const tasaRaw = await withTimeout(bcvScraper.getDolarBCV(), 5000);
 
+        if (!tasaRaw) throw new Error("Scraper fallido o vacío");
+
+        // Continuamos con el peritaje y validación (Railway vs DolarApi)
         const resultado = await validarYProcesar(tasaRaw, 'usd');
+        
         res.json({ 
             success: true, 
             tasa: resultado.tasa, 
             fuente: resultado.fuente,
             timestamp: new Date().toISOString() 
         });
+
     } catch (error) {
-        res.status(503).json({ success: false, error: 'Servicio no disponible' });
+        // Si el error fue por tiempo (Timeout), lo registramos específicamente
+        console.error(`🚨 [BCV TIMEOUT/ERROR]: ${error.message}`);
+        
+        res.status(503).json({ 
+            success: false, 
+            error: 'Servicio no disponible',
+            detalles: error.message === 'Timeout' ? 'El BCV tardó demasiado en responder' : 'Error de scraping'
+        });
     }
 });
 
 app.get('/api/euro', async (req, res) => {
     try {
-        const tasaRaw = await bcvScraper.getEuroBCV();
-        if (!tasaRaw) throw new Error("Scraper fallido");
+        // Implementación del límite de 5000ms para la respuesta del BCV
+        const tasaRaw = await withTimeout(bcvScraper.getEuroBCV(), 5000);
 
+        if (!tasaRaw) throw new Error("Scraper de Euro fallido");
+
+        // Procesamiento y validación cruzada (EUR)
         const resultado = await validarYProcesar(tasaRaw, 'eur');
-        res.json({ success: true, tasa: resultado.tasa, fuente: resultado.fuente });
+
+        res.json({ 
+            success: true, 
+            tasa: resultado.tasa, 
+            fuente: resultado.fuente,
+            timestamp: new Date().toISOString()
+        });
+
     } catch (error) {
-        res.status(503).json({ success: false, error: 'Error en consulta Euro' });
+        // Registro de error específico en los logs del servidor
+        console.error(`🚨 [EURO TIMEOUT/ERROR]: ${error.message}`);
+
+        res.status(503).json({ 
+            success: false, 
+            error: 'Error en consulta Euro',
+            detalles: error.message === 'Timeout' ? 'El servidor BCV excedió el tiempo de respuesta (5s)' : error.message
+        });
     }
 });
 
