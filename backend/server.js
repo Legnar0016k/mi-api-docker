@@ -1,4 +1,4 @@
-// Servidor Principal de Producción - v3.8.5
+// [server.js] - Servidor de Producción Blindado v3.8.8
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -10,14 +10,16 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const db = new sqlite3.Database('./backend/history.db');
 
+// Configuración de CORS
 app.use(cors({
     origin: 'https://monitor-bcv-venezuela.vercel.app',
     optionsSuccessStatus: 200
 }));
 
+// Servir archivos estáticos del nivel superior
 app.use(express.static(path.join(__dirname, '../')));
 
-// PROTECTOR ANTI-502: Cancela peticiones lentas del BCV
+// PROTECTOR ANTI-CUELGUE (Evita el Error 503 de Railway)
 const withTimeout = (promise, ms) => {
     const timeout = new Promise((_, reject) => 
         setTimeout(() => reject(new Error('TIMEOUT_BCV')), ms)
@@ -25,25 +27,56 @@ const withTimeout = (promise, ms) => {
     return Promise.race([promise, timeout]);
 };
 
-// Endpoint Euro (Blindado)
+// --- ENDPOINTS ---
+
+// 💵 Endpoint Dólar (Ruta principal)
+app.get('/tasa-bcv', async (req, res) => {
+    try {
+        const tasa = await bcvScraper.getDolarBCV();
+        if (tasa) {
+            res.json({ success: true, tasa, fuente: 'BCV_Oficial', timestamp: new Date().toISOString() });
+        } else {
+            res.status(500).json({ success: false, error: 'No se pudo obtener el Dólar' });
+        }
+    } catch (error) {
+        res.status(503).json({ success: false, error: 'Error de servidor' });
+    }
+});
+
+// 💶 Endpoint Euro
 app.get('/api/euro', async (req, res) => {
     try {
+        // Le damos 8 segundos al BCV para responder antes de abortar
         const tasa = await withTimeout(bcvScraper.getEuroBCV(), 8000);
         if (tasa) {
             res.json({ success: true, tasa });
         } else {
-            throw new Error('Dato nulo');
+            res.status(500).json({ success: false, error: 'Dato nulo del BCV' });
         }
     } catch (error) {
-        console.error("Fallo /api/euro:", error.message);
-        res.status(503).json({ success: false, error: 'BCV Lento o Caído' });
+        console.error("🚨 Fallo en /api/euro:", error.message);
+        res.status(503).json({ success: false, error: 'BCV fuera de servicio o lento' });
     }
 });
 
-// ... resto de endpoints (tasa-bcv, historial) se mantienen igual ...
-
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../index.html'));
+// 📊 Endpoint Historial
+app.get('/api/historial', (req, res) => {
+    db.all("SELECT * FROM history ORDER BY date ASC LIMIT 30", [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
+    });
 });
 
-app.listen(PORT, '0.0.0.0', () => console.log(`🚀 Server en puerto ${PORT}`));
+// --- SISTEMA AUTOMÁTICO (Cron) ---
+cron.schedule('0 9,13,17 * * *', async () => {
+    console.log("⏰ Guardando historial automático...");
+    const tasa = await bcvScraper.getDolarBCV();
+    if (tasa) {
+        const today = new Date().toISOString().split('T')[0];
+        db.run("INSERT OR IGNORE INTO history (date, usd_val) VALUES (?, ?)", [today, tasa]);
+    }
+});
+
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 API activa en puerto ${PORT}`);
+});

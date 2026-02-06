@@ -32,12 +32,12 @@ const UIRenderer = {
     },
 
 
-    actualizarEuro(tasa, esRespaldo = false) {
+   actualizarEuro(tasa, esRespaldo = false) {
         const euroElement = document.getElementById('euro-price');
         if (euroElement) {
-            euroElement.innerText = `${tasa.toFixed(2)} €`;
-            // Indicador visual: Naranja para respaldo, verde para principal
-            euroElement.style.color = esRespaldo ? '#fb923c' : '#10b981'; 
+            euroElement.innerText = `${parseFloat(tasa).toFixed(2)} €`;
+            // Si es de respaldo lo ponemos en un tono ámbar/naranja para que sepas que Railway falló
+            euroElement.style.color = esRespaldo ? '#fb923c' : ''; 
             console.log(`📊 UI: Euro actualizado (${esRespaldo ? 'Respaldo' : 'Oficial'})`);
         }
     },
