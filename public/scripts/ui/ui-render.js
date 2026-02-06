@@ -31,6 +31,17 @@ const UIRenderer = {
         if (result) result.classList.remove('hidden');
     },
 
+
+    actualizarEuro(tasa, esRespaldo = false) {
+        const euroElement = document.getElementById('euro-price');
+        if (euroElement) {
+            euroElement.innerText = `${tasa.toFixed(2)} €`;
+            // Indicador visual: Naranja para respaldo, verde para principal
+            euroElement.style.color = esRespaldo ? '#fb923c' : '#10b981'; 
+            console.log(`📊 UI: Euro actualizado (${esRespaldo ? 'Respaldo' : 'Oficial'})`);
+        }
+    },
+
     mostrarFalloTotal() {
         const syncStatus = document.getElementById('sync-status');
         const loaderText = document.querySelector('#loader p');

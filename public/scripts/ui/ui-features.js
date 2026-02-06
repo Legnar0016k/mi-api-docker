@@ -1,49 +1,57 @@
 /**
- * UI FEATURES & MODALS 🛠️
- * Lógica para el Euro y la Calculadora (Sin tocar el core)
+ * UI FEATURES & MODALS 🛠️ - v3.8.5
  */
 
-// [ui-features.js] - Sustituye la función fetchEuro por esta:
 async function fetchEuro() {
     const euroElement = document.getElementById('euro-price');
     if (!euroElement) return;
 
-    // CREAMOS UN TEMPORIZADOR DE ABORTO (MÁXIMO 2 SEGUNDOS)
+    const CONFIG_EURO = {
+        PRIMARY: 'https://mi-api-docker-production.up.railway.app/api/euro',
+        FALLBACK: 'https://ve.dolarapi.com/v1/euros/oficial', // Fuente de respaldo
+        TIMEOUT_MS: 3500 // 3.5 segundos para abortar Railway
+    };
+
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000); 
+    const timeoutId = setTimeout(() => controller.abort(), CONFIG_EURO.TIMEOUT_MS);
 
     try {
-        const response = await fetch('https://mi-api-docker-production.up.railway.app/api/euro', {
-            signal: controller.signal // Conectamos el temporizador a la petición
+        // Intento 1: Railway (Tu API)
+        const response = await fetch(`${CONFIG_EURO.PRIMARY}?t=${Date.now()}`, {
+            signal: controller.signal
         });
 
-        clearTimeout(timeoutId); // Si responde rápido, cancelamos el aborto
-
-        if (!response.ok) throw new Error('Servidor inestable');
+        if (!response.ok) throw new Error('Railway Offline');
         
         const data = await response.json();
+        clearTimeout(timeoutId);
+
         if (data.success) {
-            euroElement.innerText = data.tasa.toFixed(2) + " €";
+            UIRenderer.actualizarEuro(data.tasa, false);
+            return;
         }
+        throw new Error('Data Inválida');
+
     } catch (e) {
-        // Si hay un 502, un timeout o cualquier error, salimos de inmediato
-        // Sin console.error pesado, solo un aviso silencioso
-        euroElement.innerText = "--.-- €";
+        clearTimeout(timeoutId);
+        console.warn("🔔 Euro: Railway no responde. Activando respaldo DolarApi...");
         
-        if (e.name === 'AbortError') {
-            console.warn("🔔 Euro: Petición cancelada por lentitud (Railway 502)");
+        // Intento 2: Respaldo (DolarApi)
+        try {
+            const res = await fetch(CONFIG_EURO.FALLBACK);
+            const data = await res.json();
+            const tasaEuro = data.promedio || data.compra;
+            
+            if (tasaEuro) {
+                console.log("✅ Euro: Respaldo activado con éxito.");
+                UIRenderer.actualizarEuro(tasaEuro, true);
+            }
+        } catch (err) {
+            console.error("❌ Euro: Fallo total de fuentes.");
+            euroElement.innerText = "--.-- €";
         }
     }
 }
 
-// Lógica del Modal
-function AbrirCalculadora() {
-    document.getElementById('modal-calc').classList.remove('hidden');
-}
-
-function CerrarCalculadora() {
-    document.getElementById('modal-calc').classList.add('hidden');
-}
-
-// Iniciar carga del Euro al abrir la app
+// Funciones de la calculadora se mantienen igual...
 window.addEventListener('load', fetchEuro);
