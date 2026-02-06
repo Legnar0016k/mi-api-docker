@@ -10,38 +10,22 @@ const CONFIG_SUPERVISOR = {
 };
 
 async function supervisorFetch() {
-    console.log("Supervisor: Iniciando chequeo de alta disponibilidad...");
-    
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), CONFIG_SUPERVISOR.TIMEOUT_MS);
-
     try {
-        // Intentamos obtener la tasa de Railway (Fuente Principal)
-        const response = await fetch(`${CONFIG_SUPERVISOR.API_PRIMARY}?t=${Date.now()}`, {
-            signal: controller.signal
-        });
-
-        if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+        const response = await fetch(`${CONFIG.API_PRIMARY}?t=${Date.now()}`);
+        if (!response.ok) throw new Error("Railway 502/503");
 
         const data = await response.json();
-        clearTimeout(timeoutId);
 
-        if (data.success) {
-            // Pasamos el dato por el Validador Técnico (El filtro del 5%)
-            const esValida = await ValidadorTecnico.esTasaValida(data.tasa);
+        // El Supervisor ahora delega la inteligencia al ValidadorTecnico
+        const esValida = await ValidadorTecnico.esTasaValida(data.tasa);
 
-            if (esValida) {
-                console.log("Supervisor: Fuente principal validada ✅");
-                UIRenderer.actualizar(data.tasa, data.fecha || new Date().toLocaleTimeString(), false);
-                return;
-            }
+        if (data.success && esValida) {
+            UIRenderer.actualizar(data.tasa, "BCV Oficial", false);
+        } else {
+            throw new Error("Dato invalidado por seguridad");
         }
-        throw new Error("Dato inválido o inconsistente");
-
     } catch (err) {
-        clearTimeout(timeoutId);
-        const motivo = err.name === 'AbortError' ? 'Tiempo de espera agotado (502/Lento)' : err.message;
-        console.warn(`🚀 Supervisor: Error en Principal (${motivo}). Activando Respaldo...`);
+        console.error("🚀 Supervisor: Fallo detectado. Usando Columna Antisísmica (DolarApi)...");
         await llamarRespaldo();
     }
 }

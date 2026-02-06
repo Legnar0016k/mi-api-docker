@@ -687,3 +687,8 @@
 
 #### 🧠 Frontend (Vercel)
 - **validador.js**: Reducción del umbral de tolerancia al **5%** comparado con DolarApi. Ahora el sistema rechaza automáticamente la "tasa loca" de 551.36 sin
+
+## [4.5.0] - 2026-02-06
+### 🚀 Mejora de Inteligencia Artificial de Recuperación
+- **recovery-logic.js**: Implementada validación dinámica. Se eliminaron los límites fijos (MIN/MAX) reemplazándolos por una consulta en tiempo real a DolarApi para establecer rangos de seguridad automáticos.
+- **Auto-Corrección**: El sistema ahora detecta desviaciones mayores al 10% respecto al mercado y fuerza la resincronización.

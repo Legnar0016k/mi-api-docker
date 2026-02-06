@@ -6,50 +6,31 @@ async function fetchEuro() {
     const euroElement = document.getElementById('euro-price');
     if (!euroElement) return;
 
-    const CONFIG_EURO = {
-        PRIMARY: 'https://mi-api-docker-production.up.railway.app/api/euro',
-        FALLBACK: 'https://ve.dolarapi.com/v1/euros/oficial', // Fuente de respaldo
-        TIMEOUT_MS: 3500 // 3.5 segundos para abortar Railway
-    };
-
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), CONFIG_EURO.TIMEOUT_MS);
+    const timeoutId = setTimeout(() => controller.abort(), 3500);
 
     try {
-        // Intento 1: Railway (Tu API)
-        const response = await fetch(`${CONFIG_EURO.PRIMARY}?t=${Date.now()}`, {
-            signal: controller.signal
-        });
-
+        const response = await fetch('https://mi-api-docker-production.up.railway.app/api/euro', { signal: controller.signal });
         if (!response.ok) throw new Error('Railway Offline');
-        
         const data = await response.json();
-        clearTimeout(timeoutId);
-
         if (data.success) {
             UIRenderer.actualizarEuro(data.tasa, false);
             return;
         }
-        throw new Error('Data Inválida');
-
     } catch (e) {
-        clearTimeout(timeoutId);
-        console.warn("🔔 Euro: Railway no responde. Activando respaldo DolarApi...");
-        
-        // Intento 2: Respaldo (DolarApi)
+        console.warn("🔔 Euro: Activando respaldo...");
         try {
-            const res = await fetch(CONFIG_EURO.FALLBACK);
+            // CORRECCIÓN DE ENDPOINT: /v1/dolares/euro
+            const res = await fetch('https://ve.dolarapi.com/v1/dolares/euro');
             const data = await res.json();
-            const tasaEuro = data.promedio || data.compra;
-            
-            if (tasaEuro) {
-                console.log("✅ Euro: Respaldo activado con éxito.");
-                UIRenderer.actualizarEuro(tasaEuro, true);
+            if (data.promedio || data.compra) {
+                UIRenderer.actualizarEuro(data.promedio || data.compra, true);
             }
         } catch (err) {
-            console.error("❌ Euro: Fallo total de fuentes.");
-            euroElement.innerText = "--.-- €";
+            euroElement.innerText = "Error €";
         }
+    } finally {
+        clearTimeout(timeoutId);
     }
 }
 

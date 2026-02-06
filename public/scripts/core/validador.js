@@ -5,38 +5,30 @@
 
 const ValidadorTecnico = {
     UMBRAL: 0.05, // Solo aceptamos un 5% de diferencia (máxima rigurosidad)
+    LIMITES_SEGURIDAD: { MIN: 300, MAX: 600 },
 
     async esTasaValida(tasaPrincipal) {
-        // 1. Validación de Rango Físico (Si no está entre 30 y 100, es basura seguro)
-        if (tasaPrincipal < 30 || tasaPrincipal > 100) {
-            console.error("Validador: Tasa fuera de rango lógico (30-100). RECHAZADA.");
+        // Validación 1: Rango Numérico Físico
+        if (tasaPrincipal < this.LIMITES_SEGURIDAD.MIN || tasaPrincipal > this.LIMITES_SEGURIDAD.MAX) {
+            console.error(`Validador: Tasa ${tasaPrincipal} fuera de rango (${this.LIMITES_SEGURIDAD.MIN}-${this.LIMITES_SEGURIDAD.MAX}). RECHAZADA.`);
             return false;
         }
 
         try {
-            console.log("Validador: Consultando referencia dinámica de seguridad...");
-            // Usamos un timeout corto para la referencia también
-            const controller = new AbortController();
-            const id = setTimeout(() => controller.abort(), 3000);
-
-            const res = await fetch('https://ve.dolarapi.com/v1/dolares/oficial', { signal: controller.signal });
+            console.log("Validador: Consultando referencia dinámica...");
+            const res = await fetch('https://ve.dolarapi.com/v1/dolares/oficial');
             const data = await res.json();
-            clearTimeout(id);
-
             const tasaRef = data.promedio || data.compra;
-            if (!tasaRef) return false;
+
+            if (!tasaRef) return true; // Si falla la referencia, confiamos en el rango físico
 
             const diferencia = Math.abs(tasaPrincipal - tasaRef) / tasaRef;
             const esValida = diferencia <= this.UMBRAL;
 
-            console.log(`Validador: Ref ${tasaRef} vs Tuya ${tasaPrincipal}`);
-            console.log(`Validador: Diferencia del ${(diferencia * 100).toFixed(2)}% - ${esValida ? 'ACEPTADA' : 'RECHAZADA'}`);
-
+            console.log(`Validador: Ref ${tasaRef} vs Tuya ${tasaPrincipal} (${(diferencia * 100).toFixed(2)}%)`);
             return esValida;
         } catch (e) {
-            console.warn("Validador: No se pudo conectar con la referencia. Usando filtro de rango.");
-            // Si la referencia falla, confiamos en el rango 30-100
-            return (tasaPrincipal > 30 && tasaPrincipal < 100);
+            return true; // En caso de error de red, permitimos el paso si está en el rango MIN/MAX
         }
     }
 };
