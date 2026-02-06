@@ -660,3 +660,14 @@
 ### Mejorado
 - **Interfaz de Usuario (UX)**: Panel lateral/modal optimizado con Chart.js para visualización fluida en dispositivos móviles.
 - **Arquitectura de Datos**: Migración de LocalStorage a una API REST propia en Railway,
+
+# Changelog - 2026-02-06
+
+## [v4.2.0] - Estabilización de Producción y Fallback Crítico
+
+### 🚀 Optimización del Core (Dólar)
+- **supervisor.js**: Implementada detección inmediata de errores 500/502 en Railway. El salto a DolarApi ahora es instantáneo sin esperar el timeout del navegador.
+- **validador.js**: Reforzada la validación dinámica para rechazar tasas con desviaciones mayores al 10% (evitando el error de la tasa 547.61 detectado en logs).
+
+### 💶 Independencia del Euro
+- **ui-features.js**: Se aisló la lógica del Euro. Ahora utiliza un `AbortController` con timeout de 4s y manejo de errores silencioso. Si el endpoint del Euro falla
