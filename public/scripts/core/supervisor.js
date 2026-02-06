@@ -12,34 +12,64 @@ const CONFIG = {
     }
 };
 
-
+//==================================================================================
+// [supervisor.js] - Micro-cirugía en la función supervisorFetch
 async function supervisorFetch() {
-// ... dentro de supervisorFetch() en supervisor.js
-try {
-    console.log("Supervisor: Iniciando chequeo...");
-    const response = await fetch(`${CONFIG.API_PRIMARY}?t=${new Date().getTime()}`);
-    const data = await response.json();
+    try {
+        console.log("Supervisor: Verificando Dólar (Prioridad Máxima)...");
+        
+        // Petición ultra-rápida con cache-busting
+        const response = await fetch(`${CONFIG.API_PRIMARY}?t=${Date.now()}`);
+        
+        // Si Railway está en 502/500, saltamos al respaldo SIN procesar el JSON
+        if (!response.ok) throw new Error("Railway fuera de servicio");
 
-    if (data.success) {
-        const esValidaDinamicamente = await ValidadorTecnico.esTasaValida(data.tasa);
+        const data = await response.json();
 
-        if (esValidaDinamicamente) {
-            console.log("Supervisor: API Principal validada ✅");
-            actualizarUI(data.tasa, data.fecha || new Date().toLocaleTimeString(), data.fuente);
-            
-            // AGREGAR ESTO: Si es válida, salimos de la función aquí.
-            return; 
+        if (data.success) {
+            // El validador dinámico decide si el número es real
+            const esValida = await ValidadorTecnico.esTasaValida(data.tasa);
+            if (esValida) {
+                console.log("Supervisor: Tasa Dólar validada ✅");
+                actualizarUI(data.tasa, data.fecha || new Date().toLocaleTimeString(), data.fuente);
+                return; // Éxito total, salimos.
+            }
         }
+        throw new Error("Dato inválido");
+    } catch (error) {
+        // Si llegamos aquí, Railway falló. DolarApi entra al rescate inmediatamente.
+        console.error("🚀 Supervisor: Error en Principal. Activando DolarApi de inmediato.");
+        await llamarRespaldo(); 
     }
-    // Si llegamos aquí, es porque data.success fue false o no fue válida
-    throw new Error("Tasa no válida o error en API");
+}
+//==============================================================================
+// async function supervisorFetch() {
+// // ... dentro de supervisorFetch() en supervisor.js
+// try {
+//     console.log("Supervisor: Iniciando chequeo...");
+//     const response = await fetch(`${CONFIG.API_PRIMARY}?t=${new Date().getTime()}`);
+//     const data = await response.json();
 
-} catch (error) {
-    console.log("Supervisor: Fallo en Principal. Buscando respaldo...");
-    // Aquí es donde entra DolarApi solo si lo de arriba falló
-    await llamarRespaldo();
-}
-}
+//     if (data.success) {
+//         const esValidaDinamicamente = await ValidadorTecnico.esTasaValida(data.tasa);
+
+//         if (esValidaDinamicamente) {
+//             console.log("Supervisor: API Principal validada ✅");
+//             actualizarUI(data.tasa, data.fecha || new Date().toLocaleTimeString(), data.fuente);
+            
+//             // AGREGAR ESTO: Si es válida, salimos de la función aquí.
+//             return; 
+//         }
+//     }
+//     // Si llegamos aquí, es porque data.success fue false o no fue válida
+//     throw new Error("Tasa no válida o error en API");
+
+// } catch (error) {
+//     console.log("Supervisor: Fallo en Principal. Buscando respaldo...");
+//     // Aquí es donde entra DolarApi solo si lo de arriba falló
+//     await llamarRespaldo();
+// }
+// }
 //==============================================================================
 //Logica Antigua del SUPERVISOR.JS linea 103
 //==============================================================================

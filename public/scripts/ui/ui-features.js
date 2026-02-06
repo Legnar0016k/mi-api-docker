@@ -3,18 +3,33 @@
  * Lógica para el Euro y la Calculadora (Sin tocar el core)
  */
 
+// [ui-features.js] - Sustituye la función fetchEuro por esta:
 async function fetchEuro() {
     const euroElement = document.getElementById('euro-price');
+    if (!euroElement) return;
+
     try {
-        // Asumiendo que tu API tiene el endpoint /api/euro que creamos
-        const response = await fetch('https://mi-api-docker-production.up.railway.app/api/euro');
+        // Añadimos un timeout corto para que el Euro no bloquee el ancho de banda
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000); 
+
+        const response = await fetch('https://mi-api-docker-production.up.railway.app/api/euro', {
+            signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+
+        if (!response.ok) throw new Error('Euro Offline');
         const data = await response.json();
         
-        if (data.success && euroElement) {
+        if (data.success) {
             euroElement.innerText = data.tasa.toFixed(2) + " €";
+            euroElement.classList.add('text-blue-400'); // Un toque visual de "OK"
         }
     } catch (e) {
-        console.error("Error cargando Euro:", e);
+        // Prioridad Baja: Si falla el Euro, ponemos guiones y no bloqueamos nada
+        console.warn("🔔 Info: Euro no disponible (Railway 502/Timeout)");
+        euroElement.innerText = "--.-- €";
     }
 }
 
