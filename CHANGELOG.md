@@ -660,7 +660,7 @@
 ### Mejorado
 - **Interfaz de Usuario (UX)**: Panel lateral/modal optimizado con Chart.js para visualización fluida en dispositivos móviles.
 - **Arquitectura de Datos**: Migración de LocalStorage a una API REST propia en Railway,
-
+=======================================================================================================
 # Changelog - 2026-02-06
 
 ## [v4.2.0] - Estabilización de Producción y Fallback Crítico
@@ -671,3 +671,19 @@
 
 ### 💶 Independencia del Euro
 - **ui-features.js**: Se aisló la lógica del Euro. Ahora utiliza un `AbortController` con timeout de 4s y manejo de errores silencioso. Si el endpoint del Euro falla
+
+## [v4.3.0] - 2026-02-06
+### 🔧 Backend (Root Fix)
+- **scraper-bcv.js**: Reescrita la lógica de limpieza de strings para manejar correctamente puntos de miles y comas del BCV, eliminando el error de tasa 551.36.
+- **server.js**: Implementado 'Promise.race' con Timeout en los endpoints de la API para prevenir bloqueos de hilos y errores 502 Bad Gateway en Railway.
+- **Seguridad**: Añadida validación de rangos (10-100) para descartar valores basura antes de enviarlos al cliente.
+
+## [v4.4.0] - 2026-02-06
+### 🛡️ Sistema de Blindaje Total (Root Fix)
+
+#### 🔧 Backend (Railway)
+- **scraper-bcv.js**: Implementada limpieza profunda de strings mediante Regex para eliminar puntos de miles y estandarizar la coma decimal. Se añadió un filtro de rango (30 - 100) para abortar si el scrap detecta valores incoherentes.
+- **server.js**: Implementado sistema de `withTimeout` (8s) en todos los endpoints para liberar hilos de ejecución y prevenir el error **502 Bad Gateway** cuando el BCV está saturado.
+
+#### 🧠 Frontend (Vercel)
+- **validador.js**: Reducción del umbral de tolerancia al **5%** comparado con DolarApi. Ahora el sistema rechaza automáticamente la "tasa loca" de 551.36 sin

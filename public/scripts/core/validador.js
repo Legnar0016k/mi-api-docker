@@ -1,24 +1,32 @@
 /**
- * VALIDADOR DINÁMICO 🧠
- * Solo calcula si un número es aceptable comparado con la referencia.
+ * VALIDADOR DINÁMICO 🧠 - v3.8.5
+ * Bloquea tasas basura (como el 551.36) comparándolas con DolarApi.
  */
 
 const ValidadorTecnico = {
-    // Bajamos el umbral al 5% para ser más estrictos con la fuente principal
-    UMBRAL: 0.05, 
+    UMBRAL: 0.05, // Solo aceptamos un 5% de diferencia (máxima rigurosidad)
 
     async esTasaValida(tasaPrincipal) {
-        try {
-            console.log("Validador: Consultando referencia dinámica...");
-            const res = await fetch('https://ve.dolarapi.com/v1/dolares/oficial');
-            const data = await res.json();
-            const tasaRef = data.promedio || data.compra;
+        // 1. Validación de Rango Físico (Si no está entre 30 y 100, es basura seguro)
+        if (tasaPrincipal < 30 || tasaPrincipal > 100) {
+            console.error("Validador: Tasa fuera de rango lógico (30-100). RECHAZADA.");
+            return false;
+        }
 
+        try {
+            console.log("Validador: Consultando referencia dinámica de seguridad...");
+            // Usamos un timeout corto para la referencia también
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), 3000);
+
+            const res = await fetch('https://ve.dolarapi.com/v1/dolares/oficial', { signal: controller.signal });
+            const data = await res.json();
+            clearTimeout(id);
+
+            const tasaRef = data.promedio || data.compra;
             if (!tasaRef) return false;
 
             const diferencia = Math.abs(tasaPrincipal - tasaRef) / tasaRef;
-            
-            // Si la diferencia es mayor al 5%, rechazamos CUALQUIER cosa que diga Railway
             const esValida = diferencia <= this.UMBRAL;
 
             console.log(`Validador: Ref ${tasaRef} vs Tuya ${tasaPrincipal}`);
@@ -26,8 +34,9 @@ const ValidadorTecnico = {
 
             return esValida;
         } catch (e) {
-            // Si DolarApi (referencia) falla, por seguridad rechazamos si es un número loco
-            return (tasaPrincipal > 30 && tasaPrincipal < 50); 
+            console.warn("Validador: No se pudo conectar con la referencia. Usando filtro de rango.");
+            // Si la referencia falla, confiamos en el rango 30-100
+            return (tasaPrincipal > 30 && tasaPrincipal < 100);
         }
     }
 };
