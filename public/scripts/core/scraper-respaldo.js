@@ -1,57 +1,21 @@
-/** logica nueva 05/02/2026
-/**
- * 💾 SISTEMA DE CACHÉ DE TASAS
- * Optimiza el consumo de recursos de Railway (USD)
- */
-const RateCache = {
-    set(key, data, expirationInMinutes = 120) {
-        const item = {
-            value: data,
-            expiry: Date.now() + (expirationInMinutes * 60 * 1000),
-        };
-        localStorage.setItem(key, JSON.stringify(item));
-    },
-
-    get(key) {
-        const itemStr = localStorage.getItem(key);
-        if (!itemStr) return null;
-        const item = JSON.parse(itemStr);
-        if (Date.now() > item.expiry) {
-            localStorage.removeItem(key);
-            return null;
-        }
-        return item.value;
-    }
-};
-
-async function obtenerDolarConRespaldo() {
+async function obtenerTasasNivel0() {
     try {
-        // 1. Intentar obtener del caché local primero
-        const cached = RateCache.get('cache_tasa_bcv_usd');
-        if (cached) {
-            console.log("⚡ Usando tasa Dólar desde caché (Ahorro de API)");
-            return cached;
-        }
-
-        const urlRailway = 'https://mi-api-docker-production.up.railway.app/tasa-bcv'; 
-        
-        console.log("📡 Conectando con Railway por nueva tasa...");
+        const urlRailway = 'https://tu-api-railway.app/api/tasas'; // CAMBIA ESTO POR TU URL
         const response = await fetch(urlRailway);
-        const data = await response.json();
-        
-        if (data && data.success) {
-            const resultado = {
-                valor: data.tasa,
-                origen: data.fuente || 'Respaldo'
-            };
+        const res = await response.json();
 
-            // 2. Guardar en caché por 2 horas (120 min)
-            RateCache.set('cache_tasa_bcv_usd', resultado, 120);
-            return resultado;
+        if (res.success) {
+            console.log("✅ Datos recibidos del Servidor Nivel 0:", res);
+            // Pintamos en la interfaz (asegúrate que estos IDs existan en tu HTML)
+            document.getElementById('price').innerText = res.usd.toFixed(2);
+            if(document.getElementById('euro-price')) {
+                document.getElementById('euro-price').innerText = res.eur.toFixed(2);
+            }
         }
-        return null;
     } catch (error) {
-        console.error("❌ Error de conexión con Railway:", error);
-        return null;
+        console.error("❌ Error conectando al Nivel 0:", error);
     }
 }
+
+// Lo ejecutamos de una vez para probar
+document.addEventListener('DOMContentLoaded', obtenerTasasNivel0);

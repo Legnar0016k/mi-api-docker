@@ -9,7 +9,7 @@ const AppLoader = {
 
    
         // 1. UTILIDADES Y OBTENCIÓN (Los cimientos)
-        'public/scripts/core/scraper-respaldo.js', // Trae el dato del servidor
+        //'public/scripts/core/scraper-respaldo.js', // Trae el dato del servidor
 
         // 2. PROCESAMIENTO Y VALIDACIÓN (La inteligencia)
         //'public/scripts/core/validador.js',        // Base original
@@ -24,7 +24,7 @@ const AppLoader = {
         // 4. CONTROL Y SUPERVISIÓN (Los directores de orquesta)
         // Se cargan al final para asegurar que todas las funciones anteriores ya existan
         //'public/scripts/core/supervisor.js',
-        'public/scripts/core/monitor-master.js',
+        //'public/scripts/core/monitor-master.js',
 
         // 5. SISTEMAS DE EMERGENCIA
         'public/scripts/debug/recovery-logic.js',

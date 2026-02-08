@@ -223,15 +223,15 @@
         });
 
         // CARGA INICIAL: Llamamos al supervisor una vez que el cerebro inyecte todo
-        window.onload = () => {
-            setTimeout(() => {
-                if (typeof supervisorFetch === 'function') {
-                    supervisorFetch();
-                } else {
-                    console.error("Error: supervisorFetch no cargó a tiempo.");
-                }
-            }, 200); // Pequeño delay para asegurar inyección
-        };
+        // window.onload = () => {
+        //     setTimeout(() => {
+        //         if (typeof supervisorFetch === 'function') {
+        //             supervisorFetch();
+        //         } else {
+        //             console.error("Error: supervisorFetch no cargó a tiempo.");
+        //         }
+        //     }, 200); // Pequeño delay para asegurar inyección
+        // };
     </script>
 
 
