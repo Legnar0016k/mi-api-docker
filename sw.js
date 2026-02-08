@@ -26,10 +26,8 @@ const assets = [
     './public/scripts/core/scraper-respaldo.js', // El nuevo conector
   
     // Scripts UI
-    './public/scripts/ui/ui-features.js',
     './public/scripts/ui/calc-logic.js',
-    './public/scripts/ui/history-charts.js',
-    
+    './public/scripts/ui/ui-render.js',
     // Assets
     './public/assets/manifest.json',
     './public/assets/icon-512.png'
