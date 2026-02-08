@@ -10,9 +10,9 @@ const AppLoader = {
         'public/scripts/core/scraper-respaldo.js', 
 
         // 2. INTERFAZ Y FUNCIONES (Módulos activos)
-        'public/scripts/ui/ui-features.js',
+        //'public/scripts/ui/ui-features.js',
         'public/scripts/ui/calc-logic.js', 
-        'public/scripts/ui/history-charts.js',
+        //'public/scripts/ui/history-charts.js',
 
         // 3. ESTÉTICA Y SEGURIDAD
         'public/scripts/core/theme-manager.js',
