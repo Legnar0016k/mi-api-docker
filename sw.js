@@ -1,85 +1,87 @@
-//*********************************************************************** */
-const CACHE_NAME = 'bcv-monitor-v' + new Date().getTime(); // Esto genera un nombre único cada vez
+/**
+ * 🛠️ SERVICE WORKER - NIVEL 0 (Sincronizado)
+ * Optimizado para el nuevo Ninja Scraper y estructura minimalista.
+ */
+
+const VERSION = 'v3.8.0-ninja'; // Versión manual para control de caché
+const CACHE_NAME = `bcv-monitor-cache-${VERSION}`;
+
+// Lista de activos esenciales (SÓLO lo que existe físicamente ahora)
 const assets = [
-
-    '/',           // Referencia a la raíz
-    'index.html',  // El archivo en la raíz
-
-    // Estilos
-    './public/css/style1.css',
-    './public/css/style2.css',
-    './public/css/style3.css',
-    './public/css/history.css',
+    '/',
+    'index.html',
+    'app-loader.js',
+    'sw.js',
+    
+    // Estilos (Verifica que las rutas coincidan con tu index.html)
+    './public/styles/style1.css',
+    './public/styles/style2.css',
+    './public/styles/style3.css',
+    './public/styles/theme-toggle.css',
+    './public/styles/history.css',
   
-    // Core (Sigue el mismo orden de tu app-loader)
+    // Scripts Core
     './public/scripts/core/app-loader.js',
     './public/scripts/core/theme-manager.js',
-    //'./public/scripts/core/scraper-respaldo.js',
-    //'./public/scripts/core/validador.js',
-    //'./public/scripts/core/validador-pro.js',
-    //'./public/scripts/core/validador-ui.js',
-    //'./public/scripts/core/supervisor.js',
-    './public/scripts/core/monitor-master.js',
+    './public/scripts/core/scraper-respaldo.js', // El nuevo conector
   
-    // UI
-    './public/scripts/ui/ui-render.js',
+    // Scripts UI
     './public/scripts/ui/ui-features.js',
     './public/scripts/ui/calc-logic.js',
-    './public/scripts/ui/history-charts.js', // Agregado explícitamente
+    './public/scripts/ui/history-charts.js',
     
-    // Otros
-    './public/scripts/debug/recovery-logic.js',
+    // Assets
     './public/assets/manifest.json',
     './public/assets/icon-512.png'
-
 ];
-//*********************************************************************** */
-// // Instalación (Logica antigua de instalacion)
-// self.addEventListener('install', event => {
-//     event.waitUntil(
-//         caches.open(CACHE_NAME).then(cache => cache.addAll(assets))
-//     );
-// });
-//*********************************************************************** */
-// Instalación corregida con captura de errores
+
+// 1. INSTALACIÓN: Pre-cache de archivos estáticos
 self.addEventListener('install', event => {
+    self.skipWaiting(); // Fuerza la activación inmediata
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
-            console.log('SW: Pre-cacheando archivos...');
+            console.log('📦 SW: Almacenando activos de Nivel 0...');
             return cache.addAll(assets).catch(err => {
-                console.error('SW: Error crítico en addAll. Revisa si falta algún archivo:', err);
+                console.error('❌ SW: Error en pre-cache (revisa si falta un archivo):', err);
             });
         })
     );
 });
-//*********************************************************************** */
-// Activación y limpieza de caches viejos
+
+// 2. ACTIVACIÓN: Limpieza de versiones antiguas
 self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys().then(keys => Promise.all(
             keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
         ))
     );
+    console.log('🚀 SW: Sistema de caché actualizado a Nivel 0');
 });
-//*********************************************************************** */
-// Estrategia: Red primero, si falla, usar cache
+
+// 3. ESTRATEGIA DE PETICIÓN (FETCH)
 self.addEventListener('fetch', event => {
-    // PRIORIDAD: No tocar peticiones de API. Dejar que el navegador las maneje 
-    // directamente para evitar que el SW bloquee los headers de CORS.
+    const url = new URL(event.request.url);
+
+    // EXCEPCIÓN CRÍTICA: No cachear nunca la API de Railway ni CDNs externos
+    // Esto evita errores de CORS y asegura datos siempre frescos.
     if (
-        event.request.url.includes('railway.app') || 
-        event.request.url.includes('dolarapi.com') ||
-        event.request.url.includes('jsdelivr.net') // Chart.js CDN
+        url.hostname.includes('railway.app') || 
+        url.hostname.includes('bcv.org.ve') ||
+        url.hostname.includes('jsdelivr.net') ||
+        url.hostname.includes('tailwindcss.com')
     ) {
-        return; 
+        return; // Deja que el navegador maneje la red directamente
     }
 
+    // Estrategia: Cache First, Fallback to Network para archivos locales
     event.respondWith(
         caches.match(event.request).then(response => {
-            // Retorna cache, si no existe va a la red
-            return response || fetch(event.request);
+            return response || fetch(event.request).then(fetchRes => {
+                // Opcional: Cachear dinámicamente nuevos archivos locales
+                return fetchRes;
+            });
         }).catch(() => {
-            // Si todo falla (offline total)
+            // Si el usuario está offline y pide una página, devolver el index.html
             if (event.request.mode === 'navigate') {
                 return caches.match('index.html');
             }
@@ -87,10 +89,9 @@ self.addEventListener('fetch', event => {
     );
 });
 
-// Al final de tu sw.js*****************************************************
+// Escuchar mensajes del frontend para actualizar
 self.addEventListener('message', (event) => {
     if (event.data === 'SKIP_WAITING') {
         self.skipWaiting();
     }
 });
-//*********************************************************************** */
