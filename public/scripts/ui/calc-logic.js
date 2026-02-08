@@ -59,7 +59,27 @@ function setQuickAmount(amount) {
     }
 }
 
+// --- FUNCIONES DE CONTROL DEL MODAL ---
+function AbrirCalculadora() {
+    const modal = document.getElementById('modal-calc');
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.getElementById('calc-input').focus();
+    }
+}
+
+function CerrarCalculadora() {
+    const modal = document.getElementById('modal-calc');
+    if (modal) modal.classList.add('hidden');
+}
+
+
+
+
 // Exponer al scope global para que los onclick/oninput del HTML funcionen
+// --- EXPOSICIÓN GLOBAL (Obligatorio para que funcionen los onclick del HTML) ---
+window.AbrirCalculadora = AbrirCalculadora;
+window.CerrarCalculadora = CerrarCalculadora;
 window.calcular = calcular;
 window.setCurrency = setCurrency;
 window.setQuickAmount = setQuickAmount;

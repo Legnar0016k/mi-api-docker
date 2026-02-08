@@ -22,4 +22,9 @@ async function fetchTasa() {
         console.error("❌ Error en el flujo Nivel 0:", error);
     }
 }
-document.addEventListener('DOMContentLoaded', fetchTasa);
+// Esto hace que la función se dispare sola al cargar la página
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    fetchTasa();
+} else {
+    document.addEventListener('DOMContentLoaded', fetchTasa);
+}
