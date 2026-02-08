@@ -1,95 +1,66 @@
 /**
- * 🛠️ SERVICE WORKER - NIVEL 0 (Sincronizado)
- * Optimizado para el nuevo Ninja Scraper y estructura minimalista.
+ * 🛠️ SERVICE WORKER - NIVEL 0 (VERSIÓN 4.0.0)
+ * Estrategia: Network First para scripts y datos.
  */
 
-const VERSION = 'v3.8.0-ninja'; // Versión manual para control de caché
+const VERSION = 'v4.0.0-final';
 const CACHE_NAME = `bcv-monitor-cache-${VERSION}`;
 
-// Lista de activos esenciales (SÓLO lo que existe físicamente ahora)
 const assets = [
     '/',
     'index.html',
-    'app-loader.js',
-    'sw.js',
-    
-    // Estilos (Verifica que las rutas coincidan con tu index.html)
-    './public/styles/style1.css',
-    './public/styles/style2.css',
-    './public/styles/style3.css',
-    './public/styles/theme-toggle.css',
-    './public/styles/history.css',
-  
-    // Scripts Core
-    './public/scripts/core/app-loader.js',
-    './public/scripts/core/theme-manager.js',
-    './public/scripts/core/scraper-respaldo.js', // El nuevo conector
-  
-    // Scripts UI
-    './public/scripts/ui/calc-logic.js',
-    './public/scripts/ui/ui-render.js',
-    // Assets
-    './public/assets/manifest.json',
-    './public/assets/icon-512.png'
+    'public/scripts/core/app-loader.js',
+    'public/scripts/core/scraper-respaldo.js',
+    'public/scripts/ui/calc-logic.js',
+    'public/scripts/core/theme-manager.js',
+    'public/scripts/ui/ui-render.js',
+    'public/assets/manifest.json'
+
 ];
 
-// 1. INSTALACIÓN: Pre-cache de archivos estáticos
 self.addEventListener('install', event => {
-    self.skipWaiting(); // Fuerza la activación inmediata
+    self.skipWaiting();
     event.waitUntil(
-        caches.open(CACHE_NAME).then(cache => {
-            console.log('📦 SW: Almacenando activos de Nivel 0...');
-            return cache.addAll(assets).catch(err => {
-                console.error('❌ SW: Error en pre-cache (revisa si falta un archivo):', err);
-            });
-        })
+        caches.open(CACHE_NAME).then(cache => cache.addAll(assets))
     );
 });
 
-// 2. ACTIVACIÓN: Limpieza de versiones antiguas
 self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys().then(keys => Promise.all(
             keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
         ))
     );
-    console.log('🚀 SW: Sistema de caché actualizado a Nivel 0');
 });
 
-// 3. ESTRATEGIA DE PETICIÓN (FETCH)
 self.addEventListener('fetch', event => {
     const url = new URL(event.request.url);
 
-    // EXCEPCIÓN CRÍTICA: No cachear nunca la API de Railway ni CDNs externos
-    // Esto evita errores de CORS y asegura datos siempre frescos.
-    if (
-        url.hostname.includes('railway.app') || 
-        url.hostname.includes('bcv.org.ve') ||
-        url.hostname.includes('jsdelivr.net') ||
-        url.hostname.includes('tailwindcss.com')
-    ) {
-        return; // Deja que el navegador maneje la red directamente
+    // EXCEPCIONES: No cachear nunca la API de Railway ni CDNs
+    if (url.hostname.includes('railway.app') || url.hostname.includes('tailwindcss.com')) {
+        return;
     }
 
-    // Estrategia: Cache First, Fallback to Network para archivos locales
-    event.respondWith(
-        caches.match(event.request).then(response => {
-            return response || fetch(event.request).then(fetchRes => {
-                // Opcional: Cachear dinámicamente nuevos archivos locales
-                return fetchRes;
-            });
-        }).catch(() => {
-            // Si el usuario está offline y pide una página, devolver el index.html
-            if (event.request.mode === 'navigate') {
-                return caches.match('index.html');
-            }
-        })
-    );
+    // ESTRATEGIA: Network First para archivos de lógica (.js) y navegación
+    // Esto evita que se quede "pegado" el cargando eterno.
+    if (event.request.mode === 'navigate' || url.pathname.endsWith('.js')) {
+        event.respondWith(
+            fetch(event.request)
+                .then(response => {
+                    const copy = response.clone();
+                    caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+                    return response;
+                })
+                .catch(() => caches.match(event.request))
+        );
+    } else {
+        // Cache First para el resto (CSS, Imágenes)
+        event.respondWith(
+            caches.match(event.request).then(res => res || fetch(event.request))
+        );
+    }
 });
 
-// Escuchar mensajes del frontend para actualizar
 self.addEventListener('message', (event) => {
-    if (event.data === 'SKIP_WAITING') {
-        self.skipWaiting();
-    }
+    if (event.data === 'SKIP_WAITING') self.skipWaiting();
 });
