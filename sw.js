@@ -14,11 +14,11 @@ const assets = [
     // Core (Sigue el mismo orden de tu app-loader)
     './public/scripts/core/app-loader.js',
     './public/scripts/core/theme-manager.js',
-    './public/scripts/core/scraper-respaldo.js',
-    './public/scripts/core/validador.js',
-    './public/scripts/core/validador-pro.js',
-    './public/scripts/core/validador-ui.js',
-    './public/scripts/core/supervisor.js',
+    //'./public/scripts/core/scraper-respaldo.js',
+    //'./public/scripts/core/validador.js',
+    //'./public/scripts/core/validador-pro.js',
+    //'./public/scripts/core/validador-ui.js',
+    //'./public/scripts/core/supervisor.js',
     './public/scripts/core/monitor-master.js',
   
     // UI

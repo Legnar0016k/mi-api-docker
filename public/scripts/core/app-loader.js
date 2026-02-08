@@ -12,9 +12,9 @@ const AppLoader = {
         'public/scripts/core/scraper-respaldo.js', // Trae el dato del servidor
 
         // 2. PROCESAMIENTO Y VALIDACIÓN (La inteligencia)
-        'public/scripts/core/validador.js',        // Base original
-        'public/scripts/core/validador-pro.js',    // Lógica avanzada
-        'public/scripts/core/validador-ui.js',     // Conexión lógica-pantalla
+        //'public/scripts/core/validador.js',        // Base original
+        //'public/scripts/core/validador-pro.js',    // Lógica avanzada
+        //'public/scripts/core/validador-ui.js',     // Conexión lógica-pantalla
 
         // 3. RENDERIZADO Y UI (Lo que el usuario ve)
         'public/scripts/ui/ui-render.js',
@@ -23,7 +23,7 @@ const AppLoader = {
 
         // 4. CONTROL Y SUPERVISIÓN (Los directores de orquesta)
         // Se cargan al final para asegurar que todas las funciones anteriores ya existan
-        'public/scripts/core/supervisor.js',
+        //'public/scripts/core/supervisor.js',
         'public/scripts/core/monitor-master.js',
 
         // 5. SISTEMAS DE EMERGENCIA
@@ -32,7 +32,7 @@ const AppLoader = {
         // 6. LOGICA PARA MANEJAR EL THEMA CLARO
         'public/scripts/core/theme-manager.js',
 
-        // 7. LOGICA DEL BOTON DE HISTORIAL DE EVENTOS MONITOR
+        
         
 
     ],
