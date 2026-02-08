@@ -1,6 +1,6 @@
 /**
  * CALCULATOR LOGIC MODULE 🧮
- * Maneja las conversiones sin afectar el flujo principal.
+ * Nivel 0 - Sincronizado con UI Global
  */
 
 let selectedCurrency = 'USD';
@@ -24,42 +24,18 @@ function calcular() {
     const input = document.getElementById('calc-input').value;
     const display = document.getElementById('calc-result');
     
-    // Obtenemos las tasas directamente de los elementos del DOM que ya actualiza el supervisor y ui-features
-    const tasaUsd = parseFloat(document.getElementById('price').innerText);
-    const tasaEur = parseFloat(document.getElementById('euro-price').innerText);
+    // Obtenemos los precios de los elementos que llenó el scraper
+    const tasaUsd = parseFloat(document.getElementById('price').innerText) || 0;
+    const tasaEur = parseFloat(document.getElementById('euro-price').innerText) || 0;
     
     let total = 0;
     const monto = parseFloat(input) || 0;
 
-    if (selectedCurrency === 'USD') {
-        total = monto * tasaUsd;
-    } else {
-        total = monto * tasaEur;
-    }
+    total = (selectedCurrency === 'USD') ? monto * tasaUsd : monto * tasaEur;
 
     display.innerText = total.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-// Escuchar cambios en el input
-document.addEventListener('DOMContentLoaded', () => {
-    const inputElement = document.getElementById('calc-input');
-    if (inputElement) {
-        inputElement.addEventListener('input', calcular);
-    }
-});
-
-/**
- * Añade esto al final de tu calc-logic.js
- */
-function setQuickAmount(amount) {
-    const input = document.getElementById('calc-input');
-    if (input) {
-        input.value = amount;
-        calcular(); // Ejecuta el cálculo inmediatamente
-    }
-}
-
-// --- FUNCIONES DE CONTROL DEL MODAL ---
 function AbrirCalculadora() {
     const modal = document.getElementById('modal-calc');
     if (modal) {
@@ -73,13 +49,17 @@ function CerrarCalculadora() {
     if (modal) modal.classList.add('hidden');
 }
 
+function setQuickAmount(amount) {
+    const input = document.getElementById('calc-input');
+    if (input) {
+        input.value = amount;
+        calcular();
+    }
+}
 
-
-
-// Exponer al scope global para que los onclick/oninput del HTML funcionen
-// --- EXPOSICIÓN GLOBAL (Obligatorio para que funcionen los onclick del HTML) ---
+// 🌍 EXPOSICIÓN AL SCOPE GLOBAL (Crucial para onclick)
 window.AbrirCalculadora = AbrirCalculadora;
 window.CerrarCalculadora = CerrarCalculadora;
-window.calcular = calcular;
 window.setCurrency = setCurrency;
 window.setQuickAmount = setQuickAmount;
+window.calcular = calcular;
