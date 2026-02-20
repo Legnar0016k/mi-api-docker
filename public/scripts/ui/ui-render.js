@@ -31,12 +31,11 @@ const UIRenderer = {
         if (result) result.classList.remove('hidden');
     },
 
-
-   actualizarEuro(tasa, esRespaldo = false) {
+    actualizarEuro(tasa, esRespaldo = false) {
         const euroElement = document.getElementById('euro-price');
         if (euroElement) {
             euroElement.innerText = `${parseFloat(tasa).toFixed(2)} €`;
-            // Si es de respaldo lo ponemos en un tono ámbar/naranja para que sepas que Railway falló
+            // Si es de respaldo lo ponemos en un tono ámbar/naranja
             euroElement.style.color = esRespaldo ? '#fb923c' : ''; 
             console.log(`📊 UI: Euro actualizado (${esRespaldo ? 'Respaldo' : 'Oficial'})`);
         }
@@ -53,9 +52,58 @@ const UIRenderer = {
         if (loaderText) {
             loaderText.innerText = "ERROR CRÍTICO";
         }
+    },
+
+    // Inicializar eventos del aviso legal
+    initLegalModal() {
+        // Cerrar con tecla ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.cerrarAvisoLegal();
+            }
+        });
+
+        // Cerrar al hacer click fuera del modal (opcional)
+        const modal = document.getElementById('modal-legal');
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    this.cerrarAvisoLegal();
+                }
+            });
+        }
+    },
+
+    abrirAvisoLegal() {
+        const modal = document.getElementById('modal-legal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            // Prevenir scroll del body
+            document.body.style.overflow = 'hidden';
+        }
+    },
+
+    cerrarAvisoLegal() {
+        const modal = document.getElementById('modal-legal');
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            // Restaurar scroll del body
+            document.body.style.overflow = '';
+        }
     }
 };
 
-// Alias global para mantener compatibilidad si lo necesitas
-window.actualizarUI = UIRenderer.actualizar;
-window.mostrarFalloTotal = UIRenderer.mostrarFalloTotal;
+// Inicializar eventos cuando el DOM esté listo
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => UIRenderer.initLegalModal());
+} else {
+    UIRenderer.initLegalModal();
+}
+
+// Alias global para mantener compatibilidad
+window.actualizarUI = UIRenderer.actualizar.bind(UIRenderer);
+window.mostrarFalloTotal = UIRenderer.mostrarFalloTotal.bind(UIRenderer);
+window.abrirAvisoLegal = UIRenderer.abrirAvisoLegal.bind(UIRenderer);
+window.cerrarAvisoLegal = UIRenderer.cerrarAvisoLegal.bind(UIRenderer);
