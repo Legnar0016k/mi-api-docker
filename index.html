@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Terminal BCV v.3.8.0 | Live Feed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -19,119 +19,279 @@
     <link rel="stylesheet" href="public/styles/style3.css">
     <link rel="stylesheet" href="public/styles/theme-toggle.css">
     <link rel="stylesheet" href="public/styles/history.css">
+    
+    <style>
+        /* Ajustes solo para móvil - manteniendo diseño original */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px !important;
+            }
+            
+            .cyber-card {
+                padding: 1.5rem !important;
+            }
+            
+            #price {
+                font-size: 4rem !important;
+            }
+            
+            .text-\[9px\] {
+                font-size: 10px !important;
+            }
+            
+            .text-\[10px\] {
+                font-size: 11px !important;
+            }
+            
+            .text-\[11px\] {
+                font-size: 12px !important;
+            }
+            
+            #debug-source {
+                font-size: 10px !important;
+                line-height: 1.4;
+            }
+            
+            button {
+                min-height: 48px;
+            }
+            
+            .grid-cols-3 {
+                gap: 8px !important;
+            }
+            
+            .bg-slate-900\/40 {
+                padding: 12px 8px !important;
+            }
+            
+            #sync-status {
+                font-size: 11px !important;
+            }
+            
+            /* Mejorar legibilidad de textos pequeños */
+            .mono.text-\[9px\] {
+                font-size: 10px !important;
+            }
+            
+            /* Footer más compacto */
+            footer .mono.text-\[9px\] {
+                font-size: 9px !important;
+            }
+
+            /* Botón de historia */
+            #btn-history {
+                width: 100%;
+                margin-top: 12px;
+                padding: 14px !important;
+                font-size: 12px !important;
+            }
+        }
+        
+        /* Ajustes para tablets */
+        @media (min-width: 481px) and (max-width: 768px) {
+            .cyber-card {
+                max-width: 500px !important;
+                padding: 2rem !important;
+            }
+        }
+        
+        /* Mantener efectos originales */
+        .glow-text {
+            text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+        }
+        
+        /* Mejoras táctiles */
+        button, .clickable {
+            cursor: pointer;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+            transition: transform 0.1s;
+        }
+
+        /* Estilo específico para botón de historia */
+        #btn-history {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        #btn-history:hover {
+            background: rgba(0, 242, 255, 0.1);
+            border-color: rgba(0, 242, 255, 0.5);
+        }
+    </style>
 </head>
 
 <body class="flex items-center justify-center p-6 bg-slate-950">
 
     <div class="cyber-card w-full max-w-md rounded-3xl p-8 transition-all hover:border-cyan-400/40 border border-white/5">
         
-        <div class="flex justify-between items-start mb-10">
+        <div class="flex justify-between items-start mb-8">
             <div>
-                <p class="mono text-[10px] uppercase tracking-[0.3em] text-cyan-500/70 mb-1">Terminal // Alpha-Build</p>
+                <p class="mono text-[10px] uppercase tracking-[0.3em] text-cyan-500/70 mb-1">TERMINAL // MOBILE</p>
                 <h1 class="text-white text-2xl font-extrabold tracking-tight">DATA STREAM <span class="text-cyan-400">BCV</span></h1>
             </div>
-            <div class="bg-slate-800/50 rounded-lg px-3 py-1 border border-slate-700">
+            <div class="bg-slate-800/50 rounded-lg px-3 py-1.5 border border-slate-700">
                 <span class="live-dot mr-2"></span>
-                <span class="mono text-[10px] text-emerald-400 font-bold uppercase">Live</span>
+                <span class="mono text-[10px] text-emerald-400 font-bold uppercase">LIVE</span>
             </div>
         </div>
 
+        <!-- LOADER -->
         <div id="loader" class="py-12 flex flex-col items-center">
             <div class="relative w-16 h-16">
                 <div class="absolute inset-0 border-4 border-cyan-500/20 rounded-full"></div>
                 <div class="absolute inset-0 border-4 border-t-cyan-400 rounded-full animate-spin"></div>
             </div>
-            <p class="mono text-xs text-slate-400 mt-6 tracking-widest animate-pulse">CONNECTING TO API...</p>
+            <p class="mono text-sm text-slate-400 mt-6 tracking-widest animate-pulse">CONNECTING TO API...</p>
         </div>
 
+        <!-- RESULTADOS -->
         <div id="result" class="hidden space-y-6">
             <div class="relative group">
                 <div class="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
                 <div class="relative bg-black/40 border border-white/5 rounded-2xl p-6 text-center">
-                    <span class="text-slate-500 text-[10px] uppercase tracking-[0.2em] font-bold">Tasa de Cambio Oficial</span>
-                    <div id="debug-source" class="text-[9px] text-cyan-500/50 font-mono mt-1 uppercase">Cargando fuente...</div>
-                    <div class="flex items-center justify-center mt-2">
+                    <span class="text-slate-500 text-xs uppercase tracking-[0.2em] font-bold">Tasa de Cambio Oficial</span>
+                    <div id="debug-source" class="text-xs text-cyan-500/70 font-mono mt-2 uppercase font-medium">Cargando fuente...</div>
+                    <div class="flex items-center justify-center mt-3">
                         <span id="price" class="text-white text-6xl font-black tracking-tighter glow-text">--.--</span>
-                        <span class="text-cyan-500 text-xl font-bold ml-3 mono">VES</span>
+                        <span class="text-cyan-500 text-2xl font-bold ml-3 mono">Bs</span>
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-3 gap-2">
-                <div class="bg-slate-900/40 rounded-xl p-3 border border-white/5">
-                    <span class="block text-slate-500 text-[9px] uppercase font-bold tracking-wider mb-1">Update</span>
-                    <span id="date" class="text-slate-300 text-[11px] mono">--:--:--</span>
+            <!-- MÉTRICAS -->
+            <div class="grid grid-cols-3 gap-3">
+                <div class="bg-slate-900/40 rounded-xl p-4 border border-white/5 text-center">
+                    <span class="block text-slate-500 text-[10px] uppercase font-bold tracking-wider mb-1">⏱️ Hora</span>
+                    <span id="date" class="text-slate-300 text-sm mono">--:--:--</span>
                 </div>
-                <div class="bg-slate-900/40 rounded-xl p-3 border border-cyan-500/20">
-                    <span class="block text-cyan-500 text-[9px] uppercase font-bold tracking-wider mb-1">Euro BCV</span>
-                    <span id="euro-price" class="text-slate-300 text-[11px] mono">--.--</span>
+                <div class="bg-slate-900/40 rounded-xl p-4 border border-cyan-500/20 text-center">
+                    <span class="block text-cyan-500 text-[10px] uppercase font-bold tracking-wider mb-1">💶 Euro</span>
+                    <span id="euro-price" class="text-slate-300 text-sm mono">--.--</span>
                 </div>
-                <div class="bg-slate-900/40 rounded-xl p-3 border border-white/5">
-                    <span class="block text-slate-500 text-[9px] uppercase font-bold tracking-wider mb-1">Estado</span>
-                    <span id="sync-status" class="text-emerald-400 text-[10px] mono font-bold uppercase">Sincro OK</span>
+                <div class="bg-slate-900/40 rounded-xl p-4 border border-white/5 text-center">
+                    <span class="block text-slate-500 text-[10px] uppercase font-bold tracking-wider mb-1">📡 Estado</span>
+                    <span id="sync-status" class="text-emerald-400 text-xs mono font-bold uppercase">Sincro</span>
                 </div>
             </div>
 
-            <button onclick="AbrirCalculadora()" class="mt-4 w-full border border-cyan-500/30 rounded-xl py-3 flex items-center justify-center gap-2 hover:bg-cyan-500/10 transition-all group">
-                <span class="mono text-[10px] font-bold text-cyan-400 tracking-widest uppercase">Abrir Calculadora Modular</span>
-            </button>
+            <!-- BOTONES DE ACCIÓN -->
+            <div class="space-y-3">
+                <!-- Botón Calculadora -->
+                <button onclick="AbrirCalculadora()" class="w-full border border-cyan-500/30 rounded-xl py-4 flex items-center justify-center gap-2 hover:bg-cyan-500/10 transition-all group">
+                    <span class="text-lg">🧮</span>
+                    <span class="mono text-xs font-bold text-cyan-400 tracking-widest uppercase">CALCULADORA</span>
+                </button>
+
+                <!-- BOTÓN DE HISTORIA - RESTAURADO -->
+                <button id="btn-history" onclick="alert('Módulo de gráfica en construcción - Próximamente disponible')" class="w-full py-4 flex items-center justify-center gap-2 text-slate-400 hover:text-cyan-400 transition-all">
+                    <span class="text-lg">📊</span>
+                    <span class="mono text-xs font-bold tracking-widest uppercase">VER GRÁFICA DE TENDENCIA</span>
+                    <span class="text-[8px] bg-cyan-500/20 text-cyan-400 px-2 py-1 rounded-full">BETA</span>
+                </button>
+            </div>
         </div>
 
-        <button onclick="refreshTasa()" class="group relative mt-10 w-full overflow-hidden rounded-xl bg-cyan-600 p-[1px] transition-all hover:scale-[1.02] active:scale-95">
-            <div class="relative flex items-center justify-center gap-2 bg-slate-950 py-4 transition-all group-hover:bg-transparent">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-cyan-400 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <!-- BOTÓN REFRESH -->
+        <button onclick="refreshTasa()" class="group relative mt-6 w-full overflow-hidden rounded-xl bg-cyan-600 p-[1px] transition-all active:scale-95">
+            <div class="relative flex items-center justify-center gap-3 bg-slate-950 py-4 transition-all group-hover:bg-transparent">
+                <svg class="w-5 h-5 text-cyan-400 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
-                <span class="mono text-xs font-bold tracking-[0.2em] text-cyan-400 group-hover:text-white uppercase">Refresh Datastream</span>
+                <span class="mono text-xs font-bold tracking-[0.2em] text-cyan-400 group-hover:text-white uppercase">REFRESH</span>
             </div>
         </button>
 
-        <button id="btn-history" onclick="alert('Módulo en construcción')" class="...">
-            📊 Ver Gráfica de Tendencia
-        </button>
-
-        <div id="install-container" class="hidden mt-6">
-            <button id="btnInstall" class="w-full bg-emerald-600/20 border border-emerald-500/50 text-emerald-400 py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-emerald-600/30 transition-all">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-                <span class="mono text-[10px] font-bold uppercase tracking-widest">Instalar App</span>
+        <!-- INSTALAR APP -->
+        <div id="install-container" class="hidden mt-4">
+            <button id="btnInstall" class="w-full bg-emerald-600/20 border border-emerald-500/50 text-emerald-400 py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-emerald-600/30 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                <span class="mono text-xs font-bold uppercase tracking-widest">INSTALAR APP</span>
             </button>
         </div>
 
-        <footer class="mt-10 pt-6 border-t border-white/5 space-y-4">
-            <div class="bg-red-500/5 border border-red-500/20 rounded-lg p-3">
-                <p class="warning-blink mono text-[9px] leading-relaxed text-center font-bold text-red-400">
-                    ⚠️ PROYECTO PERSONAL: Consulte siempre la tasa oficial en <a href="https://www.bcv.org.ve/" target="_blank" class="underline hover:text-white">bcv.org.ve</a>
+        <!-- FOOTER -->
+        <footer class="mt-8 pt-4 border-t border-white/5">
+            <div class="bg-red-500/5 border border-red-500/20 rounded-lg p-4">
+                <p class="warning-blink mono text-xs leading-relaxed text-center font-bold text-red-400">
+                    ⚠️ PROYECTO PERSONAL: Consulte siempre la tasa oficial en <a href="https://www.bcv.org.ve/" target="_blank" class="underline font-bold hover:text-white">BCV.ORG.VE</a>
                 </p>
             </div>
-            <div class="flex flex-col items-center gap-2">
-                <p class="mono text-[9px] text-slate-500 uppercase tracking-[0.2em]">
-                    &copy; 2026 Raúl | <span class="text-cyan-500/70">MIT License</span>
-                </p>
-            </div>
+            <p class="mono text-[10px] text-slate-500 uppercase tracking-wider text-center mt-4">
+                © 2026 RAÚL RANGEL | <span class="text-cyan-500/70">MIT LICENSE</span>
+            </p>
         </footer>
     </div>
 
+    <!-- MODAL CALCULADORA -->
     <div id="modal-calc" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="cyber-card w-full max-w-sm rounded-3xl p-6 border-cyan-400 border bg-slate-900">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-white mono text-sm font-extrabold tracking-tighter uppercase">Calculadora</h2>
-                <button onclick="CerrarCalculadora()" class="text-slate-500 hover:text-white transition-colors">✕</button>
+                <h2 class="text-white mono text-base font-extrabold tracking-tighter uppercase flex items-center gap-2">
+                    <span>🧮</span> CALCULADORA
+                </h2>
+                <button onclick="CerrarCalculadora()" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-slate-700 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
             <div class="space-y-4">
-                <div class="bg-black/80 border border-cyan-500/50 rounded-2xl p-4 text-right">
-                    <span class="block text-[9px] uppercase text-cyan-500/50 mb-1 tracking-tighter">Total Estimado (VES)</span>
-                    <div id="calc-result" class="text-3xl font-black text-white glow-text">0,00</div>
+                <!-- VISOR -->
+                <div class="bg-black/80 border border-cyan-500/50 rounded-2xl p-5 text-right">
+                    <span class="block text-[10px] uppercase text-cyan-500/70 mb-1 tracking-tighter">Total (VES)</span>
+                    <div id="calc-result" class="text-4xl font-black text-white glow-text">0,00</div>
                 </div>
+                
+                <!-- BOTONES RÁPIDOS - 6 BOTONES -->
                 <div class="grid grid-cols-3 gap-2">
-                    <button onclick="setQuickAmount(5)" class="py-2 bg-slate-800/50 border border-white/5 rounded-lg text-cyan-400 font-mono text-[10px] font-bold">5</button>
-                    <button onclick="setQuickAmount(10)" class="py-2 bg-slate-800/50 border border-white/5 rounded-lg text-cyan-400 font-mono text-[10px] font-bold">10</button>
-                    <button onclick="setQuickAmount(100)" class="py-2 bg-slate-800/50 border border-white/5 rounded-lg text-cyan-400 font-mono text-[10px] font-bold">100</button>
+                    <button onclick="setQuickAmount(5)" class="py-3 bg-slate-800/50 border border-white/5 rounded-xl text-cyan-400 font-mono text-sm font-bold">5</button>
+                    <button onclick="setQuickAmount(10)" class="py-3 bg-slate-800/50 border border-white/5 rounded-xl text-cyan-400 font-mono text-sm font-bold">10</button>
+                    <button onclick="setQuickAmount(15)" class="py-3 bg-slate-800/50 border border-white/5 rounded-xl text-cyan-400 font-mono text-sm font-bold">15</button>
+                    <button onclick="setQuickAmount(20)" class="py-3 bg-slate-800/50 border border-white/5 rounded-xl text-cyan-400 font-mono text-sm font-bold">20</button>
+                    <button onclick="setQuickAmount(50)" class="py-3 bg-slate-800/50 border border-white/5 rounded-xl text-cyan-400 font-mono text-sm font-bold">50</button>
+                    <button onclick="setQuickAmount(100)" class="py-3 bg-slate-800/50 border border-white/5 rounded-xl text-cyan-400 font-mono text-sm font-bold">100</button>
                 </div>
+                
+                <!-- INPUT -->
                 <input type="number" id="calc-input" placeholder="0.00" oninput="calcular()"
-                       class="w-full bg-slate-950 border border-white/10 rounded-xl py-4 px-4 text-white font-mono focus:border-cyan-400 outline-none transition-all">
-                <div class="grid grid-cols-2 gap-2">
-                    <button onclick="setCurrency('USD')" id="btn-usd" class="py-3 rounded-xl border border-cyan-400 bg-cyan-400/10 text-cyan-400 font-mono text-[10px] font-bold">USD</button>
-                    <button onclick="setCurrency('EUR')" id="btn-eur" class="py-3 rounded-xl border border-white/5 bg-slate-950 text-slate-500 font-mono text-[10px] font-bold">EUR</button>
+                       class="w-full bg-slate-950 border border-white/10 rounded-xl py-4 px-4 text-white font-mono text-base focus:border-cyan-400 outline-none transition-all"
+                       inputmode="decimal">
+                
+               <!-- SELECTOR MONEDA + TASAS ACTUALES -->
+                <div class="space-y-3">
+                    <!-- Indicadores de tasa actual -->
+                    <div class="grid grid-cols-2 gap-2 mb-1">
+                        <div class="bg-slate-800/30 rounded-xl p-2 text-center border border-white/5">
+                            <span class="text-[8px] text-cyan-500/70 uppercase block">USD/BS</span>
+                            <span id="calc-usd-rate" class="text-cyan-400 text-sm font-mono font-bold">--.--</span>
+                        </div>
+                        <div class="bg-slate-800/30 rounded-xl p-2 text-center border border-white/5">
+                            <span class="text-[8px] text-cyan-500/70 uppercase block">EUR/BS</span>
+                            <span id="calc-eur-rate" class="text-cyan-400 text-sm font-mono font-bold">--.--</span>
+                        </div>
+                    </div>        
+               <!-- Selector de moneda -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="setCurrency('USD')" id="btn-usd" class="currency-btn py-4 rounded-xl border-2 border-cyan-400 bg-cyan-400/10 text-cyan-400 font-mono text-sm font-bold flex items-center justify-center gap-2 active:scale-95 transition-all">
+                            <span>💵</span> USD
+                        </button>
+                        <button onclick="setCurrency('EUR')" id="btn-eur" class="currency-btn py-4 rounded-xl border-2 border-white/10 bg-slate-800 text-slate-400 font-mono text-sm font-bold flex items-center justify-center gap-2 active:scale-95 transition-all">
+                            <span>💶</span> EUR
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -150,7 +310,7 @@
             installContainer.classList.remove('hidden');
         });
 
-        btnInstall.addEventListener('click', async () => {
+        btnInstall?.addEventListener('click', async () => {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 deferredPrompt = null;

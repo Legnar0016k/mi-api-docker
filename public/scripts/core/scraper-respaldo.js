@@ -17,7 +17,7 @@ async function fetchTasa() {
     const mostrarSinDatos = () => {
         if (priceElem) priceElem.innerText = '--.--';
         if (euroElem) euroElem.innerText = '--.-- €';
-        if (sourceElem) sourceElem.innerText = '🔴 SIN CONEXIÓN-!!!FALLA INMINENTE, ESTAMOS TRABAJANDO PARA RESTABLECER LA CONEXION LO Mas PRONTO POSIBLE...';
+        if (sourceElem) sourceElem.innerText = '🔴 SIN CONEXIÓN-!!!FALLA INMINENTE, ESTAMOS TRABAJANDO PARA RESTABLECER LA CONEXION LO Mas PRONTO POSIBLE(consulte la fuente oficial en la pagina del BCV)...';
         if (dateElem) dateElem.innerText = new Date().toLocaleTimeString();
         
         // Sincro status en ROJO PARPADEANTE

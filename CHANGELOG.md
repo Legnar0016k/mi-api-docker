@@ -705,3 +705,24 @@ Esta versión introduce una arquitectura de "Referencia Cruzada" que elimina la 
 - **Filtro de Anomalías**: Se implementó un margen de tolerancia del 15%. Si el BCV arroja un dato incoherente (error de lectura o caída), el servidor conmuta automáticamente a la tasa de respaldo.
 - **Liberación de Rangos**: Se eliminaron los límites fijos (`num < 100`) en `scraper-bcv.js`. Ahora el scraper es un extractor puro y la lógica de negocio reside en el servidor.
 - **Resiliencia del Euro**: El endpoint `/api/euro
+
+
+#### 🎯 Cambios clave: 20/02/2026 1:18am
+- **NUNCA muestra datos falsos:** Cuando no hay conexión, muestra --.-- tanto en USD como en Euro
+
+- **Parpadeo rojo intenso:** El status "SIN DATOS" parpadea en rojo brillante para alertar al usuario
+
+- **Modos de error diferenciados:**
+
+-**SINCRO OK (verde) → Todo funciona**
+
+-**SINCRO PARCIAL (amarillo) → Solo tenemos USD**
+
+-**SIN DATOS (rojo parpadeante) → Sin conexión**
+
+📌 Estados visuales:
+✅ Verde normal: Todo funciona correctamente
+
+⚠️ Amarillo: Datos parciales (solo USD, euro no disponible)
+
+🔴 Rojo PARPADEANTE: Sin conexión, mostrando --.--
