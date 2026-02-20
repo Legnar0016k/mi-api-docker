@@ -1,61 +1,122 @@
 /**
- * 📡 CONECTOR NIVEL 0 - ULTRA VELOZ
- * Prioridad: Railway (Timeout 1s) -> Backup: DolarApi (Instantáneo)
+ * 📡 CONECTOR NIVEL 0 - VERSIÓN ESTABLE
+ * Fuente principal: Exchangerate-API (datos oficiales BCV integrados)
+ * Plan de contingencia: DolarAPI y fallback hardcodeado
  */
+
+// Valores de respaldo duro basados en los datos que proporcionaste
+const FALLBACK_VALUES = {
+    usd: 402.33,
+    eur: 472.83,
+    source: "⚠️ MODO OFFLINE (DATOS ESTÁTICOS)"
+};
+
 async function fetchTasa() {
+    // Elementos del DOM
     const priceElem = document.getElementById('price');
-    const dateElem = document.getElementById('date');
     const sourceElem = document.getElementById('debug-source');
     const loader = document.getElementById('loader');
     const result = document.getElementById('result');
+    const euroElem = document.getElementById('euro-price');
+    const dateElem = document.getElementById('date');
 
-    // --- CONFIGURACIÓN DE CRONÓMETRO (1 SEGUNDO) ---
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1000); 
-
-    try {
-        console.log("⏱️ Intentando Railway (Límite 1s)...");
-        
-        // Pasamos el 'signal' al fetch para poder abortarlo
-        const response = await fetch('https://mi-api-docker-production.up.railway.app/api/tasas', {
-            signal: controller.signal
-        });
-        
-        clearTimeout(timeoutId); // Si responde a tiempo, cancelamos el cronómetro
-
-        if (!response.ok) throw new Error("Offline");
-        const res = await response.json();
-        
-        if (res.success && res.data && res.data.usd > 0) {
-            if (priceElem) priceElem.innerText = res.data.usd.toFixed(2);
-            if (sourceElem) sourceElem.innerText = "CONEXIÓN DIRECTA: RAILWAY";
-        } else {
-            throw new Error("Data Error");
-        }
-
-    } catch (error) {
-        clearTimeout(timeoutId); // Limpiamos el cronómetro también en caso de error
-        
-        const motivo = error.name === 'AbortError' ? "Tiempo Agotado (1s)" : "Error de Red";
-        console.warn(`⚠️ Saltando a DolarApi. Motivo: ${motivo}`);
-        
-        try {
-            // Rescate instantáneo
-            const resBackup = await fetch('https://ve.dolarapi.com/v1/dolares/oficial');
-            const data = await resBackup.json();
-
-            if (data && data.promedio) {
-                if (priceElem) priceElem.innerText = parseFloat(data.promedio).toFixed(2);
-                if (sourceElem) sourceElem.innerText = "⚠️ MODO RESPALDO: DOLARAPI";
-                console.log("✅ Rescate completado en milisegundos.");
-            }
-        } catch (backupError) {
-            if (sourceElem) sourceElem.innerText = "Error Crítico: Sin conexión";
-            if (priceElem) priceElem.innerText = "0.00";
-        }
-    } finally {
+    // Función única para mostrar datos en la UI
+    const mostrarDatos = (usd, eur, source) => {
+        if (priceElem) priceElem.innerText = usd.toFixed(2);
+        if (euroElem) euroElem.innerText = eur.toFixed(2) + ' €';
+        if (sourceElem) sourceElem.innerText = source;
         if (dateElem) dateElem.innerText = new Date().toLocaleTimeString();
+        
         if (loader) loader.classList.add('hidden');
         if (result) result.classList.remove('hidden');
+        
+        console.log(`✅ Éxito: USD ${usd.toFixed(2)} Bs | EUR ${eur.toFixed(2)} Bs | ${source}`);
+    };
+
+    // --- Timeout de seguridad (1.5 segundos) ---
+    const safetyTimeout = setTimeout(() => {
+        console.warn("⏰ Timeout de seguridad: Mostrando fallback");
+        mostrarDatos(
+            FALLBACK_VALUES.usd,
+            FALLBACK_VALUES.eur,
+            FALLBACK_VALUES.source
+        );
+    }, 1500);
+
+    // --- 1. FUENTE PRINCIPAL: Exchangerate-API (la más completa) ---
+    try {
+        console.log("🌐 Intentando con Exchangerate-API...");
+        const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+        const data = await response.json();
+        
+        // Verificamos que los datos existan
+        if (data && data.rates) {
+            // Los valores vienen directamente en el objeto 'rates'
+            // USD siempre es 1, pero necesitamos el valor en VES
+            const usdVes = data.rates.VES; // Tasa USD a VES
+            const eurVes = data.rates.VES / data.rates.EUR; // Tasa EUR a VES usando la lógica correcta
+            
+            // También podrías obtener otras monedas si las necesitas
+            console.log("💰 Datos crudos:", {
+                usd_ves: usdVes,
+                eur_usd: data.rates.EUR,
+                eur_ves: eurVes
+            });
+            
+            if (usdVes && usdVes > 0) {
+                clearTimeout(safetyTimeout);
+                mostrarDatos(
+                    usdVes,                 // USD en Bs
+                    eurVes,                 // EUR en Bs (calculado correctamente)
+                    `API (BCV: ${new Date(data.date).toLocaleDateString()})`
+                );
+                return;
+            }
+        }
+        throw new Error("Datos de VES no encontrados en exchangerate");
+        
+    } catch (error) {
+        console.log("⚠️ Exchangerate-API falló:", error.message);
     }
+
+    // --- 2. PLAN B: DolarAPI (si exchangerate falla) ---
+    try {
+        console.log("🔄 Intentando con DolarAPI...");
+        const dolarRes = await fetch('https://ve.dolarapi.com/v1/dolares/oficial');
+        const dolarData = await dolarRes.json();
+        
+        if (dolarData && dolarData.promedio) {
+            const usdValue = dolarData.promedio;
+            // Estimación del euro (basado en datos históricos ~17.5% más que el dólar)
+            const euroValue = usdValue * 1.175;
+            
+            clearTimeout(safetyTimeout);
+            mostrarDatos(
+                usdValue,
+                euroValue,
+                "DOLARAPI (EURO ESTIMADO)"
+            );
+            return;
+        }
+    } catch (error) {
+        console.log("⚠️ DolarAPI falló:", error.message);
+    }
+
+    // --- 3. PLAN C: TODO FALLÓ - Usar fallback ---
+    clearTimeout(safetyTimeout);
+    mostrarDatos(
+        FALLBACK_VALUES.usd,
+        FALLBACK_VALUES.eur,
+        FALLBACK_VALUES.source
+    );
 }
+
+// --- Auto-ejecutar al cargar la página ---
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => fetchTasa());
+} else {
+    fetchTasa();
+}
+
+// --- Exponer función para el botón de refresh manual ---
+window.refreshTasa = fetchTasa;
