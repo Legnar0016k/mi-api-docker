@@ -1,50 +1,55 @@
 /**
- * 📡 CONECTOR NIVEL 0
- * Enlace directo entre el Ninja Scraper (Railway) y la UI.
+ * 📡 CONECTOR NIVEL 0 - ESTRATEGIA DE RESCATE DOLAR (Prioridad DolarApi)
+ * Intenta Railway -> Si hay error o datos basura -> Rescata con DolarApi
  */
 async function fetchTasa() {
     const priceElem = document.getElementById('price');
-    const euroElem = document.getElementById('euro-price');
     const dateElem = document.getElementById('date');
     const sourceElem = document.getElementById('debug-source');
     const loader = document.getElementById('loader');
     const result = document.getElementById('result');
+    // El euro se ignora por instrucción del usuario
 
     try {
-        // SUSTITUYE CON TU URL REAL DE RAILWAY
-        const url = 'https://mi-api-docker-production.up.railway.app/api/tasas'; 
+        // 1. Intento con el servidor de Railway
+        const response = await fetch('https://mi-api-docker-production.up.railway.app/api/tasas');
         
-        const response = await fetch(url);
+        if (!response.ok) throw new Error("Servidor Offline");
+
         const res = await response.json();
 
-        if (res.success && res.data) {
-            // 1. Ocultar loader y mostrar interfaz
-            if(loader) loader.classList.add('hidden');
-            if(result) result.classList.remove('hidden');
-
-            // 2. Inyectar datos con validación
-            if(priceElem) priceElem.innerText = res.data.usd.toFixed(2);
-            if(euroElem) euroElem.innerText = res.data.eur.toFixed(2);
-            if(dateElem) dateElem.innerText = new Date().toLocaleTimeString();
-            
-            if(sourceElem) sourceElem.innerText = "CONEXIÓN DIRECTA: BCV OFICIAL";
-            console.log("✅ Datos Nivel 0 cargados con éxito");
+        // Validamos que los datos sean "claros" (que el USD sea mayor a 0)
+        if (res.success && res.data && res.data.usd > 0) {
+            if (priceElem) priceElem.innerText = res.data.usd.toFixed(2);
+            if (sourceElem) sourceElem.innerText = "CONEXIÓN DIRECTA: BCV (RAILWAY)";
+            console.log("✅ Tasa obtenida de Railway");
+        } else {
+            throw new Error("Datos no claros");
         }
+
     } catch (error) {
-        console.error("❌ Error conectando a la API:", error);
-        if(sourceElem) sourceElem.innerText = "Error: Servidor Offline";
-        // Si falla, al menos mostramos la interfaz para que no se quede el loader infinito
-        if(loader) loader.classList.add('hidden');
-        if(result) result.classList.remove('hidden');
+        // 2. PROTOCOLO DE RESPALDO: PRIORIDAD DOLARAPI
+        console.warn(`⚠️ Fallo en Servidor (${error.message}). Activando DolarApi...`);
+        
+        try {
+            const resBackup = await fetch('https://ve.dolarapi.com/v1/dolares/oficial');
+            const dataBackup = await resBackup.json();
+
+            if (dataBackup && dataBackup.promedio) {
+                // Inyectamos el valor de DolarApi
+                if (priceElem) priceElem.innerText = parseFloat(dataBackup.promedio).toFixed(2);
+                if (sourceElem) sourceElem.innerText = "⚠️ MODO RESPALDO: DOLARAPI (BCV)";
+                console.log("✅ Dólar rescatado exitosamente de DolarApi");
+            }
+        } catch (backupError) {
+            console.error("❌ Error Crítico: Sin conexión a ninguna fuente.");
+            if (sourceElem) sourceElem.innerText = "Error: Sin conexión a tasas";
+            if (priceElem) priceElem.innerText = "0.00";
+        }
+    } finally {
+        // 3. Finalización de la interfaz
+        if (dateElem) dateElem.innerText = new Date().toLocaleTimeString();
+        if (loader) loader.classList.add('hidden');
+        if (result) result.classList.remove('hidden');
     }
 }
-
-// 🔥 AUTO-DISPARADOR: Ejecuta la carga apenas el script entra en memoria
-if (document.readyState === 'complete') {
-    fetchTasa();
-} else {
-    window.addEventListener('load', fetchTasa);
-}
-
-// Exponer globalmente para el botón Refresh
-window.fetchTasa = fetchTasa;

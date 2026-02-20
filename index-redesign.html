@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal BCV v.4.0 | Sistema de Tasas en Tiempo Real</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <meta name="theme-color" content="#0f172a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <link rel="stylesheet" href="/nueva_version/scripts.css">
+</head>
+<body>
+    <div class="grid-bg"></div>
+    
+    <div class="container">
+        <div class="glass-card">
+            <!-- Loader -->
+            <div id="loader" class="loader-container">
+                <div class="spinner"></div>
+                <p class="loader-text">Conectando con BCV...</p>
+            </div>
+
+            <!-- Main Content -->
+            <div id="main-content" class="hidden">
+                <!-- Header -->
+                <div class="header">
+                    <div class="header-left">
+                        <p>Sistema de Consulta</p>
+                        <h1>Terminal BCV v4.0</h1>
+                    </div>
+                    <div class="status-badge">
+                        <div class="live-pulse"></div>
+                        <span>En Vivo</span>
+                    </div>
+                </div>
+
+                <!-- Main Rate Display -->
+                <div class="rate-display">
+                    <div class="rate-label">Tasa Oficial BCV</div>
+                    <div class="rate-source" id="debug-source">Cargando fuente...</div>
+                    <div>
+                        <span class="rate-value" id="price">--,--</span>
+                        <span class="rate-currency">VES</span>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Última Actualización</div>
+                        <div class="stat-value" id="date">--:--:--</div>
+                    </div>
+                    <div class="stat-card highlighted">
+                        <div class="stat-label">Euro BCV</div>
+                        <div class="stat-value" id="euro-price">--,-- €</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Estado del Sistema</div>
+                        <div class="stat-value" id="sync-status">Sincronizado</div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="actions">
+                    <button class="btn btn-primary" id="btn-refresh">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                        </svg>
+                        Actualizar Tasas
+                    </button>
+                    <button class="btn btn-secondary" id="btn-calculator">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="4" y="2" width="16" height="20" rx="2"/>
+                            <line x1="8" y1="6" x2="16" y2="6"/>
+                            <line x1="16" y1="14" x2="16" y2="18"/>
+                            <line x1="8" y1="14" x2="8" y2="18"/>
+                            <line x1="12" y1="14" x2="12" y2="18"/>
+                            <line x1="8" y1="10" x2="16" y2="10"/>
+                        </svg>
+                        Calculadora
+                    </button>
+                </div>
+
+                <!-- Footer -->
+                <div class="footer">
+                    <div class="disclaimer">
+                        <p class="disclaimer-text">
+                            ⚠️ PROYECTO PERSONAL · para uso comercial o legal, 
+                            consulte siempre la tasa oficial en <a href="https://www.bcv.org.ve/" target="_blank">bcv.org.ve</a>
+                        </p>
+                    </div>
+                    <p class="footer-info">
+                        © 2026 Terminal BCV · Desarrollado por <span>Raúl</span> · MIT License
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calculator Modal -->
+    <div id="modal-calc" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Calculadora de Conversión</h3>
+                <button class="modal-close" id="modal-close">✕</button>
+            </div>
+
+            <div class="calc-display">
+                <div class="calc-label">Total Estimado (VES)</div>
+                <div class="calc-result" id="calc-result">0,00</div>
+            </div>
+
+            <div class="quick-amounts">
+                <button class="quick-btn" data-amount="5">5</button>
+                <button class="quick-btn" data-amount="10">10</button>
+                <button class="quick-btn" data-amount="20">20</button>
+                <button class="quick-btn" data-amount="50">50</button>
+                <button class="quick-btn" data-amount="100">100</button>
+                <button class="quick-btn" data-amount="500">500</button>
+            </div>
+
+            <input 
+                type="number" 
+                class="calc-input" 
+                id="calc-input" 
+                placeholder="Ingrese el monto..."
+                step="0.01"
+            >
+
+            <div class="currency-toggle">
+                <button class="currency-btn active" data-currency="USD">USD</button>
+                <button class="currency-btn" data-currency="EUR">EUR</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/nueva_version/styles.js"></script>
+</body>
+</html>
