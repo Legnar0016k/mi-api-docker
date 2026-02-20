@@ -1,9 +1,41 @@
 /**
- * CALCULATOR LOGIC MODULE 🧮
- * Versión Mobile - Con soporte para referencias
+ * CALCULATOR LOGIC MODULE 🧮 20/02/2026
+ * Versión Mobile - Con soporte para referencias y tasas en tiempo real
  */
 
 let selectedCurrency = 'USD';
+
+// Función para actualizar tasas en la calculadora
+function actualizarTasasCalc() {
+    const usdRate = document.getElementById('price')?.innerText || '--.--';
+    const eurRate = document.getElementById('euro-price')?.innerText || '--.--';
+    
+    const calcUsd = document.getElementById('calc-usd-rate');
+    const calcEur = document.getElementById('calc-eur-rate');
+    
+    if (calcUsd) calcUsd.innerText = usdRate;
+    if (calcEur) calcEur.innerText = eurRate;
+}
+
+// Observer para cambios en las tasas principales
+const observer = new MutationObserver(actualizarTasasCalc);
+const priceElem = document.getElementById('price');
+const euroElem = document.getElementById('euro-price');
+
+if (priceElem) {
+    observer.observe(priceElem, { 
+        childList: true, 
+        characterData: true, 
+        subtree: true 
+    });
+}
+if (euroElem) {
+    observer.observe(euroElem, { 
+        childList: true, 
+        characterData: true, 
+        subtree: true 
+    });
+}
 
 function setCurrency(type) {
     selectedCurrency = type;
@@ -11,11 +43,11 @@ function setCurrency(type) {
     const btnEur = document.getElementById('btn-eur');
 
     if (type === 'USD') {
-        btnUsd.className = "currency-btn py-4 rounded-2xl border-2 border-cyan-400 bg-cyan-400/20 text-cyan-400 font-bold text-lg flex items-center justify-center gap-2 active:scale-95 transition-all";
-        btnEur.className = "currency-btn py-4 rounded-2xl border-2 border-white/10 bg-slate-800 text-slate-400 font-bold text-lg flex items-center justify-center gap-2 active:scale-95 transition-all";
+        btnUsd.className = "currency-btn py-4 rounded-xl border-2 border-cyan-400 bg-cyan-400/10 text-cyan-400 font-mono text-sm font-bold flex items-center justify-center gap-2 active:scale-95 transition-all";
+        btnEur.className = "currency-btn py-4 rounded-xl border-2 border-white/10 bg-slate-800 text-slate-400 font-mono text-sm font-bold flex items-center justify-center gap-2 active:scale-95 transition-all";
     } else {
-        btnEur.className = "currency-btn py-4 rounded-2xl border-2 border-cyan-400 bg-cyan-400/20 text-cyan-400 font-bold text-lg flex items-center justify-center gap-2 active:scale-95 transition-all";
-        btnUsd.className = "currency-btn py-4 rounded-2xl border-2 border-white/10 bg-slate-800 text-slate-400 font-bold text-lg flex items-center justify-center gap-2 active:scale-95 transition-all";
+        btnEur.className = "currency-btn py-4 rounded-xl border-2 border-cyan-400 bg-cyan-400/10 text-cyan-400 font-mono text-sm font-bold flex items-center justify-center gap-2 active:scale-95 transition-all";
+        btnUsd.className = "currency-btn py-4 rounded-xl border-2 border-white/10 bg-slate-800 text-slate-400 font-mono text-sm font-bold flex items-center justify-center gap-2 active:scale-95 transition-all";
     }
     calcular();
 }
@@ -55,6 +87,9 @@ function calcular() {
 function AbrirCalculadora() {
     const modal = document.getElementById('modal-calc');
     if (modal) {
+        // Actualizar tasas antes de mostrar
+        actualizarTasasCalc();
+        
         modal.classList.remove('hidden');
         modal.classList.add('flex');
         setTimeout(() => {
@@ -79,36 +114,10 @@ function setQuickAmount(amount) {
     }
 }
 
- // monitor vial en la calculadora para actualizar tasas en tiempo real
-    function actualizarTasasCalc() {
-        const usdRate = document.getElementById('price')?.innerText || '--.--';
-        const eurRate = document.getElementById('euro-price')?.innerText || '--.--';
-        
-        const calcUsd = document.getElementById('calc-usd-rate');
-        const calcEur = document.getElementById('calc-eur-rate');
-        
-        if (calcUsd) calcUsd.innerText = usdRate;
-        if (calcEur) calcEur.innerText = eurRate;
-    }
-
-    // Observar cambios en las tasas principales
-    const observer = new MutationObserver(actualizarTasasCalc);
-    const priceElem = document.getElementById('price');
-    const euroElem = document.getElementById('euro-price');
-    
-    if (priceElem) observer.observe(priceElem, { childList: true, characterData: true, subtree: true });
-    if (euroElem) observer.observe(euroElem, { childList: true, characterData: true, subtree: true });
-    
-    // Actualizar al abrir la calculadora
-    const abrirCalcOriginal = window.AbrirCalculadora;
-    window.AbrirCalculadora = function() {
-        actualizarTasasCalc();
-        if (abrirCalcOriginal) abrirCalcOriginal();
-    };
-
 // Exposición global
 window.AbrirCalculadora = AbrirCalculadora;
 window.CerrarCalculadora = CerrarCalculadora;
 window.setCurrency = setCurrency;
 window.setQuickAmount = setQuickAmount;
 window.calcular = calcular;
+window.actualizarTasasCalc = actualizarTasasCalc; // Por si necesitas llamarla manualmente

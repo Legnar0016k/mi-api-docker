@@ -726,3 +726,44 @@ Esta versión introduce una arquitectura de "Referencia Cruzada" que elimina la 
 ⚠️ Amarillo: Datos parciales (solo USD, euro no disponible)
 
 🔴 Rojo PARPADEANTE: Sin conexión, mostrando --.--
+
+
+✅ Ventajas de la nueva lógica:
+1. Tasas visibles en tiempo real 📊
+Antes: El usuario tenía que memorizar las tasas o salir de la calculadora para verlas
+
+Ahora: Las tasas USD/BS y EUR/BS se muestran directamente en la calculadora
+
+2. Actualización automática 🔄
+Antes: Las tasas en la calculadora podían quedar desactualizadas
+
+Ahora: Un MutationObserver vigila los cambios y actualiza automáticamente
+
+3. Mejor experiencia de usuario 👆
+Antes: Interfaz más básica
+
+Ahora: El usuario ve las tasas mientras calcula, sin cambiar de pantalla
+
+4. Código más robusto 🛡️
+Maneja mejor el modo offline
+
+Actualización al abrir la calculadora
+
+Exposición global de funciones auxiliares
+
+5. Preparado para el futuro 🚀
+Fácil de extender con más funcionalidades
+
+Estructura limpia y comentada
+
+
+🎯 Mejoras incluidas:
+Tasas en tiempo real: Las tasas USD y EUR se muestran y actualizan automáticamente en la calculadora
+
+Observer inteligente: Detecta cambios en las tasas principales y actualiza la calculadora
+
+Actualización al abrir: Cada vez que abres la calculadora, muestra las tasas más recientes
+
+Código limpio: Toda la lógica está encapsulada en un solo archivo
+
+Modo offline: Maneja correctamente cuando no hay conexión (muestra --.--)
