@@ -4,7 +4,7 @@ const HistoryChart = {
     
     async cargarHistorial() {
         try {
-            const response = await fetch('https://tu-backend.railway.app/api/tasas');
+            const response = await fetch('https://dolar-monitor-production.up.railway.app/api/tasas');
             const data = await response.json();
             
             if (data.success) {

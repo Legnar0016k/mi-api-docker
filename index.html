@@ -335,114 +335,119 @@
     </div>
 
     <!-- MODAL DE AVISO LEGAL -->
-<div id="modal-legal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/90 backdrop-blur-md transition-all duration-300">
-    <div class="cyber-card w-full max-w-md rounded-3xl p-6 border-2 border-yellow-500/30 bg-slate-900/95">
-        
-        <!-- HEADER DEL MODAL -->
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-white mono text-base font-extrabold tracking-tighter uppercase flex items-center gap-2">
-                <span class="text-yellow-500">⚠️</span> AVISO LEGAL
-            </h2>
-            <button onclick="cerrarAvisoLegal()" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-slate-700 hover:text-white transition-all">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-        </div>
+    <div id="modal-legal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/90 backdrop-blur-md transition-all duration-300">
+        <div class="cyber-card w-full max-w-md rounded-3xl p-6 border-2 border-yellow-500/30 bg-slate-900/95">
+            
+            <!-- HEADER DEL MODAL -->
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-white mono text-base font-extrabold tracking-tighter uppercase flex items-center gap-2">
+                    <span class="text-yellow-500">⚠️</span> AVISO LEGAL
+                </h2>
+                <button onclick="cerrarAvisoLegal()" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-slate-700 hover:text-white transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
 
-        <!-- CONTENIDO DEL AVISO (ahora más extenso pero fuera de la vista principal) -->
-        <div class="space-y-4 max-h-96 overflow-y-auto pr-2 custom-scroll">
-            <div class="bg-red-500/5 border border-red-500/20 rounded-xl p-5">
-                <p class="mono text-xs leading-relaxed text-slate-300">
-                    <span class="text-red-400 font-bold block mb-2">[⚠️ SYSTEM NOTICE - TÉRMINOS DE USO]</span>
+            <!-- CONTENIDO DEL AVISO -->
+            <div class="space-y-4 max-h-96 overflow-y-auto pr-2 custom-scroll">
+                <div class="bg-red-500/5 border border-red-500/20 rounded-xl p-5">
+                    <p class="mono text-xs leading-relaxed text-slate-300">
+                        <span class="text-red-400 font-bold block mb-2">[⚠️ SYSTEM NOTICE - TÉRMINOS DE USO]</span>
+                        
+                        El presente DATA STREAM BCV-[4.6.0] es un <span class="text-yellow-400">espejo referencial</span> con fines informativos y educativos. El sistema procesa promedios y datos externos que pueden variar respecto a la fuente oficial [BCV].
+                    </p>
                     
-                    El presente DATA STREAM BCV-[4.6.0] es un <span class="text-yellow-400">espejo referencial</span> con fines informativos y educativos. El sistema procesa promedios y datos externos que pueden variar respecto a la fuente oficial [BCV].
-                </p>
-                
-                <p class="mono text-xs leading-relaxed text-slate-300 mt-3">
-                    <span class="text-red-400 font-bold">⚠️ USO BAJO SU PROPIA RESPONSABILIDAD:</span> El operador de la plataforma no valida, certifica ni se responsabiliza por la ejecución de transacciones, pagos o decisiones financieras basadas en estos valores. Se recomienda verificar siempre el feed oficial en
-                    <a href="https://www.bcv.org.ve/" target="_blank" class="underline font-bold hover:text-white text-yellow-400">BCV.ORG.VE</a> antes de realizar cualquier operación.
-                </p>
-                
-                <div class="bg-slate-800/50 rounded-lg p-4 mt-4 border border-yellow-500/20">
-                    <p class="mono text-xs text-center">
-                        <span class="text-cyan-400 block mb-2">🔍 FUENTE OFICIAL</span>
-                        <a href="https://www.bcv.org.ve/" target="_blank" 
-                           class="text-yellow-400 underline hover:text-white font-bold text-sm">
-                            BCV.ORG.VE
-                        </a>
+                    <p class="mono text-xs leading-relaxed text-slate-300 mt-3">
+                        <span class="text-red-400 font-bold">⚠️ USO BAJO SU PROPIA RESPONSABILIDAD:</span> El operador de la plataforma no valida, certifica ni se responsabiliza por la ejecución de transacciones, pagos o decisiones financieras basadas en estos valores. Se recomienda verificar siempre el feed oficial en
+                        <a href="https://www.bcv.org.ve/" target="_blank" class="underline font-bold hover:text-white text-yellow-400">BCV.ORG.VE</a> antes de realizar cualquier operación.
+                    </p>
+                    
+                    <div class="bg-slate-800/50 rounded-lg p-4 mt-4 border border-yellow-500/20">
+                        <p class="mono text-xs text-center">
+                            <span class="text-cyan-400 block mb-2">🔍 FUENTE OFICIAL</span>
+                            <a href="https://www.bcv.org.ve/" target="_blank" 
+                               class="text-yellow-400 underline hover:text-white font-bold text-sm">
+                                BCV.ORG.VE
+                            </a>
+                        </p>
+                    </div>
+                    
+                    <p class="mono text-[9px] text-slate-500 text-center mt-4">
+                        Al utilizar esta aplicación aceptas los términos expresados.
                     </p>
                 </div>
-                
-                <p class="mono text-[9px] text-slate-500 text-center mt-4">
-                    Al utilizar esta aplicación aceptas los términos expresados.
-                </p>
             </div>
-        </div>
 
-        <!-- BOTÓN DE CERRAR -->
-        <button onclick="cerrarAvisoLegal()" 
-                class="w-full mt-4 border border-yellow-500/30 rounded-xl py-3 text-yellow-500 hover:bg-yellow-500/10 transition-all mono text-xs font-bold uppercase tracking-wider">
-            ENTENDIDO
-        </button>
-    </div>
-
-    <!-- MODAL DE GRÁFICA HISTÓRICA -->
-<div id="modal-history" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-    <div class="cyber-card w-full max-w-3xl rounded-3xl p-6 border-2 border-cyan-500/30 bg-slate-900/95">
-        
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-white mono text-base font-extrabold tracking-tighter uppercase flex items-center gap-2">
-                <span class="text-cyan-400">📊</span> TENDENCIA HISTÓRICA
-            </h2>
-            <button onclick="HistoryChart.cerrarModal()" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-slate-700 hover:text-white transition-all">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+            <!-- BOTÓN DE CERRAR -->
+            <button onclick="cerrarAvisoLegal()" 
+                    class="w-full mt-4 border border-yellow-500/30 rounded-xl py-3 text-yellow-500 hover:bg-yellow-500/10 transition-all mono text-xs font-bold uppercase tracking-wider">
+                ENTENDIDO
             </button>
         </div>
-
-        <div class="bg-black/40 rounded-xl p-4 border border-white/5 mb-4">
-            <div class="h-80 w-full">
-                <canvas id="history-chart"></canvas>
-            </div>
-        </div>
-
-        <!-- Estadísticas rápidas -->
-        <div class="grid grid-cols-3 gap-3 mb-4">
-            <div class="bg-slate-800/30 rounded-xl p-3 text-center border border-white/5">
-                <span class="text-[8px] text-cyan-500/70 uppercase block">VARIACIÓN</span>
-                <span id="stats-variacion" class="text-cyan-400 text-sm font-mono font-bold">+2.3%</span>
-            </div>
-            <div class="bg-slate-800/30 rounded-xl p-3 text-center border border-white/5">
-                <span class="text-[8px] text-cyan-500/70 uppercase block">MÁXIMO</span>
-                <span id="stats-max" class="text-cyan-400 text-sm font-mono font-bold">Bs 102.50</span>
-            </div>
-            <div class="bg-slate-800/30 rounded-xl p-3 text-center border border-white/5">
-                <span class="text-[8px] text-cyan-500/70 uppercase block">MÍNIMO</span>
-                <span id="stats-min" class="text-cyan-400 text-sm font-mono font-bold">Bs 90.20</span>
-            </div>
-        </div>
-
-        <!-- Leyenda -->
-        <div class="flex justify-center gap-6 text-[10px] mono">
-            <div class="flex items-center gap-2">
-                <span class="w-3 h-3 bg-emerald-500 rounded-full"></span>
-                <span class="text-slate-400">Tasa USD</span>
-            </div>
-            <div class="flex items-center gap-2">
-                <span class="w-3 h-3 border-2 border-white/50 border-dashed rounded-full"></span>
-                <span class="text-slate-400">Tendencia</span>
-            </div>
-        </div>
-
-        <button onclick="HistoryChart.cerrarModal()" 
-                class="w-full mt-4 border border-cyan-500/30 rounded-xl py-3 text-cyan-500 hover:bg-cyan-500/10 transition-all mono text-xs font-bold uppercase tracking-wider">
-            CERRAR
-        </button>
     </div>
-</div>
-</div>
+
+    <!-- MODAL DE GRÁFICA HISTÓRICA - AHORA SEPARADO Y CORRECTO -->
+    <div id="modal-history" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+        <div class="cyber-card w-full max-w-3xl rounded-3xl p-6 border-2 border-cyan-500/30 bg-slate-900/95">
+            
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-white mono text-base font-extrabold tracking-tighter uppercase flex items-center gap-2">
+                    <span class="text-cyan-400">📊</span> TENDENCIA HISTÓRICA
+                </h2>
+                <button onclick="HistoryChart.cerrarModal()" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-slate-700 hover:text-white transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="bg-black/40 rounded-xl p-4 border border-white/5 mb-4">
+                <div class="h-80 w-full">
+                    <canvas id="history-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Estadísticas rápidas -->
+            <div class="grid grid-cols-3 gap-3 mb-4">
+                <div class="bg-slate-800/30 rounded-xl p-3 text-center border border-white/5">
+                    <span class="text-[8px] text-cyan-500/70 uppercase block">VARIACIÓN</span>
+                    <span id="stats-variacion" class="text-cyan-400 text-sm font-mono font-bold">+2.3%</span>
+                </div>
+                <div class="bg-slate-800/30 rounded-xl p-3 text-center border border-white/5">
+                    <span class="text-[8px] text-cyan-500/70 uppercase block">MÁXIMO</span>
+                    <span id="stats-max" class="text-cyan-400 text-sm font-mono font-bold">Bs 102.50</span>
+                </div>
+                <div class="bg-slate-800/30 rounded-xl p-3 text-center border border-white/5">
+                    <span class="text-[8px] text-cyan-500/70 uppercase block">MÍNIMO</span>
+                    <span id="stats-min" class="text-cyan-400 text-sm font-mono font-bold">Bs 90.20</span>
+                </div>
+            </div>
+
+            <!-- Leyenda -->
+            <div class="flex justify-center gap-6 text-[10px] mono">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 bg-emerald-500 rounded-full"></span>
+                    <span class="text-slate-400">Tasa USD</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 border-2 border-white/50 border-dashed rounded-full"></span>
+                    <span class="text-slate-400">Tendencia</span>
+                </div>
+                <div class="flex items-center gap-1">
+                    <span class="w-2 h-2 rounded-full bg-red-400"></span>
+                    <span class="w-2 h-2 rounded-full bg-green-400 mx-1"></span>
+                    <span class="text-slate-400">Sube/Baja</span>
+                </div>
+            </div>
+
+            <button onclick="HistoryChart.cerrarModal()" 
+                    class="w-full mt-4 border border-cyan-500/30 rounded-xl py-3 text-cyan-500 hover:bg-cyan-500/10 transition-all mono text-xs font-bold uppercase tracking-wider">
+                CERRAR
+            </button>
+        </div>
+    </div>
 
     <script src="public/scripts/core/app-loader.js"></script>
 
