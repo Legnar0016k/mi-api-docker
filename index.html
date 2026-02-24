@@ -194,13 +194,13 @@
                     <span class="mono text-xs font-bold text-cyan-400 tracking-widest uppercase">CALCULADORA</span>
                 </button>
 
-                <!-- BOTÓN DE GRÁFICA REDISEÑADO - MÁS ATRACTIVO -->
+                <!-- BOTÓN DE GRÁFICA -->
                 <button onclick="HistoryChart.abrirModal()" 
                         class="group relative w-full overflow-hidden rounded-xl bg-gradient-to-r from-slate-800 to-slate-900 border border-cyan-500/30 hover:border-cyan-400 transition-all duration-300">
-                            
+                    
                     <!-- Efecto de brillo en hover -->
                     <div class="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/10 to-cyan-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-                            
+                    
                     <div class="relative flex items-center justify-center gap-3 py-4 px-4">
                         <!-- Icono animado -->
                         <div class="relative">
@@ -218,7 +218,7 @@
                             </span>
                         </div>
                         
-                        <!-- Badge BETA mejorado -->
+                        <!-- Badge BETA -->
                         <span class="ml-2 px-2 py-1 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-400 rounded-full text-[8px] font-mono font-bold border border-cyan-500/30 group-hover:border-cyan-400/50 transition-all">
                             BETA
                         </span>
@@ -267,8 +267,9 @@
             <p class="mono text-[10px] text-slate-500 uppercase tracking-wider text-center mt-4">
                 © 2026 RAÚL RANGEL | <span class="text-cyan-500/70">MIT LICENSE</span>
             </p>
-            <P class="mono text-[10px] text-slate-500 uppercase tracking-wider text-center mt-4">
-                Contacto: legnar0016k.dev@gmail.com</P>
+            <p class="mono text-[10px] text-slate-500 uppercase tracking-wider text-center mt-4">
+                Contacto: legnar0016k.dev@gmail.com
+            </p>
         </footer>
     </div>
 
@@ -292,7 +293,7 @@
                     <div id="calc-result" class="text-4xl font-black text-white glow-text">0,00</div>
                 </div>
                 
-                <!-- BOTONES RÁPIDOS - 6 BOTONES -->
+                <!-- BOTONES RÁPIDOS -->
                 <div class="grid grid-cols-3 gap-2">
                     <button onclick="setQuickAmount(5)" class="py-3 bg-slate-800/50 border border-white/5 rounded-xl text-cyan-400 font-mono text-sm font-bold">5</button>
                     <button onclick="setQuickAmount(10)" class="py-3 bg-slate-800/50 border border-white/5 rounded-xl text-cyan-400 font-mono text-sm font-bold">10</button>
@@ -307,9 +308,8 @@
                        class="w-full bg-slate-950 border border-white/10 rounded-xl py-4 px-4 text-white font-mono text-base focus:border-cyan-400 outline-none transition-all"
                        inputmode="decimal">
                 
-               <!-- SELECTOR MONEDA + TASAS ACTUALES -->
+                <!-- SELECTOR MONEDA -->
                 <div class="space-y-3">
-                    <!-- Indicadores de tasa actual -->
                     <div class="grid grid-cols-2 gap-2 mb-1">
                         <div class="bg-slate-800/30 rounded-xl p-2 text-center border border-white/5">
                             <span class="text-[8px] text-cyan-500/70 uppercase block">USD/BS</span>
@@ -319,8 +319,7 @@
                             <span class="text-[8px] text-cyan-500/70 uppercase block">EUR/BS</span>
                             <span id="calc-eur-rate" class="text-cyan-400 text-sm font-mono font-bold">--.--</span>
                         </div>
-                    </div>        
-               <!-- Selector de moneda -->
+                    </div>
                     <div class="grid grid-cols-2 gap-2">
                         <button onclick="setCurrency('USD')" id="btn-usd" class="currency-btn py-4 rounded-xl border-2 border-cyan-400 bg-cyan-400/10 text-cyan-400 font-mono text-sm font-bold flex items-center justify-center gap-2 active:scale-95 transition-all">
                             <span>💵</span> USD
@@ -338,7 +337,6 @@
     <div id="modal-legal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/90 backdrop-blur-md transition-all duration-300">
         <div class="cyber-card w-full max-w-md rounded-3xl p-6 border-2 border-yellow-500/30 bg-slate-900/95">
             
-            <!-- HEADER DEL MODAL -->
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-white mono text-base font-extrabold tracking-tighter uppercase flex items-center gap-2">
                     <span class="text-yellow-500">⚠️</span> AVISO LEGAL
@@ -350,7 +348,6 @@
                 </button>
             </div>
 
-            <!-- CONTENIDO DEL AVISO -->
             <div class="space-y-4 max-h-96 overflow-y-auto pr-2 custom-scroll">
                 <div class="bg-red-500/5 border border-red-500/20 rounded-xl p-5">
                     <p class="mono text-xs leading-relaxed text-slate-300">
@@ -380,7 +377,6 @@
                 </div>
             </div>
 
-            <!-- BOTÓN DE CERRAR -->
             <button onclick="cerrarAvisoLegal()" 
                     class="w-full mt-4 border border-yellow-500/30 rounded-xl py-3 text-yellow-500 hover:bg-yellow-500/10 transition-all mono text-xs font-bold uppercase tracking-wider">
                 ENTENDIDO
@@ -388,10 +384,10 @@
         </div>
     </div>
 
-    <!-- MODAL DE GRÁFICA HISTÓRICA - AHORA SEPARADO Y CORRECTO -->
+    <!-- MODAL DE GRÁFICA HISTÓRICA -->
     <div id="modal-history" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
         <div class="cyber-card w-full max-w-3xl rounded-3xl p-6 border-2 border-cyan-500/30 bg-slate-900/95">
-            
+
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-white mono text-base font-extrabold tracking-tighter uppercase flex items-center gap-2">
                     <span class="text-cyan-400">📊</span> TENDENCIA HISTÓRICA
@@ -401,6 +397,45 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
+            </div>
+
+            <!-- SELECTOR DE FECHA MEJORADO - BOTÓN TÁCTIL -->
+            <div class="flex flex-col gap-2 mb-4 bg-slate-800/30 rounded-xl p-4 border border-cyan-500/20">
+                <span class="text-[10px] text-cyan-400 mono uppercase tracking-wider text-center mb-1">📅 SELECCIONAR EL DÍA DE LA SEMANA A CONSULTAR</span>
+                
+                <!-- Botón principal - fácil de pulsar en móvil -->
+                <button onclick="document.getElementById('history-date').showPicker()" 
+                        class="w-full bg-gradient-to-r from-slate-800 to-slate-900 border-2 border-cyan-500/30 rounded-xl py-5 px-4 flex items-center justify-between active:scale-98 transition-all hover:border-cyan-400">
+                    
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center">
+                            <span class="text-xl">📅</span>
+                        </div>
+                        <div class="flex flex-col items-start">
+                            <span class="text-white font-mono text-sm font-bold" id="fecha-seleccionada-text">Cargando...</span>
+                            <span class="text-[8px] text-cyan-400/70 uppercase tracking-wider">TOCA PARA CAMBIAR</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-1">
+                        <span class="text-xs text-cyan-400 mono">7 DÍAS</span>
+                        <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                </button>
+            
+                <!-- Input oculto - se activa con el botón -->
+                <input type="date" 
+                       id="history-date" 
+                       class="hidden"
+                       onchange="HistoryChart.cambiarFecha()">
+                
+                <!-- Mini guía visual -->
+                <div class="flex justify-between px-2 text-[8px] text-slate-600 mono">
+                    <span>← SEMANA ANTERIOR</span>
+                    <span>SEMANA ACTUAL →</span>
+                </div>
             </div>
 
             <div class="bg-black/40 rounded-xl p-4 border border-white/5 mb-4">
@@ -413,15 +448,15 @@
             <div class="grid grid-cols-3 gap-3 mb-4">
                 <div class="bg-slate-800/30 rounded-xl p-3 text-center border border-white/5">
                     <span class="text-[8px] text-cyan-500/70 uppercase block">VARIACIÓN</span>
-                    <span id="stats-variacion" class="text-cyan-400 text-sm font-mono font-bold">+2.3%</span>
+                    <span id="stats-variacion" class="text-cyan-400 text-sm font-mono font-bold">--.--%</span>
                 </div>
                 <div class="bg-slate-800/30 rounded-xl p-3 text-center border border-white/5">
                     <span class="text-[8px] text-cyan-500/70 uppercase block">MÁXIMO</span>
-                    <span id="stats-max" class="text-cyan-400 text-sm font-mono font-bold">Bs 102.50</span>
+                    <span id="stats-max" class="text-cyan-400 text-sm font-mono font-bold">--.--</span>
                 </div>
                 <div class="bg-slate-800/30 rounded-xl p-3 text-center border border-white/5">
                     <span class="text-[8px] text-cyan-500/70 uppercase block">MÍNIMO</span>
-                    <span id="stats-min" class="text-cyan-400 text-sm font-mono font-bold">Bs 90.20</span>
+                    <span id="stats-min" class="text-cyan-400 text-sm font-mono font-bold">--.--</span>
                 </div>
             </div>
 
