@@ -767,3 +767,120 @@ Actualización al abrir: Cada vez que abres la calculadora, muestra las tasas m�
 Código limpio: Toda la lógica está encapsulada en un solo archivo
 
 Modo offline: Maneja correctamente cuando no hay conexión (muestra --.--)
+
+# Changelog - Terminal BCV v4.6.1 =============================================================
+
+## [4.6.1] - 2026-02-24
+
+### ✨ Nuevas Características
+
+#### 📊 Sistema de Gráfica Histórica
+- Implementado modal interactivo para visualizar tendencia del dólar
+- Gráfica de línea con datos históricos de los últimos 30 días
+- **Selector de fecha táctil** optimizado para móviles (botón grande de 48px)
+- Visualización por **semanas completas** (lunes a domingo) - siempre 7 días
+- **Línea de tendencia** blanca punteada (media móvil de 3 días)
+
+#### 🎨 Mejoras Visuales en Gráfica
+- **Puntos de colores**:
+  - 🔴 Rojo: El día que el dólar SUBIÓ respecto al día anterior
+  - 🟢 Verde: El día que el dólar BAJÓ respecto al día anterior
+  - ⚪ Gris: Primer punto de referencia
+- **Tooltips mejorados** con:
+  - Valor actual en Bolívares
+  - Diferencia día a día con emojis (🔴/🟢)
+  - Color del punto en el tooltip
+  - Tendencia general
+
+#### 📈 Estadísticas en Tiempo Real
+- **Variación porcentual** del período seleccionado (rojo si subió, verde si bajó)
+- **Máximo histórico** del período (siempre en rojo)
+- **Mínimo histórico** del período (siempre en verde)
+
+#### 🤖 Sistema de Respaldo Inteligente
+- **Doble fuente de datos**:
+  1. ExchangeRate-API (principal)
+  2. DolarAPI (respaldo)
+- **Modo offline automático**: Si las APIs fallan, muestra datos de ejemplo
+- **Mensajes informativos** cuando se usan datos de referencia
+
+#### 🔧 Backend y Base de Datos
+- Implementado **SQLite** para almacenamiento histórico
+- **Registro automático diario** a las 3:00 AM (hora Venezuela)
+- **Endpoints API**:
+  - `GET /api/tasas` - Tasa actual + historial
+  - `GET /api/tasas/historial` - Solo historial
+  - `POST /api/tasas/historial` - Agregar datos manuales
+- **Datos iniciales** precargados (10 días) para dar vida a la gráfica
+
+#### 🎯 Optimización Móvil
+- Botones con área táctil mínima de 48px
+- Selector de fecha convertido en botón grande
+- Textos responsivos (ajuste automático en pantallas pequeñas)
+- Modal a pantalla completa en móviles
+
+### 🐛 Correcciones
+
+#### Estructurales
+- ✅ Corregido error donde el modal de gráfica estaba DENTRO del modal de aviso legal
+- ✅ Separados correctamente los modales para evitar conflictos
+- ✅ Eliminados logs de consola innecesarios
+
+#### Lógica de Fechas
+- ✅ Corregido filtro de 7 días: ahora muestra SEMANA COMPLETA (lunes a domingo)
+- ✅ Si no hay datos para hoy, muestra automáticamente la última semana disponible
+- ✅ Si se selecciona una fecha sin datos, busca la semana anterior más cercana
+- ✅ Mensajes claros cuando se usan datos de referencia
+
+#### Backend
+- ✅ Ajustado cron job a las 3:00 AM (único registro diario)
+- ✅ Implementada solución para Railway Gratuito usando cron-job.org
+- ✅ Corregido error 400 al crear registros (eliminado campo fecha_activacion)
+
+### ⚡ Mejoras de Rendimiento
+- Optimizada carga de Chart.js
+- Implementado anti-caché en carga de scripts
+- Service Worker para actualizaciones automáticas
+- Datos de ejemplo precargados para pruebas offline
+
+### 📱 Compatibilidad
+- iOS Safari ✅
+- Android Chrome ✅
+- Navegadores de escritorio ✅
+- PWA instalable ✅
+
+---
+
+## [4.6.0] - 2026-02-20
+- Versión base con calculadora y tasas en tiempo real
+- Implementado theme manager (claro/oscuro)
+- Aviso legal y términos de uso
+
+## [4.5.0] - 2026-02-15
+- Primera versión pública
+- Scraper básico del BCV
+- Visualización de tasa USD/EUR
+
+Versión recomendada: v4.6.1 (la actual)
+
+📊 Estado del Proyecto: ESTABLE ✅
+
+*Componente	Estado	Observación*
+Backend API	          ✅ Funcional	SQLite + Railway
+Frontend	            ✅ Funcional	Mobile-first
+Gráfica histórica	    ✅ COMPLETA	Con tendencia y tooltips
+Calculadora	          ✅ Funcional	Con tasas en tiempo real
+Sistema offline	      ✅ Implementado	Datos de ejemplo
+PWA	                  ✅ Funcional	Instalable
+Railway gratuito	    ✅ Funciona	Con cron-job.org
+
+🎯 Próximas mejoras sugeridas (v4.7.0):
+Exportar datos a CSV/PDF
+
+Comparativa mes a mes
+
+Notificaciones de cambio significativo
+
+Más fuentes de datos (BCV directo)
+
+Gráfica del Euro también
