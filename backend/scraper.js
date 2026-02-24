@@ -1,52 +1,55 @@
+// scraper.js - Obtiene tasas de APIs confiables
 const axios = require('axios');
-const cheerio = require('cheerio');
-const https = require('https');
 
-/**
- * 🥷 NINJA SCRAPER BCV
- * Diseñado para ser invisible y preciso.
- */
-const scraperBCV = async () => {
-    const URL = 'https://www.bcv.org.ve/';
-    
-    // Agente para ignorar certificados SSL rotos del BCV
-    const agent = new https.Agent({ rejectUnauthorized: false });
-
+async function obtenerTasasAPI() {
     try {
-        const { data } = await axios.get(URL, {
-            httpsAgent: agent,
-            timeout: 10000,
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-                'Accept-Language': 'es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3',
-                'Cache-Control': 'no-cache',
-                'Pragma': 'no-cache'
-            }
+        // Usar ExchangeRate-API como fuente principal
+        const response = await axios.get('https://api.exchangerate-api.com/v4/latest/USD', {
+            timeout: 8000
         });
-
-        const $ = cheerio.load(data);
-
-        // Función interna para limpiar los números locos del BCV (ej: 382,63180000)
-        const limpiarTasa = (selector) => {
-            const raw = $(selector).text().trim();
-            if (!raw) return null;
-            // 1. Cambiamos la coma por punto 
-            // 2. Quitamos cualquier cosa que no sea número o punto
-            const limpio = raw.replace(',', '.').replace(/[^\d.]/g, '');
-            return parseFloat(limpio);
-        };
-
-        return {
-            usd: limpiarTasa('#dolar strong'),
-            eur: limpiarTasa('#euro strong'),
-            fecha: new Date().toISOString()
-        };
-
+        
+        const data = response.data;
+        
+        if (data && data.rates) {
+            const usdVes = data.rates.VES;
+            const eurVes = usdVes / data.rates.EUR;
+            
+            return {
+                usd: usdVes,
+                eur: eurVes,
+                fecha: new Date().toISOString().split('T')[0], // YYYY-MM-DD
+                fuente: 'exchangerate-api'
+            };
+        }
+        throw new Error('Datos incompletos');
     } catch (error) {
-        console.error("❌ Ninja Scraper detectado o bloqueado:", error.message);
-        throw error;
+        console.log('⚠️ ExchangeRate-API falló, intentando con DolarAPI');
+        
+        // Fallback a DolarAPI
+        try {
+            const dolarRes = await axios.get('https://ve.dolarapi.com/v1/dolares/oficial', {
+                timeout: 5000
+            });
+            
+            const dolarData = dolarRes.data;
+            
+            if (dolarData && dolarData.promedio) {
+                // Para euro, usamos una aproximación (1 EUR ≈ 1.05 USD)
+                const usdValue = dolarData.promedio;
+                const eurValue = usdValue * 1.05; // Aproximación
+                
+                return {
+                    usd: usdValue,
+                    eur: eurValue,
+                    fecha: new Date().toISOString().split('T')[0],
+                    fuente: 'dolarapi'
+                };
+            }
+        } catch (fallbackError) {
+            console.error('❌ Todas las APIs fallaron');
+            throw new Error('No se pudo obtener tasas de ninguna fuente');
+        }
     }
-};
+}
 
-module.exports = scraperBCV;
+module.exports = obtenerTasasAPI;

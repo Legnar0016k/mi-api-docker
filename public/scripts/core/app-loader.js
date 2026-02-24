@@ -3,7 +3,8 @@ const AppLoader = {
         'public/scripts/core/scraper-respaldo.js',
         'public/scripts/ui/calc-logic.js',
         'public/scripts/core/theme-manager.js',
-        'public/scripts/ui/ui-render.js'
+        'public/scripts/ui/ui-render.js',
+        'public/scripts/ui/history-chart.js'
     ],
 
     init() {
