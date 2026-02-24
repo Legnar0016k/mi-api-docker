@@ -384,105 +384,102 @@
         </div>
     </div>
 
-    <!-- MODAL DE GRÁFICA HISTÓRICA -->
-    <div id="modal-history" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-        <div class="cyber-card w-full max-w-3xl rounded-3xl p-6 border-2 border-cyan-500/30 bg-slate-900/95">
+    <!-- MODAL DE GRÁFICA HISTÓRICA - VERSIÓN RESPONSIVA CORREGIDA -->
+<div id="modal-history" class="fixed inset-0 z-50 hidden flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-md overflow-y-auto">
+    <div class="cyber-card w-full max-w-[95%] sm:max-w-3xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 border-2 border-cyan-500/30 bg-slate-900/95 my-4">
 
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-white mono text-base font-extrabold tracking-tighter uppercase flex items-center gap-2">
-                    <span class="text-cyan-400">📊</span> TENDENCIA HISTÓRICA
-                </h2>
-                <button onclick="HistoryChart.cerrarModal()" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-slate-700 hover:text-white transition-all">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-
-            <!-- SELECTOR DE FECHA MEJORADO - BOTÓN TÁCTIL -->
-            <div class="flex flex-col gap-2 mb-4 bg-slate-800/30 rounded-xl p-4 border border-cyan-500/20">
-                <span class="text-[10px] text-cyan-400 mono uppercase tracking-wider text-center mb-1">📅 SELECCIONAR EL DÍA DE LA SEMANA A CONSULTAR</span>
-                
-                <!-- Botón principal - fácil de pulsar en móvil -->
-                <button onclick="document.getElementById('history-date').showPicker()" 
-                        class="w-full bg-gradient-to-r from-slate-800 to-slate-900 border-2 border-cyan-500/30 rounded-xl py-5 px-4 flex items-center justify-between active:scale-98 transition-all hover:border-cyan-400">
-                    
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center">
-                            <span class="text-xl">📅</span>
-                        </div>
-                        <div class="flex flex-col items-start">
-                            <span class="text-white font-mono text-sm font-bold" id="fecha-seleccionada-text">Cargando...</span>
-                            <span class="text-[8px] text-cyan-400/70 uppercase tracking-wider">TOCA PARA CAMBIAR</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center gap-1">
-                        <span class="text-xs text-cyan-400 mono">7 DÍAS</span>
-                        <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </div>
-                </button>
-            
-                <!-- Input oculto - se activa con el botón -->
-                <input type="date" 
-                       id="history-date" 
-                       class="hidden"
-                       onchange="HistoryChart.cambiarFecha()">
-                
-                <!-- Mini guía visual -->
-                <div class="flex justify-between px-2 text-[8px] text-slate-600 mono">
-                    <span>← SEMANA ANTERIOR</span>
-                    <span>SEMANA ACTUAL →</span>
-                </div>
-            </div>
-
-            <div class="bg-black/40 rounded-xl p-4 border border-white/5 mb-4">
-                <div class="h-80 w-full">
-                    <canvas id="history-chart"></canvas>
-                </div>
-            </div>
-
-            <!-- Estadísticas rápidas -->
-            <div class="grid grid-cols-3 gap-3 mb-4">
-                <div class="bg-slate-800/30 rounded-xl p-3 text-center border border-white/5">
-                    <span class="text-[8px] text-cyan-500/70 uppercase block">VARIACIÓN</span>
-                    <span id="stats-variacion" class="text-cyan-400 text-sm font-mono font-bold">--.--%</span>
-                </div>
-                <div class="bg-slate-800/30 rounded-xl p-3 text-center border border-white/5">
-                    <span class="text-[8px] text-cyan-500/70 uppercase block">MÁXIMO</span>
-                    <span id="stats-max" class="text-cyan-400 text-sm font-mono font-bold">--.--</span>
-                </div>
-                <div class="bg-slate-800/30 rounded-xl p-3 text-center border border-white/5">
-                    <span class="text-[8px] text-cyan-500/70 uppercase block">MÍNIMO</span>
-                    <span id="stats-min" class="text-cyan-400 text-sm font-mono font-bold">--.--</span>
-                </div>
-            </div>
-
-            <!-- Leyenda -->
-            <div class="flex justify-center gap-6 text-[10px] mono">
-                <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 bg-emerald-500 rounded-full"></span>
-                    <span class="text-slate-400">Tasa USD</span>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 border-2 border-white/50 border-dashed rounded-full"></span>
-                    <span class="text-slate-400">Tendencia</span>
-                </div>
-                <div class="flex items-center gap-1">
-                    <span class="w-2 h-2 rounded-full bg-red-400"></span>
-                    <span class="w-2 h-2 rounded-full bg-green-400 mx-1"></span>
-                    <span class="text-slate-400">Sube/Baja</span>
-                </div>
-            </div>
-
-            <button onclick="HistoryChart.cerrarModal()" 
-                    class="w-full mt-4 border border-cyan-500/30 rounded-xl py-3 text-cyan-500 hover:bg-cyan-500/10 transition-all mono text-xs font-bold uppercase tracking-wider">
-                CERRAR
+        <div class="flex justify-between items-center mb-3 sm:mb-4">
+            <h2 class="text-white mono text-sm sm:text-base font-extrabold tracking-tighter uppercase flex items-center gap-2">
+                <span class="text-cyan-400 text-lg sm:text-xl">📊</span> 
+                <span class="truncate">TENDENCIA HISTÓRICA</span>
+            </h2>
+            <button onclick="HistoryChart.cerrarModal()" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-slate-700 hover:text-white transition-all flex-shrink-0">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
             </button>
         </div>
+
+        <!-- SELECTOR DE FECHA - COMPACTO EN MÓVIL -->
+        <div class="flex flex-col gap-2 mb-3 sm:mb-4 bg-slate-800/30 rounded-xl p-3 sm:p-4 border border-cyan-500/20">
+            <span class="text-[8px] sm:text-[10px] text-cyan-400 mono uppercase tracking-wider text-center mb-1">📅 SELECCIONAR DÍA</span>
+            
+            <button onclick="document.getElementById('history-date').showPicker()" 
+                    class="w-full bg-gradient-to-r from-slate-800 to-slate-900 border-2 border-cyan-500/30 rounded-xl py-3 sm:py-5 px-3 sm:px-4 flex items-center justify-between active:scale-98 transition-all hover:border-cyan-400">
+                
+                <div class="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
+                        <span class="text-base sm:text-xl">📅</span>
+                    </div>
+                    <div class="flex flex-col items-start min-w-0 flex-1">
+                        <span class="text-white font-mono text-xs sm:text-sm font-bold truncate w-full" id="fecha-seleccionada-text">Cargando...</span>
+                        <span class="text-[6px] sm:text-[8px] text-cyan-400/70 uppercase tracking-wider truncate w-full">TOCA PARA CAMBIAR</span>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-1 flex-shrink-0 ml-2">
+                    <span class="text-[10px] sm:text-xs text-cyan-400 mono whitespace-nowrap">7 DÍAS</span>
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </div>
+            </button>
+        
+            <input type="date" id="history-date" class="hidden" onchange="HistoryChart.cambiarFecha()">
+            
+            <div class="flex justify-between px-2 text-[6px] sm:text-[8px] text-slate-600 mono">
+                <span>← ANTERIOR</span>
+                <span>ACTUAL →</span>
+            </div>
+        </div>
+
+        <!-- CONTENEDOR DE GRÁFICA - ALTURA FIJA EN MÓVIL -->
+        <div class="bg-black/40 rounded-xl p-2 sm:p-4 border border-white/5 mb-3 sm:mb-4">
+            <div class="h-60 sm:h-80 w-full">
+                <canvas id="history-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- ESTADÍSTICAS - MÁS COMPACTAS EN MÓVIL -->
+        <div class="grid grid-cols-3 gap-2 sm:gap-3 mb-3 sm:mb-4">
+            <div class="bg-slate-800/30 rounded-xl p-2 sm:p-3 text-center border border-white/5">
+                <span class="text-[6px] sm:text-[8px] text-cyan-500/70 uppercase block truncate">VARIACIÓN</span>
+                <span id="stats-variacion" class="text-cyanas-400 text-[10px] sm:text-sm font-mono font-bold block truncate">--.--%</span>
+            </div>
+            <div class="bg-slate-800/30 rounded-xl p-2 sm:p-3 text-center border border-white/5">
+                <span class="text-[6px] sm:text-[8px] text-cyan-500/70 uppercase block truncate">MÁXIMO</span>
+                <span id="stats-max" class="text-cyan-400 text-[10px] sm:text-sm font-mono font-bold block truncate">--.--</span>
+            </div>
+            <div class="bg-slate-800/30 rounded-xl p-2 sm:p-3 text-center border border-white/5">
+                <span class="text-[6px] sm:text-[8px] text-cyan-500/70 uppercase block truncate">MÍNIMO</span>
+                <span id="stats-min" class="text-cyan-400 text-[10px] sm:text-sm font-mono font-bold block truncate">--.--</span>
+            </div>
+        </div>
+
+        <!-- LEYENDA - WRAP EN MÓVIL -->
+        <div class="flex flex-wrap justify-center gap-3 sm:gap-6 text-[8px] sm:text-[10px] mono mb-3 sm:mb-4">
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 sm:w-3 sm:h-3 bg-emerald-500 rounded-full"></span>
+                <span class="text-slate-400">USD</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 sm:w-3 sm:h-3 border-2 border-white/50 border-dashed rounded-full"></span>
+                <span class="text-slate-400">Tendencia</span>
+            </div>
+            <div class="flex items-center gap-1">
+                <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-red-400"></span>
+                <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-green-400 mx-1"></span>
+                <span class="text-slate-400">Sube/Baja</span>
+            </div>
+        </div>
+
+        <button onclick="HistoryChart.cerrarModal()" 
+                class="w-full border border-cyan-500/30 rounded-xl py-3 sm:py-4 text-cyan-500 hover:bg-cyan-500/10 transition-all mono text-[10px] sm:text-xs font-bold uppercase tracking-wider">
+            CERRAR
+        </button>
     </div>
+</div>
+    
 
     <script src="public/scripts/core/app-loader.js"></script>
 
