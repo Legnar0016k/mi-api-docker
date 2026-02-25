@@ -1,62 +1,153 @@
-// history-chart.js - Versión con filtro de 7 días
+// history-chart.js - Versión con registro inteligente + actualizaciones + TENDENCIA
 const HistoryChart = {
     chartInstance: null,
     datosCompletos: null,
     
     async cargarHistorial() {
         try {
+            // 1. Obtener historial actual
             const response = await fetch('https://dolar-monitor-production.up.railway.app/api/tasas');
             const data = await response.json();
             
             if (data.success) {
                 this.datosCompletos = data.data.historial;
                 
-                // Por defecto, mostrar últimos 7 días
-                const ultimos7 = this.filtrarUltimos7(this.datosCompletos);
-                this.renderizarGrafica(ultimos7);
-                this.actualizarEstadisticas(ultimos7);
+                // 2. Obtener tasa actual para comparar
+                const fechaHoy = new Date().toISOString().split('T')[0];
+                const datosHoy = this.datosCompletos.filter(d => d.fecha === fechaHoy);
                 
-                // Actualizar input de fecha con la fecha más reciente
+                // 3. Consultar tasa actual
+                const tasaActualResponse = await fetch('https://dolar-monitor-production.up.railway.app/api/tasas/actual');
+                const tasaActualData = await tasaActualResponse.json();
+                
+                if (tasaActualData.success) {
+                    const tasaActual = tasaActualData.data.usd;
+                    
+                    // Caso 1: No hay registro hoy
+                    if (datosHoy.length === 0) {
+                        console.log('📝 Registrando tasa de hoy por primera vez...');
+                        await this.registrarTasaHoy(tasaActual, false);
+                        
+                        // Recargar historial
+                        const response2 = await fetch('https://dolar-monitor-production.up.railway.app/api/tasas');
+                        const data2 = await response2.json();
+                        this.datosCompletos = data2.data.historial;
+                    }
+                    // Caso 2: Hay registro pero cambió significativamente (> 0.30)
+                    else if (Math.abs(datosHoy[0].usd - tasaActual) > 0.30) {
+                        console.log(`📝 Actualizando tasa de hoy: ${datosHoy[0].usd} → ${tasaActual}`);
+                        await this.registrarTasaHoy(tasaActual, true);
+                        
+                        // Recargar historial
+                        const response2 = await fetch('https://dolar-monitor-production.up.railway.app/api/tasas');
+                        const data2 = await response2.json();
+                        this.datosCompletos = data2.data.historial;
+                    }
+                }
+                
+                // 4. Mostrar la semana completa más reciente
+                const semanaReciente = this.filtrarUltimos7(this.datosCompletos);
+                this.renderizarGrafica(semanaReciente);
+                this.actualizarEstadisticas(semanaReciente);
+                
+                // 5. Actualizar input de fecha
                 this.actualizarInputFecha();
                 
                 return data.data;
             }
         } catch (error) {
             console.error('Error cargando historial:', error);
+            // Fallback a datos de ejemplo
             const datosEjemplo = this.getDatosEjemplo();
             this.datosCompletos = datosEjemplo;
-            this.renderizarGrafica(this.filtrarUltimos7(datosEjemplo));
-            this.actualizarEstadisticas(this.filtrarUltimos7(datosEjemplo));
+            const semanaReciente = this.filtrarUltimos7(datosEjemplo);
+            this.renderizarGrafica(semanaReciente);
+            this.actualizarEstadisticas(semanaReciente);
         }
     },
     
+    // Registrar o actualizar tasa
+    async registrarTasaHoy(tasa, esActualizacion = false) {
+        try {
+            const response = await fetch('https://dolar-monitor-production.up.railway.app/api/tasas/registrar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    usd: tasa,
+                    actualizar: esActualizacion
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                console.log(`✅ Tasa ${esActualizacion ? 'actualizada' : 'registrada'}: Bs ${tasa.toFixed(2)}`);
+                
+                // Mostrar notificación al usuario
+                Swal.fire({
+                    icon: 'success',
+                    title: esActualizacion ? '📊 Tasa actualizada' : '📊 Nuevo registro',
+                    text: `Dólar: Bs ${tasa.toFixed(2)}`,
+                    timer: 2000,
+                    showConfirmButton: false,
+                    background: '#0f172a',
+                    color: '#fff',
+                    toast: true,
+                    position: 'top-end'
+                });
+            }
+        } catch (error) {
+            console.error('❌ Error registrando tasa:', error);
+        }
+    },
+    
+    // Obtener la semana más reciente con datos
     filtrarUltimos7(datos) {
         if (!datos || datos.length === 0) return [];
         
-        // Ordenar por fecha descendente y tomar últimos 7
         const ordenados = [...datos].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-        return ordenados.slice(0, 7).reverse(); // Revertir para orden ascendente en gráfica
+        const fechaMasReciente = ordenados[0].fecha;
+        
+        return this.filtrarPorSemana(datos, fechaMasReciente);
     },
     
+    // Filtrar por semana completa (lunes a domingo)
     filtrarPorSemana(datos, fechaSeleccionada) {
         if (!datos || datos.length === 0 || !fechaSeleccionada) return [];
         
         const fechaRef = new Date(fechaSeleccionada);
-        const fechaInicio = new Date(fechaRef);
-        fechaInicio.setDate(fechaInicio.getDate() - 6); // 7 días incluyendo la seleccionada
+        const diaSemana = fechaRef.getDay();
+        const diffAlLunes = diaSemana === 0 ? 6 : diaSemana - 1;
         
-        // Formatear a YYYY-MM-DD para comparar
-        const inicioStr = fechaInicio.toISOString().split('T')[0];
-        const finStr = fechaRef.toISOString().split('T')[0];
+        const lunes = new Date(fechaRef);
+        lunes.setDate(fechaRef.getDate() - diffAlLunes);
+        const domingo = new Date(lunes);
+        domingo.setDate(lunes.getDate() + 6);
         
+        const lunesStr = lunes.toISOString().split('T')[0];
+        const domingoStr = domingo.toISOString().split('T')[0];
+        
+        // Filtrar datos de la semana
         const filtrados = datos.filter(d => 
-            d.fecha >= inicioStr && d.fecha <= finStr
+            d.fecha >= lunesStr && d.fecha <= domingoStr
         ).sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+        
+        // Si no hay datos, buscar semana anterior
+        if (filtrados.length === 0) {
+            const fechasDisponibles = [...new Set(datos.map(d => d.fecha))].sort();
+            const fechasAnteriores = fechasDisponibles.filter(f => f < fechaSeleccionada);
+            
+            if (fechasAnteriores.length > 0) {
+                const fechaCercana = fechasAnteriores[fechasAnteriores.length - 1];
+                return this.filtrarPorSemana(datos, fechaCercana);
+            }
+        }
         
         return filtrados;
     },
     
-    // SE Modifica la función actualizarInputFecha para que llame a esta:
     actualizarInputFecha() {
         const input = document.getElementById('history-date');
         if (input && this.datosCompletos && this.datosCompletos.length > 0) {
@@ -64,12 +155,10 @@ const HistoryChart = {
             input.value = fechas[fechas.length - 1];
             input.max = fechas[fechas.length - 1];
             input.min = fechas[0];
-
-            // 🔥 NUEVO: Actualizar el texto del botón
             this.actualizarTextoBoton(input.value);
         }
     },
-
+    
     actualizarTextoBoton(fecha) {
         const textoBoton = document.getElementById('fecha-seleccionada-text');
         if (textoBoton && fecha) {
@@ -83,28 +172,31 @@ const HistoryChart = {
         }
     },
     
-    // Modifica la función cambiarFecha para que actualice el texto:
     async cambiarFecha() {
         const input = document.getElementById('history-date');
         if (!input || !input.value || !this.datosCompletos) return;
         
         const fechaSeleccionada = input.value;
-        const datosFiltrados = this.filtrarPorSemana(this.datosCompletos, fechaSeleccionada);
+        let datosFiltrados = this.filtrarPorSemana(this.datosCompletos, fechaSeleccionada);
         
-        if (datosFiltrados.length > 0) {
-            this.renderizarGrafica(datosFiltrados);
-            this.actualizarEstadisticas(datosFiltrados);
-            // 🔥 NUEVO: Actualizar el texto del botón
-            this.actualizarTextoBoton(fechaSeleccionada);
-        } else {
+        if (datosFiltrados.length === 0) {
             Swal.fire({
                 icon: 'info',
                 title: 'Sin datos',
-                text: 'No hay registros para la semana seleccionada',
-                timer: 2000,
-                showConfirmButton: false
+                text: 'No hay registros. Mostrando datos de ejemplo.',
+                timer: 2500,
+                showConfirmButton: false,
+                background: '#0f172a',
+                color: '#fff',
+                toast: true,
+                position: 'top-end'
             });
+            datosFiltrados = this.getDatosEjemplo().slice(0, 7);
         }
+        
+        this.renderizarGrafica(datosFiltrados);
+        this.actualizarEstadisticas(datosFiltrados);
+        this.actualizarTextoBoton(fechaSeleccionada);
     },
     
     getDatosEjemplo() {
@@ -121,10 +213,7 @@ const HistoryChart = {
             const variacion = Math.sin(i * 0.5) * 2;
             const valor = base + variacion;
             
-            datos.push({
-                fecha: fechaStr,
-                usd: valor
-            });
+            datos.push({ fecha: fechaStr, usd: valor });
         }
         return datos;
     },
@@ -148,152 +237,142 @@ const HistoryChart = {
         if (statsVariacion) {
             statsVariacion.innerHTML = `<span class="${ultimoValor > primerValor ? 'text-red-400' : 'text-green-400'}">${signo}${variacion}%</span>`;
         }
-        
         if (statsMax) {
             statsMax.innerHTML = `<span class="text-red-400">Bs ${maximo.toFixed(2)}</span>`;
         }
-        
         if (statsMin) {
             statsMin.innerHTML = `<span class="text-green-400">Bs ${minimo.toFixed(2)}</span>`;
         }
     },
     
     renderizarGrafica(historial) {
-    const canvas = document.getElementById('history-chart');
-    if (!canvas) return;
-    
-    const ctx = canvas.getContext('2d');
-    
-    if (this.chartInstance) {
-        this.chartInstance.destroy();
-    }
-    
-    const datosOrdenados = [...historial].sort((a, b) => 
-        new Date(a.fecha) - new Date(b.fecha)
-    );
-    
-    // 📈 Media móvil de 3 días (TENDENCIA)
-    const mediaMovil = datosOrdenados.map((item, index, arr) => {
-        if (index < 2) return item.usd;
-        const sum = arr[index-2].usd + arr[index-1].usd + item.usd;
-        return sum / 3;
-    });
-    
-    // 🔴🟢 Colores según subida/bajada
-    const coloresPorPunto = datosOrdenados.map((item, index, arr) => {
-        if (index === 0) return '#94a3b8';
-        return item.usd > arr[index-1].usd ? '#ef4444' : '#10b981';
-    });
-    
-    this.chartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: datosOrdenados.map(d => {
-                const fecha = new Date(d.fecha);
-                return fecha.toLocaleDateString('es-VE', { 
-                    day: '2-digit', 
-                    month: 'short' 
-                });
-            }),
-            datasets: [
-                {
-                    label: 'Tasa USD',
-                    data: datosOrdenados.map(d => d.usd),
-                    borderColor: '#4f46e5',
-                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                    borderWidth: 2,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                    pointBackgroundColor: coloresPorPunto,
-                    pointBorderColor: coloresPorPunto,
-                    pointBorderWidth: 2,
-                    tension: 0.2,
-                    fill: true
-                },
-                {
-                    label: 'Tendencia',
-                    data: mediaMovil,
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                    borderWidth: 1.5,
-                    borderDash: [5, 5],
-                    pointRadius: 0,
-                    fill: false,
-                    tension: 0.3
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false,
-                    backgroundColor: '#0f172a',
-                    titleColor: '#e2e8f0',
-                    bodyColor: '#94a3b8',
-                    borderColor: '#00f2ff',
-                    borderWidth: 1,
-                    callbacks: {
-                        // 💬 Tooltip mejorado con emojis
-                        label: function(context) {
-                            const valorActual = context.raw;
-                            const dataset = context.dataset;
-                            
-                            if (context.datasetIndex === 0) {
-                                const index = context.dataIndex;
-                                let cambio = '';
-                                if (index > 0) {
-                                    const valorAnterior = dataset.data[index-1];
-                                    const diferencia = valorActual - valorAnterior;
-                                    const signo = diferencia > 0 ? '+' : '';
-                                    const emoji = diferencia > 0 ? '🔴' : '🟢';
-                                    cambio = ` ${emoji} ${signo}${diferencia.toFixed(2)}`;
+        const canvas = document.getElementById('history-chart');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        
+        if (this.chartInstance) {
+            this.chartInstance.destroy();
+        }
+        
+        const datosOrdenados = [...historial].sort((a, b) => 
+            new Date(a.fecha) - new Date(b.fecha)
+        );
+        
+        // 📈 Media móvil de 3 días (TENDENCIA) - ¡RESTAURADA!
+        const mediaMovil = datosOrdenados.map((item, index, arr) => {
+            if (index < 2) return item.usd;
+            const sum = arr[index-2].usd + arr[index-1].usd + item.usd;
+            return sum / 3;
+        });
+        
+        // 🔴🟢 Colores según subida/bajada
+        const coloresPorPunto = datosOrdenados.map((item, index, arr) => {
+            if (index === 0) return '#94a3b8';
+            return item.usd > arr[index-1].usd ? '#ef4444' : '#10b981';
+        });
+        
+        this.chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: datosOrdenados.map(d => {
+                    const fecha = new Date(d.fecha);
+                    return fecha.toLocaleDateString('es-VE', { day: '2-digit', month: 'short' });
+                }),
+                datasets: [
+                    {
+                        label: 'Tasa USD',
+                        data: datosOrdenados.map(d => d.usd),
+                        borderColor: '#4f46e5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        pointBackgroundColor: coloresPorPunto,
+                        pointBorderColor: coloresPorPunto,
+                        pointBorderWidth: 2,
+                        tension: 0.2,
+                        fill: true
+                    },
+                    {
+                        label: 'Tendencia', // 📈 Línea de tendencia restaurada
+                        data: mediaMovil,
+                        borderColor: 'rgba(255, 255, 255, 0.3)',
+                        borderWidth: 1.5,
+                        borderDash: [5, 5],
+                        pointRadius: 0,
+                        fill: false,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: '#0f172a',
+                        titleColor: '#e2e8f0',
+                        bodyColor: '#94a3b8',
+                        borderColor: '#00f2ff',
+                        borderWidth: 1,
+                        callbacks: {
+                            label: function(context) {
+                                const valorActual = context.raw;
+                                if (context.datasetIndex === 0) {
+                                    const index = context.dataIndex;
+                                    let cambio = '';
+                                    if (index > 0) {
+                                        const valorAnterior = context.dataset.data[index-1];
+                                        const diferencia = valorActual - valorAnterior;
+                                        const signo = diferencia > 0 ? '+' : '';
+                                        const emoji = diferencia > 0 ? '🔴' : '🟢';
+                                        cambio = ` ${emoji} ${signo}${diferencia.toFixed(2)}`;
+                                    }
+                                    return `USD: Bs ${valorActual.toFixed(2)}${cambio}`;
                                 }
-                                return `USD: Bs ${valorActual.toFixed(2)}${cambio}`;
-                            }
-                            return `Tendencia: Bs ${valorActual.toFixed(2)}`;
-                        },
-                        // Color del punto en tooltip
-                        labelColor: function(context) {
-                            if (context.datasetIndex === 0) {
-                                const index = context.dataIndex;
+                                return `Tendencia: Bs ${valorActual.toFixed(2)}`;
+                            },
+                            labelColor: function(context) {
+                                if (context.datasetIndex === 0) {
+                                    return {
+                                        borderColor: coloresPorPunto[context.dataIndex],
+                                        backgroundColor: coloresPorPunto[context.dataIndex],
+                                        borderWidth: 2
+                                    };
+                                }
                                 return {
-                                    borderColor: coloresPorPunto[index],
-                                    backgroundColor: coloresPorPunto[index],
+                                    borderColor: 'rgba(255, 255, 255, 0.3)',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.3)',
                                     borderWidth: 2
                                 };
                             }
-                            return {
-                                borderColor: 'rgba(255, 255, 255, 0.3)',
-                                backgroundColor: 'rgba(255, 255, 255, 0.3)',
-                                borderWidth: 2
-                            };
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: {
+                            callback: v => 'Bs ' + v.toFixed(2),
+                            color: '#94a3b8'
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45,
+                            color: '#94a3b8'
                         }
                     }
                 }
-            },
-            scales: {
-                y: {
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                    ticks: {
-                        callback: v => 'Bs ' + v.toFixed(2),
-                        color: '#94a3b8'
-                    }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: {
-                        maxRotation: 45,
-                        minRotation: 45,
-                        color: '#94a3b8'
-                    }
-                }
             }
-        }
-    });
-},
+        });
+    },
     
     abrirModal() {
         const modal = document.getElementById('modal-history');
@@ -311,8 +390,6 @@ const HistoryChart = {
             modal.classList.remove('flex');
         }
     }
-
-    
 };
 
 window.HistoryChart = HistoryChart;

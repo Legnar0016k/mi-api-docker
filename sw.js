@@ -7,6 +7,7 @@ const VERSION = 'v4.0.0-final';
 const CACHE_NAME = `bcv-monitor-cache-${VERSION}`;
 
 const assets = [
+    //LOGICA
     '/',
     'index.html',
     'public/scripts/core/app-loader.js',
@@ -14,8 +15,16 @@ const assets = [
     'public/scripts/ui/calc-logic.js',
     'public/scripts/core/theme-manager.js',
     'public/scripts/ui/ui-render.js',
-    'public/assets/manifest.json'
-
+    'public/assets/manifest.json',
+    'public/scripts/ui/history.chart.js',
+    //STYLOS
+    'public/styles/estilosdeavisolegal.css',
+    'public/styles/history.css',
+    'public/styles/theme-toggle.css',
+    'public/styles/style1.css',
+    'public/styles/style2.css',
+    'public/styles/style3.css',
+    'public/assets/icons/icon-512.png'
 ];
 
 self.addEventListener('install', event => {
