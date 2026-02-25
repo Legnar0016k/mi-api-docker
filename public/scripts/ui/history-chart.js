@@ -206,6 +206,7 @@ const HistoryChart = {
             `<span class="text-green-400">Bs ${minimo.toFixed(2)}</span>`;
     },
     
+    // 🔥 VERSIÓN CORREGIDA - Renderizado con fechas correctas
     renderizarGrafica(historial) {
         const canvas = document.getElementById('history-chart');
         if (!canvas) return;
@@ -216,9 +217,15 @@ const HistoryChart = {
             this.chartInstance.destroy();
         }
         
-        const datosOrdenados = [...historial].sort((a, b) => 
-            new Date(a.fecha) - new Date(b.fecha)
-        );
+        // 🔥 IMPORTANTE: Crear una copia y ordenar por fecha ASCENDENTE
+        const datosOrdenados = [...historial].sort((a, b) => {
+            // Convertir a timestamp para comparación numérica
+            const fechaA = new Date(a.fecha).getTime();
+            const fechaB = new Date(b.fecha).getTime();
+            return fechaA - fechaB;
+        });
+        
+        console.log('📊 Datos ordenados para gráfica:', datosOrdenados.map(d => `${d.fecha}: ${d.usd}`));
         
         // 📈 Media móvil (tendencia)
         const mediaMovil = datosOrdenados.map((item, index, arr) => {
@@ -226,18 +233,28 @@ const HistoryChart = {
             return (arr[index-2].usd + arr[index-1].usd + item.usd) / 3;
         });
         
+        // 🔴🟢 Colores según subida/bajada
         const coloresPorPunto = datosOrdenados.map((item, index, arr) => {
             if (index === 0) return '#94a3b8';
             return item.usd > arr[index-1].usd ? '#ef4444' : '#10b981';
         });
         
+        // 🔥 CORREGIDO: Crear etiquetas de fecha de forma segura
+        const labels = datosOrdenados.map(d => {
+            const partes = d.fecha.split('-'); // YYYY-MM-DD
+            if (partes.length === 3) {
+                const dia = partes[2];
+                const mes = partes[1];
+                // Formato: DD/MM
+                return `${dia}/${mes}`;
+            }
+            return d.fecha;
+        });
+        
         this.chartInstance = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: datosOrdenados.map(d => {
-                    const fecha = new Date(d.fecha);
-                    return fecha.toLocaleDateString('es-VE', { day: '2-digit', month: 'short' });
-                }),
+                labels: labels,
                 datasets: [
                     {
                         label: 'Tasa USD',
@@ -279,6 +296,11 @@ const HistoryChart = {
                         borderColor: '#00f2ff',
                         borderWidth: 1,
                         callbacks: {
+                            title: function(tooltipItems) {
+                                // Mostrar fecha completa en tooltip
+                                const index = tooltipItems[0].dataIndex;
+                                return datosOrdenados[index].fecha;
+                            },
                             label: function(context) {
                                 const valorActual = context.raw;
                                 if (context.datasetIndex === 0) {
@@ -319,7 +341,14 @@ const HistoryChart = {
                     },
                     x: {
                         grid: { display: false },
-                        ticks: { maxRotation: 45, minRotation: 45, color: '#94a3b8' }
+                        ticks: { 
+                            maxRotation: 45, 
+                            minRotation: 45, 
+                            color: '#94a3b8',
+                            // Asegurar que se muestren todas las etiquetas
+                            autoSkip: true,
+                            maxTicksLimit: 7
+                        }
                     }
                 }
             }
