@@ -84,15 +84,18 @@ const HistoryChart = {
         }
     },
     
-    // 🔥 NUEVA VERSIÓN - Últimos 7 días disponibles
+    // 🔥 VERSIÓN CORREGIDA - Últimos 7 días en orden ascendente
     filtrarUltimos7(datos) {
         if (!datos || datos.length === 0) return [];
         
         const ordenados = [...datos].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-        return ordenados.slice(0, 7).reverse();
+        const ultimos7 = ordenados.slice(0, 7);
+        
+        // ORDENAR ASCENDENTE para la gráfica
+        return ultimos7.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
     },
     
-    // 🔥 VERSIÓN CORREGIDA - 7 días hacia atrás
+    // 🔥 VERSIÓN CORREGIDA - 7 días hacia atrás y orden correcto
     filtrarPorSemana(datos, fechaSeleccionada) {
         if (!datos || datos.length === 0 || !fechaSeleccionada) return [];
         
@@ -105,9 +108,15 @@ const HistoryChart = {
         
         console.log(`📅 Período: ${inicioStr} → ${finStr}`);
         
+        // Filtrar datos entre inicio y fin
         const filtrados = datos.filter(d => 
             d.fecha >= inicioStr && d.fecha <= finStr
-        ).sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+        );
+        
+        // ORDENAR POR FECHA ASCENDENTE (importante para la gráfica)
+        filtrados.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+        
+        console.log('📊 Datos filtrados:', filtrados.map(d => `${d.fecha}: ${d.usd}`));
         
         if (filtrados.length < 3) {
             const ordenados = [...datos].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
@@ -144,6 +153,8 @@ const HistoryChart = {
         
         const fechaSeleccionada = input.value;
         let datosFiltrados = this.filtrarPorSemana(this.datosCompletos, fechaSeleccionada);
+        
+        console.log('📊 Datos para gráfica:', datosFiltrados.map(d => `${d.fecha}: ${d.usd}`));
         
         if (datosFiltrados.length === 0) {
             Swal.fire({
