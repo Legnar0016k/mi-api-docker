@@ -884,3 +884,74 @@ Notificaciones de cambio significativo
 Más fuentes de datos (BCV directo)
 
 Gráfica del Euro también
+
+# Changelog - Terminal BCV
+
+## [4.6.2] - 2026-02-25
+
+### 🐛 Correcciones en Gráfica Histórica
+
+#### 📊 Renderizado de Fechas
+- **Corregido** el desplazamiento de datos en la gráfica (el valor del día 25 ya no aparece en el día 24)
+- **Implementado** sistema robusto de ordenamiento usando `getTime()` para comparación numérica de fechas
+- **Creadas** etiquetas manuales con `split('-')` para evitar problemas de zona horaria
+- **Mejorados** los tooltips: ahora muestran la fecha completa (YYYY-MM-DD) al pasar el mouse
+
+#### 🔍 Depuración
+- **Agregados** `console.log` estratégicos para verificar los datos en cada etapa:
+  - `📊 Datos filtrados` - Muestra los datos después del filtrado por fecha
+  - `📊 Datos ordenados para gráfica` - Muestra los datos antes de renderizar
+
+#### 🎨 Visualización
+- **Optimizadas** las etiquetas del eje X: ahora muestran `DD/MM` de forma consistente
+- **Ajustado** el límite de etiquetas a 7 para mejor legibilidad en móviles
+- **Mantenidos** los colores 🔴/🟢 según la variación día a día
+
+### 🔧 Mejoras Técnicas
+
+#### Backend (sin cambios)
+- ✅ API endpoints funcionando correctamente
+- ✅ Base de datos SQLite con registros históricos
+- ✅ Sistema de registro inteligente (solo cuando es necesario)
+
+#### Frontend
+- ✅ Filtro de últimos 7 días funcionando
+- ✅ Selector de fecha táctil optimizado para móviles
+- ✅ Línea de tendencia blanca punteada restaurada
+- ✅ Tooltips con emojis de subida/bajada
+
+### 📊 Ejemplo de Funcionamiento Correcto
+
+| Fecha | Valor | Visualización |
+|-------|-------|---------------|
+| 2026-02-23 | 405.35 | ✅ 23/02: 405.35 |
+| 2026-02-24 | 407.37 | ✅ 24/02: 407.37 |
+| 2026-02-25 | 411.09 | ✅ 25/02: 411.09 |
+
+### ✅ Estado del Proyecto
+
+| Componente | Estado | Observación |
+|------------|--------|-------------|
+| Backend API | ✅ Funcional | Railway + SQLite |
+| Base de Datos | ✅ 16 registros | 3 reales + 13 iniciales |
+| Gráfica Histórica | ✅ CORREGIDA | Datos en fechas correctas |
+| Selector de Fecha | ✅ Táctil | Botón grande para móvil |
+| Tasa en Tiempo Real | ✅ Funcional | Con fallback a cache |
+| Rate Limiting | ✅ 3 actualizaciones/hora | LocalStorage |
+
+### 📦 Archivos Modificados
+
+- `history-chart.js` - Corrección del renderizado de fechas
+  - Línea 380-480: Función `renderizarGrafica` completamente revisada
+  - Línea 200-220: Función `filtrarPorSemana` con logs mejorados
+  - Línea 250-270: Función `cambiarFecha` con verificación de datos
+
+### 🚀 Próximos Pasos (v4.7.0)
+
+- [ ] Agregar más fuentes de datos (BCV directo)
+- [ ] Implementar gráfica del Euro
+- [ ] Exportar datos a CSV desde la interfaz
+- [ ] Notificaciones de cambios significativos
+
+### 📥 Instalación/Actualización
+
